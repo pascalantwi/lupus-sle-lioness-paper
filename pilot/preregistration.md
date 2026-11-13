@@ -64,3 +64,4 @@ The AUC of every model in every cell with its MCSE; every quantity of section 3,
 
 ## 6. Amendments before the run
 
+- 2026-11-13, after the timing run and before the run. Replicates per cell: 200. The timing run (10 replicates per cell, three workers loaded, the run's own scheduling; `pilot/results/timing.rds`) took 84 seconds, which projects 200 replicates to about 1,700 seconds, within the one-hour box.
