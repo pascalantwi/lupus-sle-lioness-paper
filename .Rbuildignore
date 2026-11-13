@@ -26,3 +26,5 @@ __pycache__
 ^idea\.md$
 ^proposal\.md$
 ^STATUS\.md$
+^references$
+^proposal-new$
