@@ -1,0 +1,22 @@
+Package: lionesspreg
+Title: LIONESS Edges Across Pregnancy in SLE and RA
+Version: 0.0.0.9000
+Authors@R:
+    person("Project", "Author", , "author@example.com", role = c("aut", "cre"))
+Description: A research compendium: the functions, tests, analysis scripts, results,
+    and manuscript of one project run with the research workflow, on the question [FILL: one sentence].
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports:
+    glmnet,
+    stats
+Suggests:
+    devtools,
+    here,
+    knitr,
+    rmarkdown,
+    roxygen2,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0
