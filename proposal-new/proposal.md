@@ -1,10 +1,5 @@
 # Proposal: LIONESS edges across pregnancy in SLE and RA
 
-| | |
-|---|---|
-| From | `idea.md`, 2026-11-13 |
-| Written | 2026-11-13, workflow 0.2.4-md |
-| Status | final 2026-11-13 (stop 1 waived by the user's request to go straight to the pilot) |
 
 ## 1. Summary and verdict
 
