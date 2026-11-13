@@ -4,10 +4,12 @@
 \alias{FactorLevels}
 \title{Factor levels of pilot-b}
 \usage{
-FactorLevels(name = c("none", "SLE", "RA", "stress"))
+FactorLevels(name = c("none", "SLE", "RA", "stress", "SLE_c", "RA_c"))
 }
 \arguments{
-\item{name}{\code{"none"}, \code{"SLE"}, \code{"RA"}, or \code{"stress"}.}
+\item{name}{\code{"none"}, \code{"SLE"}, \code{"RA"}, or \code{"stress"} (pilot-b), or
+\code{"SLE_c"}, \code{"RA_c"} (pilot-c: composition from the marker-gene score,
+\code{results/factor_shift_markers.rds}).}
 }
 \value{
 A list with \code{f} and \code{comp}, each \code{c(shift, scale, kappa)}.

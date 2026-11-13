@@ -5,12 +5,17 @@
 #' from `results/factor_shift.rds` (SLE, RA), plus no change and the stress
 #' level.
 #'
-#' @param name `"none"`, `"SLE"`, `"RA"`, or `"stress"`.
+#' @param name `"none"`, `"SLE"`, `"RA"`, or `"stress"` (pilot-b), or
+#'   `"SLE_c"`, `"RA_c"` (pilot-c: composition from the marker-gene score,
+#'   `results/factor_shift_markers.rds`).
 #' @return A list with `f` and `comp`, each `c(shift, scale, kappa)`.
 #' @export
-FactorLevels <- function(name = c("none", "SLE", "RA", "stress")) {
+FactorLevels <- function(name = c("none", "SLE", "RA", "stress", "SLE_c",
+                                  "RA_c")) {
   name <- match.arg(name)
   switch(name,
+    SLE_c = list(f = c(0.2, 1.1, 0.9), comp = c(0.6, 0.85, 0.8)),
+    RA_c = list(f = c(-0.3, 0.65, 0.4), comp = c(1.4, 0.85, 0.1)),
     none = list(f = c(0, 1, 0.5), comp = c(0, 1, 0.5)),
     SLE = list(f = c(0.2, 1.1, 0.9), comp = c(-0.1, 1.0, 0.55)),
     RA = list(f = c(-0.3, 0.65, 0.4), comp = c(0.45, 1.45, 0.05)),
@@ -45,7 +50,7 @@ PilotBDesign <- function() {
 
 #' Simulate one cohort of pilot-b
 #'
-#' Four samples per woman, the first two pregnant. The IFN factor `f` (genes
+#' `n_preg + n_non` samples per woman, the first `n_preg` pregnant. The IFN factor `f` (genes
 #' 1 to 20, loading 0.8) and the composition factor `comp` (genes 31 to 50,
 #' loading 0.6) are each the woman's level (variance `kappa`) plus sample
 #' noise (variance `1 - kappa`); in pregnant samples each becomes
@@ -61,16 +66,20 @@ PilotBDesign <- function() {
 #' @param module Change in the module's correlation in pregnancy.
 #' @param activity `"none"`, `"ifn"`, or `"module"`.
 #' @param p Number of genes (at least 50).
+#' @param n_preg,n_non Samples per woman in and outside pregnancy (2 and 2
+#'   in pilot-b).
 #' @return A list with `x`, `y` (1 pregnant), `woman`, `comp`, `f`, and
 #'   `activity`.
 #' @export
 SimulateCohortB <- function(women, levels = FactorLevels("none"), module = 0,
-                            activity = c("none", "ifn", "module"), p = 50) {
+                            activity = c("none", "ifn", "module"), p = 50,
+                            n_preg = 2L, n_non = 2L) {
   activity <- match.arg(activity)
   stopifnot(p >= 50, 0.3 + module < 1)
-  n <- 4L * women
-  woman <- rep(seq_len(women), each = 4L)
-  y <- rep(c(1L, 1L, 0L, 0L), times = women)
+  k <- n_preg + n_non
+  n <- k * women
+  woman <- rep(seq_len(women), each = k)
+  y <- rep(c(rep(1L, n_preg), rep(0L, n_non)), times = women)
   draw <- function(lv) {
     v <- stats::rnorm(women, sd = sqrt(lv[3]))[woman] +
       stats::rnorm(n, sd = sqrt(1 - lv[3]))
@@ -198,10 +207,14 @@ Concordance <- function(pred, y) {
 #' @param coh A cohort from [SimulateCohortB()].
 #' @param outcome The outcome: `coh$y` (pregnancy) or `coh$activity`.
 #' @param family `"binomial"` or `"gaussian"`.
+#' @param within If `TRUE` (Gaussian only), every feature matrix is centered
+#'   on each woman's own mean inside each fold, and `outcome` should already
+#'   be centered by woman ([CenterByGroup()]).
 #' @return A matrix of out-of-fold predictions, one column per model (`R0`,
 #'   `R1`, `E1`, `F1`, `N1`, `N1R0`).
 #' @export
-PredictModelsB <- function(coh, outcome, family = c("binomial", "gaussian")) {
+PredictModelsB <- function(coh, outcome, family = c("binomial", "gaussian"),
+                           within = FALSE) {
   family <- match.arg(family)
   models <- c("R0", "R1", "E1", "F1", "N1", "N1R0")
   folds <- GroupFolds(coh$woman, 5L)
@@ -212,6 +225,10 @@ PredictModelsB <- function(coh, outcome, family = c("binomial", "gaussian")) {
     ft <- PregnancyFeatures(coh, tr)
     a <- ft$train
     b <- ft$test
+    if (within) {
+      a <- lapply(a, CenterByGroup, group = coh$woman[tr])
+      b <- lapply(b, CenterByGroup, group = coh$woman[!tr])
+    }
     ytr <- outcome[tr]
     inner <- GroupFolds(coh$woman[tr], 5L)
     en <- function(rtr, ptr, rte, pte) {
@@ -245,8 +262,13 @@ RunReplicateB <- function(design_row, rep) {
   set.seed(design_row$seed + rep)
   pg <- PairGroups()
   out <- list(cell = design_row$cell, rep = rep)
+  opt <- function(nm, default) {
+    if (is.null(design_row[[nm]]) || is.na(design_row[[nm]])) default
+    else design_row[[nm]]
+  }
   coh <- SimulateCohortB(design_row$women, FactorLevels(design_row$levels),
-                         design_row$module, design_row$activity)
+                         design_row$module, design_row$activity,
+                         n_preg = opt("n_preg", 2L), n_non = opt("n_non", 2L))
   shares <- function(ed, prefix) {
     d_raw <- ChangeByWoman(ed$raw, coh$y, coh$woman)
     d_par <- ChangeByWoman(ed$partial, coh$y, coh$woman)
@@ -261,8 +283,9 @@ RunReplicateB <- function(design_row, rep) {
     pred <- PredictModelsB(coh, coh$y, "binomial")
     for (m in colnames(pred)) out[[m]] <- Auc(pred[, m], coh$y)
   } else if (design_row$aim == 2) {
-    yy <- coh$activity
-    pred <- PredictModelsB(coh, yy, "gaussian")
+    within <- opt("within", FALSE)
+    yy <- if (within) CenterByGroup(coh$activity, coh$woman) else coh$activity
+    pred <- PredictModelsB(coh, yy, "gaussian", within = within)
     for (m in colnames(pred)) {
       out[[m]] <- Concordance(pred[, m], yy)
       out[[paste0("cor_", m)]] <- stats::cor(pred[, m], yy)
@@ -275,7 +298,9 @@ RunReplicateB <- function(design_row, rep) {
     coh_a <- coh
     coh <- SimulateCohortB(design_row$women_b,
                            FactorLevels(design_row$levels_b),
-                           design_row$module_b)
+                           design_row$module_b,
+                           n_preg = opt("n_preg_b", 2L),
+                           n_non = opt("n_non_b", 2L))
     ed_b <- CohortEdges(coh)
     d_b_raw <- ChangeByWoman(ed_b$raw, coh$y, coh$woman)
     d_b_par <- ChangeByWoman(ed_b$partial, coh$y, coh$woman)
@@ -381,4 +406,45 @@ KnownAnswerChecksB <- function(summaries = NULL, seed = 1L) {
     }
   }
   k
+}
+
+#' Center a vector or the columns of a matrix on group means
+#'
+#' @param m A numeric vector or matrix (samples in rows).
+#' @param group Group of each sample.
+#' @return `m` minus the mean of its group, same shape.
+#' @export
+CenterByGroup <- function(m, group) {
+  if (is.null(dim(m))) return(m - stats::ave(m, group))
+  # rowsum and table both order the groups by their sorted values
+  mu <- rowsum(m, group) / as.vector(table(group))
+  out <- m - unname(mu[as.character(group), , drop = FALSE])
+  dimnames(out) <- dimnames(m)
+  out
+}
+
+#' The design table of pilot-c
+#'
+#' The 10 cells of `pilot-c/preregistration.md`: pilot-b's cells with five
+#' visits per woman (three pregnant and two not at the SLE, null, and stress
+#' levels; two and three at the RA levels), the composition levels from the
+#' marker-gene score, within-woman activity in cells 6 and 7, and seeds
+#' `20961113 + 1000c`.
+#'
+#' @return A data frame as [PilotBDesign()], plus `n_preg`, `n_non`,
+#'   `n_preg_b`, `n_non_b`, and `within`.
+#' @export
+PilotCDesign <- function() {
+  d <- PilotBDesign()
+  d$levels <- c("none", "SLE_c", "RA_c", "stress", "SLE_c", "RA_c", "RA_c",
+                "SLE_c", "SLE_c", "stress")
+  d$levels_b[d$aim == 3] <- c("RA_c", "RA_c", "none")
+  ra <- d$levels == "RA_c"
+  d$n_preg <- ifelse(ra, 2L, 3L)
+  d$n_non <- ifelse(ra, 3L, 2L)
+  d$n_preg_b <- ifelse(d$aim == 3, 2L, NA_integer_)
+  d$n_non_b <- ifelse(d$aim == 3, 3L, NA_integer_)
+  d$within <- d$aim == 2
+  d$seed <- 20961113L + 1000L * d$cell
+  d
 }

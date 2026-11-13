@@ -176,3 +176,13 @@ Pass when every clause passes. Fail when 1(b), 3(a), or 3(b) fails (the fix, the
 - RA as one group (seropositive and seronegative); all pregnancy samples against all non-pregnant ones (defaults, proposal section 9).
 - SLE activity as any against none (secondary), RA activity (DAS28) as the main activity analysis.
 - [TO CONFIRM: the user's approval of this revision and its pass rule before pilot-b runs]{.tc}
+
+## 13. Revision 2 (2026-11-13): the third pilot
+
+This section governs where it differs from section 12. The user read pilot-b's close call (`pilot-b/results/verdict.rds`: every deciding clause passed; 2(b) and 3(c) failed; 2(a) and 2(c) close) and asked for a third pilot ("go to C"), going straight on without a separate stop. Three design changes, each for a reason pilot-b gave, with **the pass rule of section 12.5 unchanged**:
+
+1. **Every visit.** Five samples per woman, mirroring the visits per woman in GSE235508 (`results/factor_shift_markers.rds`: about 2.7 pregnant and 2.4 non-pregnant in SLE, 2.3 and 2.3 in RA): three pregnant and two non-pregnant in SLE, two and three in RA. Pilot-b used four.
+2. **Cell mix from marker genes.** The composition level comes from a neutrophil-minus-lymphocyte marker score (FCGR3B, CXCR2, CSF3R, FPR1 against CD3E, CD3D, CD2, MS4A1, CD79A; [TO CONFIRM: a published source for this marker list]{.tc}), measured by `analysis/02_factor_shift_markers.R`. Rounded: SLE shift 0.6, spread ratio 0.85, within-woman share 0.8; RA shift 1.4, spread ratio 0.85, within-woman share 0.1. Pilot-b's principal-component proxy gave much smaller shifts (about 0 and 0.45).
+3. **Activity within woman.** Activity and every feature are centered on the woman's own mean before fitting and scoring (pilot-b, decisions log D3), so the prediction uses each visit's departure from the woman's usual level.
+
+A change considered and dropped: testing a smaller pre-chosen set of edges does not change any pair's test, since each share counts pairs tested one by one.

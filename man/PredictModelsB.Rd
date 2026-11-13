@@ -4,7 +4,12 @@
 \alias{PredictModelsB}
 \title{Out-of-fold predictions of the six models of pilot-b}
 \usage{
-PredictModelsB(coh, outcome, family = c("binomial", "gaussian"))
+PredictModelsB(
+  coh,
+  outcome,
+  family = c("binomial", "gaussian"),
+  within = FALSE
+)
 }
 \arguments{
 \item{coh}{A cohort from \code{\link[=SimulateCohortB]{SimulateCohortB()}}.}
@@ -12,6 +17,10 @@ PredictModelsB(coh, outcome, family = c("binomial", "gaussian"))
 \item{outcome}{The outcome: \code{coh$y} (pregnancy) or \code{coh$activity}.}
 
 \item{family}{\code{"binomial"} or \code{"gaussian"}.}
+
+\item{within}{If \code{TRUE} (Gaussian only), every feature matrix is centered
+on each woman's own mean inside each fold, and \code{outcome} should already
+be centered by woman (\code{\link[=CenterByGroup]{CenterByGroup()}}).}
 }
 \value{
 A matrix of out-of-fold predictions, one column per model (\code{R0},

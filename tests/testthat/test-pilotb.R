@@ -78,3 +78,36 @@ test_that("the known-answer checks of pilot-b hold", {
   ids <- k[k$type == "identity", ]
   expect_true(all(abs(ids$computed - ids$known) < 0.02))
 })
+
+test_that("pilot-b's cohort is unchanged by the new visit arguments", {
+  set.seed(31)
+  a <- SimulateCohortB(5, FactorLevels("RA"))
+  set.seed(31)
+  b <- SimulateCohortB(5, FactorLevels("RA"), n_preg = 2L, n_non = 2L)
+  expect_identical(a, b)
+})
+
+test_that("SimulateCohortB gives the requested visits per woman", {
+  set.seed(32)
+  coh <- SimulateCohortB(6, FactorLevels("SLE_c"), n_preg = 3L, n_non = 2L)
+  expect_equal(nrow(coh$x), 30)
+  expect_true(all(tapply(coh$y, coh$woman, sum) == 3))
+})
+
+test_that("CenterByGroup removes each group's mean", {
+  m <- cbind(c(1, 3, 10, 14), c(2, 2, 5, 7))
+  g <- c(2, 2, 1, 1)
+  cm <- CenterByGroup(m, g)
+  expect_equal(cm[, 1], c(-1, 1, -2, 2))
+  expect_equal(CenterByGroup(c(1, 3, 10, 14), g), c(-1, 1, -2, 2))
+})
+
+test_that("PilotCDesign has five visits and the within-woman activity cells",
+          {
+  d <- PilotCDesign()
+  expect_equal(d$n_preg + d$n_non, rep(5L, 10))
+  expect_equal(d$within, d$aim == 2)
+  expect_equal(d$seed, 20961113L + 1000L * (1:10))
+  r <- suppressWarnings(RunReplicateB(d[6, ], 1))
+  expect_true(all(c("N1", "r2_N1") %in% names(r)))
+})

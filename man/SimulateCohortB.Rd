@@ -9,7 +9,9 @@ SimulateCohortB(
   levels = FactorLevels("none"),
   module = 0,
   activity = c("none", "ifn", "module"),
-  p = 50
+  p = 50,
+  n_preg = 2L,
+  n_non = 2L
 )
 }
 \arguments{
@@ -22,13 +24,16 @@ SimulateCohortB(
 \item{activity}{\code{"none"}, \code{"ifn"}, or \code{"module"}.}
 
 \item{p}{Number of genes (at least 50).}
+
+\item{n_preg, n_non}{Samples per woman in and outside pregnancy (2 and 2
+in pilot-b).}
 }
 \value{
 A list with \code{x}, \code{y} (1 pregnant), \code{woman}, \code{comp}, \code{f}, and
 \code{activity}.
 }
 \description{
-Four samples per woman, the first two pregnant. The IFN factor \code{f} (genes
+\code{n_preg + n_non} samples per woman, the first \code{n_preg} pregnant. The IFN factor \code{f} (genes
 1 to 20, loading 0.8) and the composition factor \code{comp} (genes 31 to 50,
 loading 0.6) are each the woman's level (variance \code{kappa}) plus sample
 noise (variance \code{1 - kappa}); in pregnant samples each becomes
