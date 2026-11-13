@@ -34,3 +34,4 @@ As pilot-b, in `pilot-c/results/`, with pilot-b's values beside pilot-c's for ev
 
 ## 6. Amendments before the run
 
+- 2026-11-13, after the timing run and before the run. Replicates per cell: 400. The timing run (10 replicates per cell, three workers loaded, the run's own scheduling; `pilot-c/results/timing.rds`) took 60 seconds, which projects 400 replicates to about 2,400 seconds, within the one-hour box.

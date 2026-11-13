@@ -5,8 +5,8 @@
 | Workflow version | 0.2.4-md (2026-11-03): tgrimes/research-workflow 0.2.4 with a Markdown reference list and no Zotero |
 | Project | LIONESS edges across pregnancy in SLE and RA |
 | Package | lionesspreg |
-| Stage | 2, piloted-close-call (pilot-b) |
-| Open stop | stage 2 stop: the pilot-b verdict, `pilot-b/pilot-report.html` |
+| Stage | 2, pilot running (pilot-c) |
+| Open stop | none: pilot-c running (revision 2, the user: "go to C") |
 | Last update | 2026-11-13 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
