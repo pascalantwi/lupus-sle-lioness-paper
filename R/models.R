@@ -75,15 +75,19 @@ PregnancyFeatures <- function(cohort, train, score_genes = 1:5,
        test = part(!train, LionessTestEdges(g[!train, , drop = FALSE], gtr)))
 }
 
-#' Fit a logistic base model and score a test set
+#' Fit a logistic or linear base model and score a test set
 #'
 #' @param x_train,x_test Covariate matrices.
-#' @param y Training labels.
+#' @param y Training outcome (labels for `"binomial"`).
+#' @param family `"binomial"` (logistic) or `"gaussian"` (least squares).
 #' @return Linear predictors for the test samples.
 #' @export
-FitReference <- function(x_train, y, x_test) {
+FitReference <- function(x_train, y, x_test,
+                         family = c("binomial", "gaussian")) {
+  family <- match.arg(family)
+  fam <- if (family == "binomial") stats::binomial() else stats::gaussian()
   fit <- suppressWarnings(stats::glm.fit(cbind(1, x_train), y,
-                                         family = stats::binomial()))
+                                         family = fam))
   b <- fit$coefficients
   b[is.na(b)] <- 0
   drop(cbind(1, x_test) %*% b)
@@ -100,22 +104,34 @@ FitReference <- function(x_train, y, x_test) {
 #' @param y Training labels.
 #' @param foldid Inner fold of each training sample.
 #' @param alpha The elastic-net mixing parameter.
+#' @param family `"binomial"` (deviance) or `"gaussian"` (mean squared
+#'   error, with the base alone if the path fails).
 #' @return Linear predictors for the test samples.
 #' @export
 FitElasticNet <- function(ref_train, pen_train, y, ref_test, pen_test,
-                          foldid, alpha = 0.5) {
+                          foldid, alpha = 0.5,
+                          family = c("binomial", "gaussian")) {
+  family <- match.arg(family)
   xtr <- cbind(ref_train, pen_train)
   xte <- cbind(ref_test, pen_test)
   pf <- c(rep(0, ncol(ref_train)), rep(1, ncol(pen_train)))
   # cv.glmnet, or its prediction, can fail when a path ends after one
   # penalty value; only then the fallback runs
   out <- tryCatch({
-    fit <- glmnet::cv.glmnet(xtr, y, family = "binomial", alpha = alpha,
+    fit <- glmnet::cv.glmnet(xtr, y, family = family, alpha = alpha,
                              foldid = foldid, penalty.factor = pf,
-                             type.measure = "deviance")
+                             type.measure = if (family == "binomial")
+                               "deviance" else "mse")
     drop(stats::predict(fit, newx = xte, s = "lambda.min", type = "link"))
   }, error = function(e) NULL)
-  if (is.null(out)) out <- ElasticNetFallback(xtr, y, xte, pf, foldid, alpha)
+  if (is.null(out)) {
+    out <- if (family == "binomial") {
+      ElasticNetFallback(xtr, y, xte, pf, foldid, alpha)
+    } else {
+      # the unpenalized base alone stands in for a failed Gaussian path
+      FitReference(ref_train, y, ref_test, family = "gaussian")
+    }
+  }
   out
 }
 

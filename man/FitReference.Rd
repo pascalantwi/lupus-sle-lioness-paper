@@ -2,18 +2,20 @@
 % Please edit documentation in R/models.R
 \name{FitReference}
 \alias{FitReference}
-\title{Fit a logistic base model and score a test set}
+\title{Fit a logistic or linear base model and score a test set}
 \usage{
-FitReference(x_train, y, x_test)
+FitReference(x_train, y, x_test, family = c("binomial", "gaussian"))
 }
 \arguments{
 \item{x_train, x_test}{Covariate matrices.}
 
-\item{y}{Training labels.}
+\item{y}{Training outcome (labels for \code{"binomial"}).}
+
+\item{family}{\code{"binomial"} (logistic) or \code{"gaussian"} (least squares).}
 }
 \value{
 Linear predictors for the test samples.
 }
 \description{
-Fit a logistic base model and score a test set
+Fit a logistic or linear base model and score a test set
 }

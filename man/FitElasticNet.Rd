@@ -4,7 +4,16 @@
 \alias{FitElasticNet}
 \title{Fit an elastic net with unpenalized base terms and score a test set}
 \usage{
-FitElasticNet(ref_train, pen_train, y, ref_test, pen_test, foldid, alpha = 0.5)
+FitElasticNet(
+  ref_train,
+  pen_train,
+  y,
+  ref_test,
+  pen_test,
+  foldid,
+  alpha = 0.5,
+  family = c("binomial", "gaussian")
+)
 }
 \arguments{
 \item{ref_train, ref_test}{Base covariate matrices (unpenalized).}
@@ -16,6 +25,9 @@ FitElasticNet(ref_train, pen_train, y, ref_test, pen_test, foldid, alpha = 0.5)
 \item{foldid}{Inner fold of each training sample.}
 
 \item{alpha}{The elastic-net mixing parameter.}
+
+\item{family}{\code{"binomial"} (deviance) or \code{"gaussian"} (mean squared
+error, with the base alone if the path fails).}
 }
 \value{
 Linear predictors for the test samples.
