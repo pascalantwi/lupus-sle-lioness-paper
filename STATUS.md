@@ -5,8 +5,8 @@
 | Workflow version | 0.2.4-md (2026-11-03): tgrimes/research-workflow 0.2.4 with a Markdown reference list and no Zotero |
 | Project | LIONESS edges across pregnancy in SLE and RA |
 | Package | lionesspreg |
-| Stage | 0, not started |
-| Open stop | none: write `idea.md`, then ask the agent to look at it |
+| Stage | 1, proposal final |
+| Open stop | none: stop 1 waived by the user; stage 2 in progress |
 | Last update | 2026-11-13 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
@@ -27,4 +27,4 @@ One line per stage boundary, newest last: the date, the stage reached, the path 
 
 | Date | Stage | Deliverable | Open stop |
 |---|---|---|---|
-| | | | |
+| 2026-11-13 | 1, proposal final (stop 1 waived by the user) | `proposal.md` | none |
