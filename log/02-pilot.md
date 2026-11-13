@@ -36,3 +36,10 @@ The numbered decisions are in `pilot/decisions.md`.
 - The run: 8 cells x 200 replicates in 1,622 seconds on three workers (`pilot/results/run_info.rds`), exit 0, no restart.
 - `Rscript pilot/verdict.R`: `piloted-close-call` (`pilot/results/verdict.rds`); readings in `pilot/decisions.md`, D1.
 - The report rendered; `check-report.py`: no errors or warnings. A Markdown copy, `pilot/pilot-report.md`, was rendered at the user's request ("let the file be md"), with its three figures committed beside it.
+
+## After the first pilot's stop
+
+- D-S1 (2026-11-13). The user said the plan should have held three aims: pregnancy stage, disease activity at each visit, and whether edges change differently in SLE than in RA across pregnancy. The agent's own description of idea 1 had named all three; `idea.md` and the proposal kept only the first. The agent's error, recorded in proposal section 12.1.
+- D-S2 (2026-11-13). The user chose a re-pilot on the three aims ("go"), and approved the counts download (25 MB). Defaults taken: RA as one group; all pregnancy samples against all non-pregnant ones.
+- The counts were downloaded (`analysis/00_download.R`, not committed) and the factor change measured (`analysis/01_factor_shift.R`, `results/factor_shift.rds`); no edge was computed on real data.
+- The revision (proposal section 12) has its own stop before pilot-b, as the agent promised the user.

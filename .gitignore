@@ -31,3 +31,6 @@ __pycache__/
 # PDFs the user adds as full texts for core citations (rules.md, section 2); publishers' PDFs are not shared
 /references/pdfs/*
 !/references/pdfs/.gitkeep
+
+# The GSE235508 counts (25 MB) are fetched by analysis/00_download.R
+/data/raw/GSE235508_mRNA_counts.txt.gz

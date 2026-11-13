@@ -71,3 +71,53 @@ DescribePregnancyCohort <- function(samples) {
   list(by_group = by_group,
        by_time = table(group = s$samplegroup, timepoint = tp))
 }
+
+#' Log counts per million of the GSE235508 counts, for named samples
+#'
+#' @param path Path to `GSE235508_mRNA_counts.txt.gz` (genes in rows,
+#'   Ensembl identifiers as row names, samples `S1` to `S335` in columns).
+#' @return A matrix of `log2(CPM + 1)`, genes in rows, samples in columns.
+#' @export
+ReadLogCpm <- function(path) {
+  x <- as.matrix(utils::read.delim(gzfile(path), row.names = 1,
+                                   check.names = FALSE))
+  lib <- colSums(x)
+  log2(sweep(x, 2, lib / 1e6, "/") + 1)
+}
+
+#' Shift and scale of a score in pregnancy, in units of the non-pregnant
+#' samples
+#'
+#' The score is standardized by the mean and standard deviation of the
+#' non-pregnant samples; the shift is the mean of the standardized pregnant
+#' samples, the scale the ratio of the pregnant to the non-pregnant standard
+#' deviation, and the within-woman correlation the share of the non-pregnant
+#' variance between women (one-way intraclass correlation, by moments).
+#'
+#' @param score Numeric score per sample.
+#' @param pregnant Logical, `TRUE` for pregnant samples.
+#' @param woman Woman (pregnancy) of each sample.
+#' @return A one-row data frame: `shift`, `scale`, `icc`, `n_samples`,
+#'   `n_women`.
+#' @export
+ShiftSummary <- function(score, pregnant, woman) {
+  z <- (score - mean(score[!pregnant])) / stats::sd(score[!pregnant])
+  np <- !pregnant
+  w <- woman[np]
+  zz <- z[np]
+  k <- tapply(zz, w, length)
+  keep <- names(k)[k >= 2]
+  icc <- NA_real_
+  if (length(keep) >= 3) {
+    sel <- w %in% keep
+    a <- stats::anova(stats::lm(zz[sel] ~ factor(w[sel])))
+    k0 <- mean(k[keep])
+    msb <- a[1, "Mean Sq"]
+    msw <- a[2, "Mean Sq"]
+    icc <- (msb - msw) / (msb + (k0 - 1) * msw)
+  }
+  data.frame(shift = mean(z[pregnant]),
+             scale = stats::sd(z[pregnant]) / stats::sd(z[np]),
+             icc = icc, n_samples = length(z),
+             n_women = length(unique(woman)))
+}

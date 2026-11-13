@@ -4,9 +4,10 @@
 # project root:  Rscript analysis/00_download.R
 #
 # GSE235508 series matrix (16 KB): the sample characteristics (group, time
-#   point, pregnancy, disease activity, medication). The processed counts
-#   (GSE235508_mRNA_counts.txt.gz, 25 MB) are added here at stage 3, after the
-#   user approves that download (proposal.md, section 9).
+#   point, pregnancy, disease activity, medication).
+# GSE235508 processed counts (GSE235508_mRNA_counts.txt.gz, 25 MB), approved
+#   by the user on 2026-11-13; not committed (.gitignore), fetched by this
+#   script.
 
 devtools::load_all(here::here(), quiet = TRUE)
 set.seed(20761113)  # no random step; the seed is set as every script does
@@ -15,9 +16,10 @@ raw_dir <- here::here("data", "raw")
 dir.create(raw_dir, showWarnings = FALSE, recursive = TRUE)
 base <- "https://ftp.ncbi.nlm.nih.gov/geo/series"
 files <- data.frame(
-  accession = "GSE235508",
-  url = file.path(base,
-                  "GSE235nnn/GSE235508/matrix/GSE235508_series_matrix.txt.gz"),
+  accession = c("GSE235508", "GSE235508"),
+  url = file.path(base, c(
+    "GSE235nnn/GSE235508/matrix/GSE235508_series_matrix.txt.gz",
+    "GSE235nnn/GSE235508/suppl/GSE235508_mRNA_counts.txt.gz")),
   stringsAsFactors = FALSE
 )
 files$file <- file.path(raw_dir, basename(files$url))
@@ -45,7 +47,7 @@ utils::write.csv(files, here::here("results", "00_download_checksums.csv"),
                  row.names = FALSE)
 print(files[, c("file", "bytes", "md5", "fetched")])
 saveRDS(list(run = "production", n_rep = NA_integer_, n_cells = NA_integer_,
-             date = Sys.time(), note = "GSE235508 series matrix download",
+             date = Sys.time(), note = "GSE235508 series matrix and counts download",
              n_rep_production = NA_integer_),
         here::here("results", "00_download_run_info.rds"))
 writeLines(capture.output(sessionInfo()),

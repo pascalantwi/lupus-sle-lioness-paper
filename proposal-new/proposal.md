@@ -116,3 +116,63 @@ The other keys: kuijjer2019lioness, kuijjer2019lionessr, yu2017iena, deschildre2
 ## 11. Revisions
 
 - 2026-11-13. Written in one pass at the user's request to redo the pilot for idea 1 in this repository; stop 1 waived by that request, and the open questions of section 9 go to the pilot's stop.
+
+## 12. Revision 1 (2026-11-13): the user's three aims, and the second pilot
+
+This section governs where it differs from sections 1 to 11, which stand as the record.
+
+### 12.1 Why this revision
+
+The idea the user chose ("idea 1", from the options of 2026-11-13) named three things to predict or compare: **pregnancy stage**, **disease activity at each visit**, and **whether edges change differently in SLE than in RA across pregnancy**. Sections 1 to 11 kept only the first; the second was left out and the third reduced to a phrase, without a reason recorded. Stop 1, where the user would have caught it, was waived. The first pilot (`pilot/`) is a correct test of aim 1 by classification and gave a close call (`pilot/results/verdict.rds`): edges equal their first-order formula and the E1 base removes the artifact, but at 20 women neither the artifact nor a real rewiring moves the AUC much; the paired test of edges between periods called rewiring in about 45% of factor-gene pairs where co-expression did not change (`pilot/results/cell_summaries.rds`). The user chose a re-pilot on the three aims (2026-11-13, "go").
+
+### 12.2 The three aims
+
+1. **Pregnancy stage (within SLE, within RA).** Does the paired test of LIONESS edges between pregnancy and the postpartum period call rewiring that is the squared change of the interferon and composition factors, and do partial-correlation edges (given the IFN score and composition) remove it while keeping a real change? Classification of pregnancy stage is kept as a secondary measure.
+2. **Disease activity at each visit.** Do LIONESS edges predict activity beyond the IFN score, composition, their squares, and the gene levels, and beyond their own first-order formula? Main analysis in RA (DAS28: 138 visits, 37 women); in SLE the activity index (LAI-P) is zero at 75 of 97 visits (22 visits from 13 women above zero), so SLE activity is analysed only as any activity against none, as a secondary analysis.
+3. **SLE against RA across pregnancy.** Do raw LIONESS edges show a different change over pregnancy in SLE than in RA when the only difference is how the shared factors move in each disease, and does the fix remove that false difference while keeping a real one? Each disease's edges use its own reference; the women of the two diseases come from the one study and are compared, never pooled into one reference.
+
+### 12.3 The real size of the factor change (measured before the pilot)
+
+`analysis/01_factor_shift.R` (output `results/factor_shift.rds`) measured, within each disease and among women with samples in both periods, the change in pregnancy of the IFN5 score (the mean of EPSTI1, IFI44L, LY6E, OAS3, RSAD2; @mai2021ifn5) and of the first principal component of the 2,000 most variable genes (a proxy for the main composition axis), in units of the non-pregnant samples. No edge was computed. Rounded: in SLE the IFN5 score shifts by about 0.2 with a spread ratio of about 1.1 and a within-woman correlation of about 0.9, and the composition proxy barely moves; in RA the IFN5 score falls by about 0.3 with a spread ratio of about 0.6, and the composition proxy shifts by about 0.45 with a spread ratio of about 1.45. These smaller-than-assumed changes set the "real" levels of pilot-b; the first pilot's large level is kept as a stress setting.
+
+### 12.4 Pilot-b design
+
+Fifty genes as before, with two shared factors that may both move in pregnancy: the IFN factor on genes 1 to 20 (score: genes 1 to 5) and the composition factor on genes 31 to 50 (observed without error); module genes 21 to 30. Each factor has its own shift, spread ratio, and within-woman correlation per disease (12.3). Four samples per woman (two in each period) for aims 1 and 3; four visits per woman with an activity score for aim 2, where the activity raises the spread of the IFN factor (artifact cell) or the module's correlation (signal cell).
+
+| Cell | Aim | What changes | Women |
+|---|---|---|---|
+| 1 | 1 | nothing (null) | 18 |
+| 2 | 1 | SLE levels of both factors | 18 |
+| 3 | 1 | RA levels of both factors | 27 |
+| 4 | 1 | large IFN change (stress: shift 1, spread 2.25) | 18 |
+| 5 | 1 | SLE levels and module correlation +0.4 in pregnancy | 18 |
+| 6 | 2 | RA levels; activity raises the IFN factor's spread only | 36 |
+| 7 | 2 | RA levels; activity raises the module's correlation | 36 |
+| 8 | 3 | SLE levels (18 women) against RA levels (27 women); no rewiring | 18 + 27 |
+| 9 | 3 | as cell 8, with module +0.4 in SLE pregnancy only | 18 + 27 |
+| 10 | 3 | large IFN change in SLE against none in RA (stress) | 18 + 27 |
+
+**Measures.** Aims 1 and 3: the share of gene pairs called changed at the 5% level by a paired test across women (aim 1) or by a two-sample test of the women's changes between diseases (aim 3), for raw LIONESS edges and for partial-correlation LIONESS edges given the IFN score and composition, among the factor-gene pairs (genes 6 to 20) and the module pairs. Aims 1 and 2: the out-of-fold AUC (pregnancy) or the out-of-fold correlation between predicted and observed activity, for $R_0$, $R_1$, E1, F1, N1, and N1 with $R_0$, folds by woman. 200 replicates per cell if the timing run fits one hour on three cores.
+
+### 12.5 Pass rule (to be frozen in `pilot-b/preregistration.md`)
+
+| Q | Clause | Quantity | Threshold | Cells |
+|---|---|---|---|---|
+| 1 | (a) | raw-edge share called changed, factor pairs | $\ge 0.10$ | 4 |
+| 1 | (b) | partial-edge share called changed (aim 1) or differently changed (aim 3), factor pairs | $\le 0.05 + \max(0.01, 3\,\text{MCSE})$ | 2, 3, 4, 8, 10 |
+| 1 | (c) | partial-edge share of module pairs called changed, over the raw-edge share | $\ge 0.75$ | 5 |
+| 2 | (a) | raw-edge share called changed, factor pairs | $\ge 0.10$ in cell 2 or cell 3 | 2, 3 |
+| 2 | (b) | raw-edge share called differently changed, factor pairs | $\ge 0.10$ | 8 |
+| 2 | (c) | partial-edge share of module pairs called differently changed | $\ge 0.15$ | 9 |
+| 3 | (a) | $\lvert A(\text{N1}) - A(\text{F1}) \rvert$ (AUC or activity correlation) | $\le \max(0.01, 3\,\text{MCSE})$ | 1 to 7 |
+| 3 | (b) | activity: $\lvert$N1 $-$ E1$\rvert$ | $\le \max(0.01, 3\,\text{MCSE})$ | 6 |
+| 3 | (c) | activity: N1 $-$ E1 | $\ge 0.03$ | 7 |
+
+Pass when every clause passes. Fail when 1(b), 3(a), or 3(b) fails (the fix, the equivalence, and the artifact's removal from activity prediction are the claims the paper rests on). Close call otherwise, stated both ways. A value within 3 MCSE of a one-sided threshold is a close call for that clause.
+
+### 12.6 What the user should check at this stop
+
+- That the three aims read as intended.
+- RA as one group (seropositive and seronegative); all pregnancy samples against all non-pregnant ones (defaults, proposal section 9).
+- SLE activity as any against none (secondary), RA activity (DAS28) as the main activity analysis.
+- [TO CONFIRM: the user's approval of this revision and its pass rule before pilot-b runs]{.tc}

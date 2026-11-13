@@ -6,7 +6,7 @@
 | Project | LIONESS edges across pregnancy in SLE and RA |
 | Package | lionesspreg |
 | Stage | 2, piloted-close-call |
-| Open stop | stage 2 stop: the pilot verdict, `pilot/pilot-report.html` |
+| Open stop | revision stop: `proposal.md`, section 12 (three aims, pilot-b plan), before pilot-b |
 | Last update | 2026-11-13 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
@@ -29,3 +29,4 @@ One line per stage boundary, newest last: the date, the stage reached, the path 
 |---|---|---|---|
 | 2026-11-13 | 1, proposal final (stop 1 waived by the user) | `proposal.md` | none |
 | 2026-11-13 | 2, piloted-close-call | `pilot/pilot-report.html` | stage 2 stop: the user reads the close call |
+| 2026-11-13 | 2, piloted-close-call; revision 1 written | `proposal.md`, section 12 | revision stop: the user approves the three aims and pilot-b's rule |

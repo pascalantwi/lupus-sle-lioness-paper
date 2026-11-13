@@ -1,2 +1,3 @@
 "accession","url","file","fetched","bytes","md5"
-"GSE235508","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE235nnn/GSE235508/matrix/GSE235508_series_matrix.txt.gz","GSE235508_series_matrix.txt.gz",TRUE,16714,"1a6ec82302ba012c213e478108ad972f"
+"GSE235508","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE235nnn/GSE235508/matrix/GSE235508_series_matrix.txt.gz","GSE235508_series_matrix.txt.gz",FALSE,16714,"1a6ec82302ba012c213e478108ad972f"
+"GSE235508","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE235nnn/GSE235508/suppl/GSE235508_mRNA_counts.txt.gz","GSE235508_mRNA_counts.txt.gz",TRUE,26093615,"ae8301e531c5a63278c05e80380b13dd"

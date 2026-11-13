@@ -98,3 +98,16 @@ test_that("DescribePregnancyCohort counts usable pregnancies", {
   expect_equal(d$usable_pregnancies[d$group == "RA"], 0)
   expect_equal(d$pregnant_samples[d$group == "SLE"], 1)
 })
+
+test_that("ShiftSummary recovers a known shift and scale", {
+  set.seed(11)
+  woman <- rep(1:400, each = 4)
+  preg <- rep(c(TRUE, TRUE, FALSE, FALSE), 400)
+  u <- rnorm(400, sd = sqrt(0.5))[woman]
+  base <- u + rnorm(1600, sd = sqrt(0.5))
+  score <- ifelse(preg, 1 + 2 * base, base)
+  s <- ShiftSummary(score, preg, woman)
+  expect_equal(s$shift, 1, tolerance = 0.1)
+  expect_equal(s$scale, 2, tolerance = 0.1)
+  expect_equal(s$icc, 0.5, tolerance = 0.1)
+})
