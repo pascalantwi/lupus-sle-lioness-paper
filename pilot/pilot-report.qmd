@@ -90,7 +90,11 @@ Pregnancy moves many genes together: the mix of white cells in blood changes, an
 
 ## Potential impact
 
-[Written after the verdict.]
+LIONESS builds one network per sample from an aggregate network and has an R implementation [@kuijjer2019lioness; @kuijjer2019lionessr]; its authors suggest such networks for studying change across time. The product of standardized deviations as an edge goes back to iENA [@yu2017iena], the first-order term is the influence function of the correlation [@devlin1975robust], and a recent review relates sample edges to covariance products [@kuijjer2026challenges]. The longitudinal study behind the data described pregnancy in SLE and RA by differential expression and deconvolution [@lien2024pregnancy]; no network analysis of it, or of pregnancy with single-sample networks, was found at stage 1.
+
+The problem is the reading of a change in edges between time points as rewiring. When a factor that moves many genes changes over time, as composition does in every pregnancy and interferon does in SLE, the edges of the genes it moves change with its square. This pilot shows how large that is in the analysis a longitudinal user runs, a paired test of each edge between periods: with no change in co-expression at all, the share of factor-gene pairs called rewired was `r gm(2, "rewire_factor")` at 20 women and `r gm(4, "rewire_factor")` at 40 under a large factor change, against `r gm(1, "rewire_factor")` in the null cell (@tbl-rewire). A user would therefore adjust the edges for the squared score before calling anything rewired.
+
+For classification the picture is different. Edges equal their first-order formula: N1 and F1 differed by `r fmt_range(c1b$value, 4)` in AUC across all cells (@fig-gains), so any network classifier can be reproduced without building a network. With the E1 base, edges added `r fmt_range(c3a$value, 4)` when only the factor changed. But at 20 women the edges' gain on a base without squares was only `r gm(2, "artifact_N1R0_vs_R0")`, and a real change in co-expression added only `r gm(5, "d1_N1_vs_E1")` over E1 (@tbl-verdict): at the size of GSE235508, classification cannot show either effect. The impact of the project rests on the paired edge test, which the pilot shows is fooled, and on a fix for it, which the pilot did not test.
 
 ## Application: the study behind the data
 
@@ -268,7 +272,15 @@ knitr::include_graphics("results/auc_gains.png")
 
 ## Numbered findings
 
-[Written after the verdict.]
+Each finding is a claim followed by the output behind it. Read the claim, open the output, and check that you can see the claim there before accepting it.
+
+1. **LIONESS edges and their first-order formula perform the same.** Their AUC difference ranged over `r fmt_range(c1b$value, 4)` across all `r nrow(design)` cells (@tbl-verdict, purple points in @fig-gains), inside the margin of 0.01 in every cell.
+2. **The signal to match was a little short of the pre-registered 0.05.** In `r cell_lab(7)`, N1 gained `r gm(7, "d1_N1_vs_E1")` over E1, within 3 MCSE of 0.05, a close call (@tbl-verdict, blue points).
+3. **The E1 base removes the artifact from classification.** In the factor-only cells, N1 against E1 ranged over `r fmt_range(c3a$value, 4)`, while N1 with $R_0$ gained `r gm(4, "artifact_N1R0_vs_R0")` over $R_0$ at 40 women (red points).
+4. **At 20 women the classification artifact is small.** N1 with $R_0$ gained `r gm(2, "artifact_N1R0_vs_R0")` over $R_0$ in `r cell_lab(2)`, below the 0.02 of clause 2(a); the squared terms of $R_1$ themselves gained `r gm(2, "gain_R1_vs_R0")` over $R_0$ there (@tbl-auc).
+5. **At 20 women a real rewiring is hard to see by classification.** N1 gained `r gm(5, "d1_N1_vs_E1")` over E1 in `r cell_lab(5)`, below the 0.03 of clause 2(b), and `r gm(6, "d1_N1_vs_E1")` with a change of 0.2 (@tbl-verdict).
+6. **The paired edge test calls rewiring where there is none.** With no change in co-expression, the share of factor-gene pairs called rewired was `r gm(3, "rewire_factor")` under a moderate factor change and `r gm(2, "rewire_factor")` under a large one at 20 women, against `r gm(1, "rewire_factor")` in the null cell (@tbl-rewire). The same test found the true module change in `r gm(5, "rewire_module")` of the module pairs at 20 women.
+7. **The known-answer checks hold.** Every code identity agreed to better than $10^{-13}$, the folds kept every woman together, the null cell's AUCs sat near 0.5, and its apparent rewiring at its nominal level (@tbl-known-answer).
 
 ## Tables
 
@@ -358,7 +370,19 @@ cat(read_md_part("decisions.md"), "\n")
 
 # Action items and limitations {#action-items-and-limitations}
 
-[Written after the verdict.]
+## Action items
+
+1. **Decide the status.** The rule gives `piloted-close-call`. The reading that passes and the reading that fails are in the decisions log (D1). Three ways on: read it as a pass and go to stage 3 with the classification aim as planned (with the known risk that GSE235508 is too small to show it); re-scope to the paired edge test as the primary measure, with a re-pilot (`pilot-b/`) that tests a fix for it; or drop the classification aim.
+2. **Answer the proposal's open questions** (section 9): the comparison, the RA grouping, the healthy pregnancies, and approval of the 25 MB counts download.
+3. **Resolve the yellow `[TO CONFIRM]` items** in the spec: the journal's limits and the milestone dates.
+4. **Verify the citations.** Every entry was copied from its record; @devlin1975robust still lacks its full text.
+
+## Limitations
+
+- Everything here is simulation; no gene expression of GSE235508 was analysed, only its sample records.
+- One shared factor with equal loadings, normal noise, and four samples per woman; the real study has up to seven uneven time points.
+- The size of the real change in the shared factor over pregnancy is not known; the moderate and large levels are the first project's.
+- No fix for the paired edge test was run.
 
 {{< include ../templates/pilot-report/parts/standard-footnotes.md >}}
 

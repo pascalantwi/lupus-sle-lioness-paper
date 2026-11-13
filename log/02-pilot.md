@@ -30,3 +30,9 @@ The numbered decisions are in `pilot/decisions.md`.
 ## Process feedback
 
 - The roxygen markdown parser read an inline formula starting with `` `r `` as R code; the formula now starts with `e =`.
+
+## The run and the verdict
+
+- The run: 8 cells x 200 replicates in 1,622 seconds on three workers (`pilot/results/run_info.rds`), exit 0, no restart.
+- `Rscript pilot/verdict.R`: `piloted-close-call` (`pilot/results/verdict.rds`); readings in `pilot/decisions.md`, D1.
+- The report rendered; `check-report.py`: no errors or warnings. A Markdown copy, `pilot/pilot-report.md`, was rendered at the user's request ("let the file be md"), with its three figures committed beside it.

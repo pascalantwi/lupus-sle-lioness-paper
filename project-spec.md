@@ -5,7 +5,7 @@
 | Proposal | `proposal.md`, final 2026-11-13 |
 | Authors | as in `DESCRIPTION`, set by `tools/authors.R` before the final render |
 | Written | 2026-11-13 |
-| Status | draft, section 3 completed after the verdict |
+| Status | draft; section 3 completed 2026-11-13 after the verdict |
 
 ## 1. Question and why it matters
 
@@ -27,7 +27,13 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 
 **Plot:** `pilot/results/auc_gains.png`.
 
-**The three pilot answers:** to be filled after the verdict.
+**Status:** `piloted-close-call` (2026-11-13), 200 replicates per cell, 8 cells, three cores, 1,622 seconds.
+
+**The three pilot answers** (`pilot/results/verdict.rds`; numbers rounded from `pilot/results/cell_summaries.rds`):
+
+1. Does the effect exist? Edges equal their formula: N1 and F1 differed by at most 0.0011 in AUC in any cell (1(b) pass). With a module change at 40 women, N1 gained 0.043 (MCSE 0.0039) over E1, within 3 MCSE of 0.05 (1(a) close call).
+2. Is it large enough at realistic sizes? Not by classification at 20 women: the artifact was 0.005 (MCSE 0.0035), below 0.02 (2(a) fail), and real rewiring added 0.009 (MCSE 0.0034) over E1, below 0.03 (2(b) fail). By the paired edge test, yes: with no change in co-expression, 0.45 of factor-gene pairs were called rewired at 20 women under a large factor change, against 0.047 in the null cell.
+3. Is there a fix? For classification, yes: with the E1 base edges added between -0.0004 and 0.0015 in the factor-only cells (3(a) pass). For the paired edge test, none was tested.
 
 ## 4. ADEMP skeleton
 
