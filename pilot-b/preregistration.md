@@ -70,3 +70,4 @@ Every measure of section 3 in every cell with its MCSE; the verdict table clause
 
 ## 6. Amendments before the run
 
+- 2026-11-13, after the timing run and before the run. Replicates per cell: 200. The timing run (10 replicates per cell, three workers loaded, the run's own scheduling; `pilot-b/results/timing.rds`) took 52 seconds, which projects 200 replicates to about 1,040 seconds, within the one-hour box.
