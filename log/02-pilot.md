@@ -43,3 +43,4 @@ The numbered decisions are in `pilot/decisions.md`.
 - D-S2 (2026-11-13). The user chose a re-pilot on the three aims ("go"), and approved the counts download (25 MB). Defaults taken: RA as one group; all pregnancy samples against all non-pregnant ones.
 - The counts were downloaded (`analysis/00_download.R`, not committed) and the factor change measured (`analysis/01_factor_shift.R`, `results/factor_shift.rds`); no edge was computed on real data.
 - The revision (proposal section 12) has its own stop before pilot-b, as the agent promised the user.
+- D-S3 (2026-11-13, during the pilot-b run). The user: one paper, not two. The pregnancy work is to become a second application in the first project's paper (`work-flow-for-lioness-paper`), each dataset analysed on its own, never merged. No change to the first repository until the user says so; how the pregnancy part enters that paper (a protocol amendment there) is proposed after pilot-b's verdict.
