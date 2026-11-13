@@ -132,12 +132,13 @@ sh <- function(cl, kind, grp) {
 }
 tcells <- design$cell[design$aim != 2]
 png(file.path(res_dir, "shares.png"), width = 2000, height = 1300, res = 220)
-par(mfrow = c(1, 2), mar = c(4, 13, 2, 1))
+par(mfrow = c(1, 2), mar = c(4, 12, 2, 1))
 for (grp in c("factor", "module")) {
   m <- t(sapply(tcells, function(cl) c(sh(cl, "raw", grp)[1],
                                        sh(cl, "par", grp)[1])))
   yy <- rev(seq_along(tcells))
-  plot(NA, xlim = c(0, 1), ylim = c(0.5, length(tcells) + 0.5), yaxt = "n",
+  plot(NA, xlim = c(0, max(0.3, max(m, na.rm = TRUE) + 0.03)),
+       ylim = c(0.5, length(tcells) + 0.5), yaxt = "n",
        ylab = "", xlab = "Share of pairs called changed",
        main = sprintf("%s pairs", tools::toTitleCase(grp)))
   axis(2, at = yy, labels = lab[match(tcells, design$cell)], las = 1,

@@ -44,3 +44,11 @@ The numbered decisions are in `pilot/decisions.md`.
 - The counts were downloaded (`analysis/00_download.R`, not committed) and the factor change measured (`analysis/01_factor_shift.R`, `results/factor_shift.rds`); no edge was computed on real data.
 - The revision (proposal section 12) has its own stop before pilot-b, as the agent promised the user.
 - D-S3 (2026-11-13, during the pilot-b run). The user: one paper, not two. The pregnancy work is to become a second application in the first project's paper (`work-flow-for-lioness-paper`), each dataset analysed on its own, never merged. No change to the first repository until the user says so; how the pregnancy part enters that paper (a protocol amendment there) is proposed after pilot-b's verdict.
+
+## Pilot-b
+
+- Pre-registration 927c000; code 3924b81; timing 52 s for 10 replicates per cell; amendment to 200 replicates 807b6cb, pushed before the run.
+- The run: 10 cells x 200 replicates in 965 seconds on three workers, exit 0. The machine had restarted once in the session before the run; the run itself completed in one pass.
+- `Rscript pilot-b/verdict.R`: `piloted-close-call` (`pilot-b/results/verdict.rds`); readings in `pilot-b/decisions.md`, D1. Every deciding clause passed (1(b), 3(a), 3(b)); 2(b) and 3(c) failed; 2(a) and 2(c) close.
+- The report rendered with no checker errors; a Markdown copy `pilot-b/pilot-report.md` with its figures.
+- One search for other pregnancy datasets with SLE and RA (web search, 2026-11-13): none beyond GSE235508; Hong 2019 (SLE and healthy only) and a 2025 monocyte study (small) noted.
