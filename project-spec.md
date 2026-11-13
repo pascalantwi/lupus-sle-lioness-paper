@@ -25,13 +25,19 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 
 **Verdict file:** `pilot/results/verdict.rds`, after the run.
 
-**Plot:** `pilot/results/auc_gains.png`; pilot-b: `pilot-b/results/shares.png`, `pilot-b/results/model_gains.png`.
+**Plot:** `pilot/results/auc_gains.png`; pilot-b: `pilot-b/results/shares.png`, `pilot-b/results/model_gains.png`; pilot-c: `pilot-c/results/shares.png`, `pilot-c/results/model_gains.png`.
 
 **Second pilot (`pilot-b/`, proposal section 12, the user's three aims):** `piloted-close-call` (2026-11-13), 200 replicates per cell, 10 cells, three cores, 965 seconds; verdict file `pilot-b/results/verdict.rds`. Numbers rounded from `pilot-b/results/cell_summaries.rds`.
 
 1. Does the fix work? Yes: raw edges called 0.17 of unchanged factor pairs changed at the stress level; partial-correlation edges gave 0.044 to 0.049 in every factor-only cell, within and between diseases, and kept a real module change (0.22 against 0.23).
 2. Does it matter at the study's levels? Modestly: no false rewiring at the SLE level, 0.107 at the RA level (close call), a false SLE-against-RA difference of 0.079 (below 0.10, fail), and a real SLE-only change found in 0.157 of module pairs (close call).
 3. Prediction: edges equalled their formula (N1 against F1 within 0.0007); the base with the squared score removed the activity artifact; edges did not detect activity-linked co-expression across women (fail).
+
+**Third pilot (`pilot-c/`, proposal section 13: every visit, marker-gene cell mix, activity within woman; pass rule unchanged):** `piloted-close-call` (2026-11-13), 400 replicates per cell, 10 cells, three cores, 2,233 seconds; verdict file `pilot-c/results/verdict.rds`. Numbers rounded from `pilot-c/results/cell_summaries.rds`.
+
+1. Does the fix work? Yes, again: partial-correlation edges gave 0.047 to 0.050 in every factor-only cell (raw 0.18 at the stress level), and kept real change within a disease (0.28 against 0.28) and between diseases.
+2. Does it matter at the study's levels? Little: with the cell mix measured from marker genes, raw edges called 0.046 (SLE level) and 0.059 (RA level) of factor pairs changed, and 0.059 differently changed between diseases (2(a), 2(b) fail); a real SLE-only change was found in 0.18 of module pairs (2(c) pass).
+3. Prediction: edges equalled their formula (within 0.0003); the squared-score base removed the activity artifact within woman; edges found no activity-linked co-expression within woman (3(c) fail).
 
 **Status:** `piloted-close-call` (2026-11-13), 200 replicates per cell, 8 cells, three cores, 1,622 seconds.
 

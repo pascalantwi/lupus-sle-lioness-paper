@@ -52,3 +52,9 @@ The numbered decisions are in `pilot/decisions.md`.
 - `Rscript pilot-b/verdict.R`: `piloted-close-call` (`pilot-b/results/verdict.rds`); readings in `pilot-b/decisions.md`, D1. Every deciding clause passed (1(b), 3(a), 3(b)); 2(b) and 3(c) failed; 2(a) and 2(c) close.
 - The report rendered with no checker errors; a Markdown copy `pilot-b/pilot-report.md` with its figures.
 - One search for other pregnancy datasets with SLE and RA (web search, 2026-11-13): none beyond GSE235508; Hong 2019 (SLE and healthy only) and a 2025 monocyte study (small) noted.
+
+## Pilot-c
+
+- The user: "go to C" (2026-11-13), straight on without a separate stop (D-S4). Revision 2 (proposal section 13): every visit, marker-gene cell mix, activity within woman; pass rule unchanged. The "fewer edges" change the agent had proposed was dropped before pre-registration: each share counts pairs tested one by one, so the set tested does not change any pair's result.
+- Marker-gene shift measured (`analysis/02_factor_shift_markers.R`); pre-registration 430b0d4; code and tests; timing 60 s for 10 replicates per cell; amendment to 400 replicates b23e94d, pushed before the run.
+- The run: 10 cells x 400 replicates in 2,233 seconds, one pass. Verdict `piloted-close-call` (`pilot-c/results/verdict.rds`); readings in `pilot-c/decisions.md`, D1; the unequal-groups account of the small artifact in D2.
