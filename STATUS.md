@@ -6,7 +6,7 @@
 | Project | LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features (re-scope 2026-11-16; earlier: LIONESS edges across pregnancy in SLE and RA) |
 | Package | lionesspreg |
 | Stage | 2, piloted-close-call (pilot-d) |
-| Open stop | stage 2 stop: the pilot-d verdict, `pilot-d/pilot-report.html` |
+| Open stop | stage 2 stop answered (the user reads pilot-d as a pass for the method claims); stage 3 waits for the user after the supervisor confirms the re-scope |
 | Last update | 2026-11-16 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
@@ -35,3 +35,4 @@ One line per stage boundary, newest last: the date, the stage reached, the path 
 | 2026-11-16 | 1, proposal at stop 1 (re-scope: personal-network stability, GSE65391) | `proposal.md` | stop 1 |
 | 2026-11-16 | 1, proposal final (re-scope; defaults taken, D-R5) | `proposal.md` | none |
 | 2026-11-16 | 2, piloted-close-call (pilot-d) | `pilot-d/pilot-report.html` | stage 2 stop: the user reads the pilot-d close call |
+| 2026-11-16 | 2, piloted-close-call (pilot-d), read by the user as a pass for the method claims | `pilot-d/pilot-report.html` | none: stage 3 starts on the user's word, after the supervisor confirms |
