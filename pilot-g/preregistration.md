@@ -49,3 +49,5 @@ Every pathway's and pair's $R^2_{\text{terms}}$, stabilities of connectivity, sc
 
 ## 6. Amendments before the run
 
+
+- 2026-11-16, before the run. The timing run (`pilot-g/results/timing.rds`): ten replicates per cell in 7 seconds on three workers, about 0.6 seconds per replicate. 200 replicates per cell, as the rule sets when the run fits one hour.
