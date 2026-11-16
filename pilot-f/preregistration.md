@@ -44,3 +44,4 @@ As pilot-e, with pilot-e's partial-correlation values beside the own-module ones
 
 ## 6. Amendments before the run
 
+- 2026-11-16, after the timing run and before the run. Replicates per cell: 120. The timing run (10 replicates per cell, three workers loaded; `pilot-f/results/timing.rds`) took 262 seconds, which projects 200 replicates to about 5,240 seconds, over the hour, and 120 to about 3,150 seconds, the largest multiple of 20 that fits.
