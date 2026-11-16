@@ -68,3 +68,8 @@ The numbered decisions are in `pilot/decisions.md`.
 - The run: 6 cells x 200 replicates in 2,714 seconds, one pass. `Rscript pilot-d/verdict.R`: `piloted-close-call` (deciding clauses 1(b), 3(a), 3(b) pass; 1(a), 2(a), 2(b), 3(c) fail). Readings and the reasons for the small excess in `pilot-d/decisions.md` (D1 to D4). Report rendered, checker clean, Markdown copy with its figures.
 
 - D-S6 (2026-11-16). The user read pilot-d's close call as a pass for the method claims ("accept"): edges equal their formula, the fix removes the interferon part, the fix keeps a real personal network (deciding clauses 1(b), 3(a), 3(b) passed). Questions left open, for stage 3's design proposal: (1) the refocused message (single-sample edges are unreliable over visits, and their stability is mostly the person's gene levels and, in part, a stable interferon level) was observed, not pre-registered, so `protocol.md` pre-registers it with numbers before the full simulation and before any GSE65391 edge is computed; (2) a comparison for the interferon part that does not carry interferon itself (decisions D2); (3) prediction within person; (4) the supervisor's confirmation of the re-scope.
+
+## Pilot-e (network metrics)
+
+- The supervisor suggested network metrics instead of single edges (D-S7, 2026-11-16); the user: "pilot e". igraph added (DESCRIPTION, renv.lock). Proposal revision 1 (section 12) and the pre-registration (773f189) committed before the code; timing 284 s for 10 replicates per cell, amendment to 120 replicates (c8c910d), pushed before the run.
+- The run: 4 cells x 120 replicates in 3,442 seconds. Verdict `piloted-fail` (clause 3(a)); readings in `pilot-e/decisions.md`. Report rendered, checker run.

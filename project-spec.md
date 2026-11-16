@@ -33,6 +33,12 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 2. Large enough at the measured level? No: excess 0.016 (2(a) fail); the fix changed identification on interferon pairs by 0.004 (2(b) fail).
 3. Is there a fix? Yes: the fixed excess was 0.002 to 0.007 (3(a) pass), and the fix kept a real personal module (3(b) pass). Edges did not predict the next visit's activity (concordance near 0.48; 3(c) fail in cell 6). Single-sample edges were unreliable over visits (intraclass correlation 0.07 to 0.22).
 
+**Pilot-e (network metrics, proposal section 12):** `piloted-fail` (2026-11-16), 120 replicates per cell, 4 cells, 3,442 seconds; verdict file `pilot-e/results/verdict.rds`; numbers rounded from `pilot-e/results/cell_summaries.rds`.
+
+1. Closed forms: a module's connectivity correlated about 0.97 with its squared expression score in every cell; raw and first-order edges gave the same stability for all 19 metrics (largest difference under 0.0004).
+2. Stability: IFN connectivity was more stable than IFN edges by about 0.10, and as stable as the squared IFN score (difference about -0.01).
+3. Correction: with the five-gene score, the corrected IFN connectivity stayed more stable than the cross connectivity by about 0.09 and 0.15 (fail); the corrected module connectivity exceeded the cross by about 0.056 with a real personal module (close call).
+
 ## 4. ADEMP skeleton
 
 **Aims.** (1) How much of the stability of LIONESS edges over repeated samples comes from a stable shared factor? (2) Does a person's network identify her, and is that identification the factor? (3) Do partial-correlation edges remove the factor's part and keep a real personal network? (4) Do edges predict the next visit's activity beyond the genes, and do they equal their formula throughout?
