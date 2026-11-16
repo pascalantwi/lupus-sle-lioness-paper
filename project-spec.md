@@ -39,6 +39,8 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 2. Stability: IFN connectivity was more stable than IFN edges by about 0.10, and as stable as the squared IFN score (difference about -0.01).
 3. Correction: with the five-gene score, the corrected IFN connectivity stayed more stable than the cross connectivity by about 0.09 and 0.15 (fail); the corrected module connectivity exceeded the cross by about 0.056 with a real personal module (close call).
 
+**Pilot-f (own-module correction, proposal section 13):** `piloted-fail` (2026-11-16), 120 replicates per cell, 4 cells, 3,136 seconds; verdict file `pilot-f/results/verdict.rds`. Clauses 1 and 2 passed as in pilot-e. The own-module correction left the IFN set's connectivity as stable as raw (about 0.25 at the measured level, 0.62 when interferon was very stable; 3(a) fail), and the personal module's excess was about 0.036 (3(b) fail): a set's connectivity is its squared expression score up to scale, which no within-set adjustment changes (`pilot-f/decisions.md`, D2).
+
 ## 4. ADEMP skeleton
 
 **Aims.** (1) How much of the stability of LIONESS edges over repeated samples comes from a stable shared factor? (2) Does a person's network identify her, and is that identification the factor? (3) Do partial-correlation edges remove the factor's part and keep a real personal network? (4) Do edges predict the next visit's activity beyond the genes, and do they equal their formula throughout?

@@ -73,3 +73,8 @@ The numbered decisions are in `pilot/decisions.md`.
 
 - The supervisor suggested network metrics instead of single edges (D-S7, 2026-11-16); the user: "pilot e". igraph added (DESCRIPTION, renv.lock). Proposal revision 1 (section 12) and the pre-registration (773f189) committed before the code; timing 284 s for 10 replicates per cell, amendment to 120 replicates (c8c910d), pushed before the run.
 - The run: 4 cells x 120 replicates in 3,442 seconds. Verdict `piloted-fail` (clause 3(a)); readings in `pilot-e/decisions.md`. Report rendered, checker run.
+
+## Pilot-f (own-module correction)
+
+- The user: "option 1" (re-pilot with the own-module correction). Revision 2 (proposal section 13) and pre-registration (7e71b5f) committed before the code; timing 262 s; amendment to 120 replicates (0189846). A slip in the agent's script edit left `verdict.R` unwritten at the code commit; it was written and committed with the amendment, before the run.
+- The run: 4 cells x 120 replicates in 3,136 seconds. Verdict `piloted-fail` (3(a), 3(b)); the reason is algebraic (`pilot-f/decisions.md`, D2).
