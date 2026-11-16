@@ -49,3 +49,4 @@ Every metric's intraclass correlation by cell and edge type, the closed-form cor
 
 ## 6. Amendments before the run
 
+- 2026-11-16, after the timing run and before the run. Replicates per cell: 120. The timing run (10 replicates per cell, three workers loaded, the run's own scheduling; `pilot-e/results/timing.rds`) took 284 seconds, which projects 200 replicates to about 5,700 seconds, over the one-hour box; 120 replicates project to about 3,400 seconds, the largest multiple of 20 that fits.
