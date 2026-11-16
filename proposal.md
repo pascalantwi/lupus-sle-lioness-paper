@@ -140,3 +140,20 @@ This section governs where it differs from sections 1 to 11. Pilot-d (`pilot-d/r
 ## 13. Revision 2 (2026-11-16): the own-module correction
 
 This section governs where it differs from section 12. Pilot-e failed its deciding clause 3(a) (`pilot-e/results/verdict.rds`): conditioning on a five-gene interferon score did not correct a module's connectivity, because the score measures the factor with error and carries the person's own gene levels (`pilot-e/decisions.md`, D2). The user chose a re-pilot with a correction aimed at that cause ("option 1"): each gene is regressed on the mean standardized expression of the other genes of its own set (a leave-one-gene-out set score) and on the measured cell mix, and LIONESS edges are built from the residuals. The question is whether this removes a shared factor's stability from a set's connectivity while keeping a real personal module, which the same regression could also remove. The pilot is `pilot-f/`; the pass rule is pilot-e's with this correction in place of the partial-correlation one.
+
+## 14. Revision 3 (2026-11-16): a pathway approach
+
+This section governs where it differs from sections 12 and 13. The supervisor asked for LIONESS in a pathway approach; the user: "do it". Pilots e and f (`pilot-e/`, `pilot-f/`) showed that a gene set's connectivity is its squared expression score and that no linear adjustment separates a network part from it. The pathway approach summarizes each person's LIONESS network by pathway: the connectivity within each pathway (mean edge) and the crosstalk between each pair of pathways (mean edge between their genes). The first-order form gives both in closed form (agent's derivation; section 14.1), and the pilot (`pilot-g/`) tests it with six simulated pathways that mirror blood biology; real gene-set collections (blood transcriptional modules, MSigDB Hallmark, or Reactome, after a licence check) are for stage 3.
+
+### 14.1 The closed forms (sketch, the agent's)
+
+For pathway $A$ with $m_A$ genes, $S_A = \sum_{i \in A} z_i$, $Q_A = \sum_{i \in A} z_i^2$, $R_i^{B} = \sum_{j \in B,\, j \ne i} r_{ij}$, and $C_A = m_A (m_A - 1) / 2$, averaging the first-order edge over pairs gives
+
+$$
+\begin{aligned}
+\text{within}_A &= \bar r_A + \frac{S_A^2 - Q_A}{2 C_A} - \frac{1}{2 C_A} \sum_{i \in A} R_i^{A} z_i^2, \\
+\text{crosstalk}_{AB} &= \bar r_{AB} + \frac{S_A S_B}{m_A m_B} - \frac{1}{2 m_A m_B} \left( \sum_{i \in A} R_i^{B} z_i^2 + \sum_{j \in B} R_j^{A} z_j^2 \right).
+\end{aligned}
+$$
+
+Line 1 uses $\sum_{i < j} z_i z_j = (S_A^2 - Q_A)/2$ and collects the $-\tfrac{r_{ij}}{2}(z_i^2 + z_j^2)$ terms by gene; line 2 averages over the $m_A m_B$ cross pairs. The reference correlations are the same for every sample, so a sample's pathway connectivity is, up to $O(N^{-1})$, a fixed linear function of three expression terms ($S_A^2$, $Q_A$, and $\sum_i R_i^A z_i^2$), and its crosstalk of three ($S_A S_B$ and the two weighted sums of squares). Prediction: LIONESS pathway connectivity and crosstalk carry nothing beyond these expression terms, even when a pathway has real personal co-expression; that co-expression shows through the terms themselves. Numerical check: the regression of LIONESS connectivity on its three terms should have $R^2$ near 1, and its residual no stability over visits.
