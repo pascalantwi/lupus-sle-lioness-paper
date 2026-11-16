@@ -137,3 +137,5 @@ GSE65391 and ILLUMINATE opened 2026-11-15; descriptive checks in `log/01-rescope
 ## R7. Process feedback
 
 - The data check before the proposal (factor stability, group differences) is what the pregnancy pilots lacked; it should come before every proposal.
+
+- D-R5 (2026-11-16). The user: "when you are done start with the stage 2", without answering the four open questions of proposal section 9. Defaults taken: the user confirms the re-scope with the supervisor; aim 5 kept with the next visit's SLEDAI; GSE65391 alone; the GSE65391 download approved. The user was told the defaults in the same turn.

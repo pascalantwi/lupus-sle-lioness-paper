@@ -5,8 +5,8 @@
 | Workflow version | 0.2.4-md (2026-11-03): tgrimes/research-workflow 0.2.4 with a Markdown reference list and no Zotero |
 | Project | LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features (re-scope 2026-11-16; earlier: LIONESS edges across pregnancy in SLE and RA) |
 | Package | lionesspreg |
-| Stage | 1, proposal at stop 1 |
-| Open stop | stop 1: `proposal.md` (re-scope) for the user and the supervisor |
+| Stage | 2, spec |
+| Open stop | none: stage 2 in progress (re-scope) |
 | Last update | 2026-11-16 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
@@ -33,3 +33,4 @@ One line per stage boundary, newest last: the date, the stage reached, the path 
 | 2026-11-13 | 2, piloted-close-call (pilot-b) | `pilot-b/pilot-report.html` | stage 2 stop: the user reads the pilot-b close call |
 | 2026-11-13 | 2, piloted-close-call (pilot-c) | `pilot-c/pilot-report.html` | stage 2 stop: the user reads the pilot-c close call |
 | 2026-11-16 | 1, proposal at stop 1 (re-scope: personal-network stability, GSE65391) | `proposal.md` | stop 1 |
+| 2026-11-16 | 1, proposal final (re-scope; defaults taken, D-R5) | `proposal.md` | none |

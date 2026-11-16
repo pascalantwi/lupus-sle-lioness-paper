@@ -4,7 +4,7 @@
 |---|---|
 | From | `idea.md`, 2026-11-16 (re-scope) |
 | Written | 2026-11-16, workflow 0.2.4-md |
-| Status | at stop 1, for the user and the supervisor to review before any pilot |
+| Status | final 2026-11-16 (the user: "start with the stage 2"; defaults of section 11 taken) |
 | Earlier proposal | the pregnancy proposal and its revisions 1 and 2 are the record in git: `git show c677b11:proposal.md` |
 
 ## 1. Summary and verdict
@@ -130,3 +130,4 @@ Every source this proposal cites has an entry in `references/references.md`. Cor
 ## 11. Revisions
 
 - 2026-11-16. Re-scope from the pregnancy project after its third pilot's close call and a review of candidate ideas (`log/01-idea-review.md`, re-scope section). Stop 1 is held for the user and the supervisor.
+- 2026-11-16, stop 1 answered by the user's instruction to start stage 2, without answers to section 9; the agent took these defaults, recorded as D-R5 in `log/01-idea-review.md`: (1) the user confirms the re-scope with the supervisor; (2) aim 5 kept, with the next visit's SLEDAI as the outcome; (3) GSE65391 alone, ILLUMINATE not used; (4) the GSE65391 download into `data/raw/` approved, not committed. The reference check (step 9) found every cited record opened and one core full text pending (devlin1975robust).
