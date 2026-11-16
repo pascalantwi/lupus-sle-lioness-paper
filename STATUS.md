@@ -5,8 +5,8 @@
 | Workflow version | 0.2.4-md (2026-11-03): tgrimes/research-workflow 0.2.4 with a Markdown reference list and no Zotero |
 | Project | LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features (re-scope 2026-11-16; earlier: LIONESS edges across pregnancy in SLE and RA) |
 | Package | lionesspreg |
-| Stage | 2, spec |
-| Open stop | none: stage 2 in progress (re-scope) |
+| Stage | 2, pilot running (pilot-d) |
+| Open stop | none: pilot-d running |
 | Last update | 2026-11-16 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
