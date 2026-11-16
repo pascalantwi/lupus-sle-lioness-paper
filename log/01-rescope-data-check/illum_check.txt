@@ -1,0 +1,79 @@
+Samples: 1820  SLE: 1760  healthy: 60 
+Healthy by batch:
+
+Additional HCs   ILLUMINATE-1   ILLUMINATE-2 
+            30             17             13 
+
+IFN-positive (above healthy mean + 2 SD), SLE: 0.597 
+By trial:
+ILLUMINATE-1 ILLUMINATE-2 
+       0.575        0.619 
+
+== ifn by group (healthy vs SLE grade): mean, SD
+           n   mean    sd
+healthy   60 -0.992 0.457
+mild     238 -0.167 0.718
+moderate 975 -0.005 0.726
+severe   543  0.195 0.658
+
+== bcell by group (healthy vs SLE grade): mean, SD
+           n   mean    sd
+healthy   60  0.091 0.299
+mild     238 -0.005 0.528
+moderate 975  0.004 0.542
+severe   543 -0.015 0.573
+
+== mix by group (healthy vs SLE grade): mean, SD
+           n   mean    sd
+healthy   60 -0.153 0.792
+mild     238 -0.013 1.137
+moderate 975  0.029 1.303
+severe   543 -0.022 1.323
+
+Spearman correlations among SLE patients:
+       sledai dsdna    c3    c4   ifn bcell   mix
+sledai   1.00  0.34 -0.37 -0.32  0.18 -0.03  0.00
+dsdna    0.34  1.00 -0.50 -0.47  0.27 -0.10  0.04
+c3      -0.37 -0.50  1.00  0.72 -0.25  0.07  0.03
+c4      -0.32 -0.47  0.72  1.00 -0.22  0.04  0.04
+ifn      0.18  0.27 -0.25 -0.22  1.00  0.14  0.11
+bcell   -0.03 -0.10  0.07  0.04  0.14  1.00 -0.42
+mix      0.00  0.04  0.03  0.04  0.11 -0.42  1.00
+
+Mismatch counts (SLE):
+, , trial = ILLUMINATE-1
+
+          ifn_positive
+grade      FALSE TRUE
+  mild        66   44
+  moderate   217  263
+  severe      89  197
+
+, , trial = ILLUMINATE-2
+
+          ifn_positive
+grade      FALSE TRUE
+  mild        60   68
+  moderate   200  295
+  severe      76  181
+
+
+Serology profile x IFN-positive:
+              
+               FALSE TRUE
+  dsDNA- lowC    208  524
+  dsDNA- normC   500  524
+
+IFN score by ancestry (SLE): mean, SD
+                        n   mean    sd
+afr_amer              233  0.153 0.658
+amer_ind_ak_native    249  0.087 0.760
+asian                  19  0.147 0.732
+multiple               39  0.218 0.710
+native_hw_pac_island    1 -0.280    NA
+white                1215 -0.006 0.711
+
+IFN score by sex (SLE): mean, SD
+          n   mean    sd
+Female 1626  0.038 0.715
+Male    130 -0.001 0.701

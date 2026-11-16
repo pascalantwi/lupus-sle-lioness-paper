@@ -1,0 +1,42 @@
+Factors by nephritis class:
+                   n     ifn               neutrophil_percent
+Data Not Available "135" "0.31 (SD 0.93)"  "66.34 (SD 14.85)"
+Membr              "42"  "0.25 (SD 0.67)"  "62.27 (SD 13.50)"
+Mesan              "8"   "0.25 (SD 0.43)"  "61.37 (SD 17.73)"
+NoLN               "498" "0.04 (SD 0.78)"  "62.21 (SD 13.66)"
+Proli+Membr        "3"   "-0.17 (SD 1.22)" "62.96 (SD 5.91)" 
+Prolif             "238" "0.14 (SD 0.71)"  "68.61 (SD 12.66)"
+                   lymphocyte_percent
+Data Not Available "22.55 (SD 12.10)"
+Membr              "26.91 (SD 11.74)"
+Mesan              "27.41 (SD 13.45)"
+NoLN               "27.55 (SD 11.95)"
+Proli+Membr        "20.32 (SD 6.80)" 
+Prolif             "21.06 (SD 10.70)"
+
+Factors by oral_steroids_category :
+  n     ifn               neutrophil_percent lymphocyte_percent
+0 "249" "-0.00 (SD 0.75)" "57.54 (SD 13.77)" "30.53 (SD 11.99)"
+1 "675" "0.16 (SD 0.80)"  "67.12 (SD 12.97)" "22.97 (SD 11.30)"
+
+Factors by steroid_iv_category :
+  n     ifn               neutrophil_percent lymphocyte_percent
+0 "820" "0.13 (SD 0.76)"  "63.79 (SD 13.70)" "25.72 (SD 11.92)"
+1 "104" "-0.01 (SD 0.99)" "69.57 (SD 14.15)" "20.30 (SD 11.56)"
+
+Factors by mycophenolate_category :
+  n     ifn              neutrophil_percent lymphocyte_percent
+0 "565" "0.18 (SD 0.77)" "65.09 (SD 13.99)" "24.13 (SD 12.12)"
+1 "359" "0.01 (SD 0.81)" "63.52 (SD 13.65)" "26.64 (SD 11.66)"
+
+Factors by hydroxychloroquine_category :
+                   n     ifn              neutrophil_percent lymphocyte_percent
+0                  "97"  "0.32 (SD 0.87)" "59.96 (SD 15.47)" "29.30 (SD 13.00)"
+1                  "826" "0.09 (SD 0.77)" "65.01 (SD 13.58)" "24.62 (SD 11.78)"
+Data Not Available "1"   "0.75 (SD NA)"   "62.80 (SD NA)"    "32.70 (SD NA)"   
+
+Factors by cyclophosphamide_category :
+                   n     ifn              neutrophil_percent lymphocyte_percent
+0                  "876" "0.11 (SD 0.79)" "64.11 (SD 13.88)" "25.55 (SD 11.97)"
+1                  "47"  "0.13 (SD 0.78)" "71.09 (SD 11.98)" "16.29 (SD 8.78)" 
+Data Not Available "1"   "0.28 (SD NA)"   "NaN (SD NA)"      "NaN (SD NA)"     

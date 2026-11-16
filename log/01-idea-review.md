@@ -70,3 +70,70 @@ Step 1 to 8: about 40 minutes of agent time.
 ## 9. Process feedback
 
 - The seed reference list was carried from the first project with each entry's original record and date; the user reviews `references.md` once, at the end.
+
+# Re-scope, 2026-11-16: personal-network stability (GSE65391)
+
+First line (step 1.4): the question as read is whether LIONESS personal networks are personal, that is, how much of their stability over repeated samples, their ability to identify the person, and their prediction of the next disease activity is real co-expression and how much is IFN and cell mix entering the edges squared; a critique with a correction.
+
+## R1. Inventory of the new `idea.md`
+
+| Element | What it says | Stated, implied, or absent |
+|---|---|---|
+| Question | stability, fingerprinting, next-visit activity of personal LIONESS networks | stated |
+| Procedure | LIONESS, Pearson | stated |
+| Setting | repeated samples of the same patient | stated |
+| Mechanism | the squared shared factor; stability of $F^2$ | stated |
+| Estimand | person-level co-expression and its intraclass correlation | implied; stated in the proposal |
+| Theory | the closed forms (user's); ICC of $F^2$ (agent's sketch) | stated |
+| Data | GSE65391; ILLUMINATE optional | stated |
+| Constraints | method and title unchanged (user); SLE against RA dropped (user); simulation mirrors the application (user) | stated |
+
+## R2. Paper test
+
+In `proposal.md`, section 3.
+
+## R3. Searches (2026-11-13 to 2026-11-16; web search unless stated)
+
+| # | Date | Query | What it gave |
+|---|---|---|---|
+| 1 | 11-14 | GSE88884 ILLUMINATE lupus whole blood SLEDAI interferon | ILLUMINATE design; IFN-positive 75%; Hoffman et al. 2017 |
+| 2 | 11-14 | longitudinal autoimmune flare IFN dermatomyositis Sjogren dataset | Stanford DM cohort (no GEO); GSE318067 DM controlled |
+| 3 | 11-14 | LIONESS single-sample networks breast cancer TCGA | LIONESS applied to breast cancer subtypes (2024), TNBC response (2025) |
+| 4 | 11-14 | longitudinal blood transcriptome pregnancy SLE RA GEO | only GSE235508 holds both |
+| 5 | 11-14 | public GEO autoimmune IFN longitudinal myositis Sjogren SSc | MS IFN-beta series GSE41846; a harmonized compendium |
+| 6 | 11-15 | tabalumab ILLUMINATE co-expression network GSE88885 | drug effect on B-cell genes; no network re-analysis |
+| 7 | 11-15 | cell composition confounds differential co-expression | @farahbod2020composition |
+| 8 | 11-15 | single-sample network LIONESS reproducibility test-retest | only reference-set and replicate reproducibility |
+| 9 | 11-15 | LIONESS SLE or autoimmune | none found |
+| 10 | 11-15 | interferon discordance SLEDAI SACQ | SACQ interferon resembles remission |
+| 11 | 11-15 | ILLUMINATE ancestry JCI Insight | 2020 ancestry paper (title only) |
+| 12 | 11-15 | sex differences networks LIONESS GTEx | Lopes-Ramos et al. 2020 |
+| 13 | 11-15 | lupus subtypes GSE65391 | 3, 5, 7 subtypes reported |
+| 14 | 11-15 | longitudinal stability IFN signature lupus | @petri2019stability |
+| 15 | 11-15 | single-sample network reliability intraclass correlation | nothing for blood networks |
+| 16 | 11-15 | differential co-expression network lupus whole blood | Ntasis et al. 2020 (Sci Rep) |
+| 17 | 11-15 | LIONESS reference dependence | acknowledged, not quantified |
+| 18 | 11-16 | fingerprinting gene co-expression network blood repeated samples | none for blood networks; @whitney2003individuality; @mishra2026temporal |
+| 19 | 11-16 | GSE65391 single-sample network LIONESS SLEDAI prediction | no LIONESS on GSE65391; several ML predictions of activity and flares |
+| 20 | 11-16 | Europe PMC records by DOI (identifier lookups, outside the budget) | the six new entries of `references/references.md` |
+
+Budget: 19 queries against about 20. Stop rule: queries 18 and 19 added no study of personal-network stability or blood-network fingerprinting.
+
+## R4. Theory check
+
+The closed forms are the user's (tested in the first project). New, the agent's sketch: for a factor with within-person intraclass correlation $\kappa$, the intraclass correlation of $F^2$ is $\kappa^2$ (from $\mathrm{Cov}(X^2, Y^2) = 2\rho^2$ for a standard bivariate normal pair). Check proposed: a simulation over a grid of $\kappa$, with $\kappa = 0$ as the known-answer case.
+
+## R5. Datasets
+
+GSE65391 and ILLUMINATE opened 2026-11-15; descriptive checks in `log/01-rescope-data-check/` (README there). Neither file is in `data/raw/` yet.
+
+## R6. Decisions
+
+- D-R1. Re-scope approved by the user's requests of 2026-11-14 to 2026-11-16 ("same method", "same title", "the simulation should be same as application", "I do not want to keep SLE vs RA", "do stage 1 ... save it in the new repo").
+- D-R2. GSE65391 chosen over ILLUMINATE: SLEDAI and measured blood counts at every visit; ILLUMINATE has clinical values at baseline only and showed little relation of IFN and cell mix to activity.
+- D-R3. Ideas set aside, with the data check behind each, in the scratch review (summarized in this section): within-lupus activity, kidney, and flare predictions alone (factors barely change), drug effect (known), ancestry and sex (small differences), lupus against healthy (too easy, the supervisor), subtypes (crowded).
+- D-R4. Stop 1 is held this time; the pregnancy proposal's waived stop 1 led to a missed aim.
+
+## R7. Process feedback
+
+- The data check before the proposal (factor stability, group differences) is what the pregnancy pilots lacked; it should come before every proposal.

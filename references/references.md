@@ -282,3 +282,98 @@ Carried on 2026-11-13 from the first LIONESS project (`work-flow-for-lioness-pap
 - record: PubMed record PMID 38049980, opened 2026-11-13; GEO series GSE235508, opened 2026-11-13
 - full_text: abstract only (PubMed; PMC10894842 is open); cited as supporting for the dataset and its findings
 
+### banchereau2016personalized
+
+> Banchereau, R., Hong, S., Cantarel, B., Baldwin, N., Baisch, J., Edens, M., Cepika, A. M., Acs, P., Turner, J., Anguiano, E., Vinod, P., Kahn, S., Obermoser, G., Blankenship, D., Wakeland, E., Nassi, L., Gotte, A., Punaro, M., Liu, Y. J., ..., & Pascual, V. (2016). Personalized immunomonitoring uncovers molecular networks that stratify lupus patients. *Cell*, 165(3), 551-565. https://doi.org/10.1016/j.cell.2016.03.008
+
+- type: article
+- author: Banchereau, R. and Hong, S. and Cantarel, B. and Baldwin, N. and Baisch, J. and Edens, M. and Cepika, A. M. and Acs, P. and Turner, J. and Anguiano, E. and Vinod, P. and Kahn, S. and Obermoser, G. and Blankenship, D. and Wakeland, E. and Nassi, L. and Gotte, A. and Punaro, M. and Liu, Y. J. and Banchereau, J. and Rossello-Urgell, J. and Wright, T. and Pascual, V.
+- title: Personalized immunomonitoring uncovers molecular networks that stratify lupus patients
+- journal: Cell
+- year: 2016
+- volume: 165
+- number: 3
+- pages: 551-565
+- doi: 10.1016/j.cell.2016.03.008
+- record: Europe PMC record PMID 27040498, opened 2026-11-16; GEO series GSE65391, opened 2026-11-15
+- full_text: abstract only (PMC5426482 is open); cited as supporting for the dataset
+
+### petri2019stability
+
+> Petri, M., Fu, W., Ranger, A., Allaire, N., Cullen, P., Magder, L. S., & Zhang, Y. (2019). Association between changes in gene signatures expression and disease activity among patients with systemic lupus erythematosus. *BMC Medical Genomics*, 12(1), 4. https://doi.org/10.1186/s12920-018-0468-1
+
+- type: article
+- author: Petri, M. and Fu, W. and Ranger, A. and Allaire, N. and Cullen, P. and Magder, L. S. and Zhang, Y.
+- title: Association between changes in gene signatures expression and disease activity among patients with systemic lupus erythematosus
+- journal: BMC Medical Genomics
+- year: 2019
+- volume: 12
+- number: 1
+- pages: 4
+- doi: 10.1186/s12920-018-0468-1
+- record: Europe PMC record PMID 30626389, opened 2026-11-16
+- full_text: abstract only (PMC6327466 is open); cited as supporting
+
+### farahbod2020composition
+
+> Farahbod, M., & Pavlidis, P. (2020). Untangling the effects of cellular composition on coexpression analysis. *Genome Research*, 30(6), 849-859. https://doi.org/10.1101/gr.256735.119
+
+- type: article
+- author: Farahbod, M. and Pavlidis, P.
+- title: Untangling the effects of cellular composition on coexpression analysis
+- journal: Genome Research
+- year: 2020
+- volume: 30
+- number: 6
+- pages: 849-859
+- doi: 10.1101/gr.256735.119
+- record: Europe PMC record PMID 32580998, opened 2026-11-16
+- full_text: abstract only (PMC7370889 is open); cited as supporting
+
+### whitney2003individuality
+
+> Whitney, A. R., Diehn, M., Popper, S. J., Alizadeh, A. A., Boldrick, J. C., Relman, D. A., & Brown, P. O. (2003). Individuality and variation in gene expression patterns in human blood. *Proceedings of the National Academy of Sciences of the United States of America*, 100(4), 1896-1901. https://doi.org/10.1073/pnas.252784499
+
+- type: article
+- author: Whitney, A. R. and Diehn, M. and Popper, S. J. and Alizadeh, A. A. and Boldrick, J. C. and Relman, D. A. and Brown, P. O.
+- title: Individuality and variation in gene expression patterns in human blood
+- journal: Proceedings of the National Academy of Sciences of the United States of America
+- year: 2003
+- volume: 100
+- number: 4
+- pages: 1896-1901
+- doi: 10.1073/pnas.252784499
+- record: Europe PMC record PMID 12578971, opened 2026-11-16
+- full_text: abstract only; cited as supporting
+
+### finn2015fingerprinting
+
+> Finn, E. S., Shen, X., Scheinost, D., Rosenberg, M. D., Huang, J., Chun, M. M., Papademetris, X., & Constable, R. T. (2015). Functional connectome fingerprinting: identifying individuals using patterns of brain connectivity. *Nature Neuroscience*, 18(11), 1664-1671. https://doi.org/10.1038/nn.4135
+
+- type: article
+- author: Finn, E. S. and Shen, X. and Scheinost, D. and Rosenberg, M. D. and Huang, J. and Chun, M. M. and Papademetris, X. and Constable, R. T.
+- title: Functional connectome fingerprinting: identifying individuals using patterns of brain connectivity
+- journal: Nature Neuroscience
+- year: 2015
+- volume: 18
+- number: 11
+- pages: 1664-1671
+- doi: 10.1038/nn.4135
+- record: Europe PMC record PMID 26457551, opened 2026-11-16
+- full_text: abstract only (PMC5008686 is open); cited as supporting
+
+### mishra2026temporal
+
+> Mishra, N., Kimmig, F., Vandeputte, D., Talevi, V., De Commer, L., Verspecht, C., Vich Vila, A., El-Sayed Moustafa, J. S., Kreft, L., Botzki, A., El Darzi, Y., Proost, S., Devolder, L., Wang, D., Bernardes, J. P., Aziz, N. A., SYSCID consortium, Franke, A., Schreiber, S., ..., & Rosenstiel, P. (2026). Large-scale analysis of temporal gene expression variation in peripheral blood. *Nature Communications*, 17(1), 6992. https://doi.org/10.1038/s41467-026-73218-6
+
+- type: article
+- author: Mishra, N. and Kimmig, F. and Vandeputte, D. and Talevi, V. and De Commer, L. and Verspecht, C. and Vich Vila, A. and El-Sayed Moustafa, J. S. and Kreft, L. and Botzki, A. and El Darzi, Y. and Proost, S. and Devolder, L. and Wang, D. and Bernardes, J. P. and Aziz, N. A. and {SYSCID consortium} and Franke, A. and Schreiber, S. and Dermitzakis, E. T. and Vieira-Silva, S. and Falony, G. and Small, K. S. and Breteler, M. M. B. and Schultze, J. L. and Raes, J. and Rosenstiel, P.
+- title: Large-scale analysis of temporal gene expression variation in peripheral blood
+- journal: Nature Communications
+- year: 2026
+- volume: 17
+- number: 1
+- pages: 6992
+- doi: 10.1038/s41467-026-73218-6
+- record: Europe PMC record PMID 42215465, opened 2026-11-16
+- full_text: abstract only (PMC13392353 is open); cited as supporting

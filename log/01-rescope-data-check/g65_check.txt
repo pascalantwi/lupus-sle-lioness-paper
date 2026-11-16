@@ -1,0 +1,90 @@
+SLE samples: 924  children: 158  healthy samples: 72 
+
+SLEDAI distribution (SLE visits):
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   2.000   4.000   6.404   8.000  35.000 
+visits with SLEDAI 0: 93 
+
+IFN score, healthy vs SLE: mean, SD
+          [,1]  [,2]
+healthy -1.467 0.604
+SLE      0.114 0.787
+
+Spearman correlations, all SLE visits (between and within children):
+                   sledai   ifn neutrophil_percent lymphocyte_percent ds_dna
+sledai               1.00  0.22               0.17              -0.22   0.41
+ifn                  0.22  1.00               0.28              -0.31   0.16
+neutrophil_percent   0.17  0.28               1.00              -0.93   0.27
+lymphocyte_percent  -0.22 -0.31              -0.93               1.00  -0.28
+ds_dna               0.41  0.16               0.27              -0.28   1.00
+c3                  -0.45 -0.30              -0.09               0.10  -0.47
+c4                  -0.38 -0.27              -0.09               0.09  -0.47
+                      c3    c4
+sledai             -0.45 -0.38
+ifn                -0.30 -0.27
+neutrophil_percent -0.09 -0.09
+lymphocyte_percent  0.10  0.09
+ds_dna             -0.47 -0.47
+c3                  1.00  0.75
+c4                  0.75  1.00
+
+Pearson correlations WITHIN children (each centered on the child's own mean):
+                   sledai   ifn neutrophil_percent lymphocyte_percent ds_dna
+sledai               1.00  0.14               0.00              -0.04   0.27
+ifn                  0.14  1.00               0.10              -0.17   0.14
+neutrophil_percent   0.00  0.10               1.00              -0.88   0.07
+lymphocyte_percent  -0.04 -0.17              -0.88               1.00  -0.11
+ds_dna               0.27  0.14               0.07              -0.11   1.00
+c3                  -0.43 -0.15               0.12              -0.13  -0.25
+c4                  -0.31 -0.10               0.08              -0.12  -0.22
+                      c3    c4
+sledai             -0.43 -0.31
+ifn                -0.15 -0.10
+neutrophil_percent  0.12  0.08
+lymphocyte_percent -0.13 -0.12
+ds_dna             -0.25 -0.22
+c3                  1.00  0.72
+c4                  0.72  1.00
+
+Activity domain (sledai_component_class):
+
+         Global Musculoskeletal            None           Renal        Serology 
+             68              56             104             340             356 
+
+Renal SLEDAI item ('renal' field):
+
+  0   1 
+516 408 
+
+Nephritis class:
+
+Data Not Available              Membr              Mesan               NoLN 
+               135                 42                  8                498 
+       Proli+Membr             Prolif 
+                 3                238 
+
+Factors by activity domain:
+                n     ifn               neutrophil_percent lymphocyte_percent
+Global          "68"  "0.50 (SD 0.72)"  "68.49 (SD 12.89)" "20.03 (SD 9.93)" 
+Musculoskeletal "56"  "0.28 (SD 0.93)"  "61.94 (SD 15.95)" "26.89 (SD 13.37)"
+None            "104" "-0.23 (SD 1.00)" "61.73 (SD 14.27)" "27.26 (SD 12.18)"
+Renal           "340" "0.14 (SD 0.74)"  "66.73 (SD 13.50)" "22.64 (SD 11.32)"
+Serology        "356" "0.09 (SD 0.71)"  "62.71 (SD 13.50)" "27.51 (SD 11.99)"
+
+Factors by renal item:
+  n     ifn              neutrophil_percent lymphocyte_percent
+0 "516" "0.05 (SD 0.81)" "62.43 (SD 13.92)" "27.39 (SD 12.16)"
+1 "408" "0.20 (SD 0.75)" "67.03 (SD 13.40)" "22.21 (SD 11.13)"
+
+Factors by SLEDAI grade:
+                n     ifn               neutrophil_percent lymphocyte_percent
+low (0-4)       "478" "-0.00 (SD 0.82)" "62.75 (SD 13.57)" "27.21 (SD 11.86)"
+moderate (5-10) "282" "0.17 (SD 0.75)"  "65.06 (SD 14.17)" "24.22 (SD 12.07)"
+high (>10)      "164" "0.36 (SD 0.69)"  "68.45 (SD 13.39)" "20.48 (SD 10.80)"
+
+Visits followed by a flare (next-visit SLEDAI rise >= 4): 123 of 766 ; children with at least one: 65 
+
+Factors at visits before a flare vs not:
+             n     ifn              neutrophil_percent lymphocyte_percent
+before flare "123" "0.12 (SD 0.84)" "64.94 (SD 14.74)" "25.06 (SD 13.09)"
+no flare     "643" "0.14 (SD 0.74)" "64.59 (SD 13.58)" "24.99 (SD 11.58)"

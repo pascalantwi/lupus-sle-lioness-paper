@@ -1,0 +1,18 @@
+                     ifn_positive
+profile               FALSE TRUE
+  both                  147  437
+  dsDNA only            169  255
+  low complement only    61   87
+  neither               333  271
+
+IFN mean, SD by profile
+                      n   mean    sd
+both                584  0.286 0.617
+dsDNA only          424  0.047 0.682
+low complement only 148  0.017 0.650
+neither             604 -0.216 0.754
+
+Additional healthy vs trial healthy, IFN and mix means:
+         ifn bcell    mix
+FALSE -0.952 0.130 -0.488
+TRUE  -1.031 0.051  0.183

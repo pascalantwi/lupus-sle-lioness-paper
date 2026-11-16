@@ -1,0 +1,17 @@
+Children with 2+ visits: 131  visits: 897 
+Visits per child:    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.000   3.000   6.000   6.847   9.000  22.000 
+Within-child stability (ICC) of ifn                  0.55
+Within-child stability (ICC) of neutrophil_percent   0.22
+Within-child stability (ICC) of lymphocyte_percent   0.30
+Within-child stability (ICC) of sledai               0.39
+
+Days between consecutive visits:    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.     NAs 
+   7.00   48.25   84.00  100.78  105.00  735.00     131 
+Change in SLEDAI to next visit:     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.      NAs 
+-26.0000  -2.0000   0.0000  -0.6854   1.0000  18.0000      131 
+SD of change: 4.69 
+
+Training/test split (children):
+    Test Training 
+      40       91 
