@@ -43,7 +43,7 @@ for (cl in design$cell) for (grp in c("ifn", "module", "cellmix", "cross")) {
   g <- get(cl, paste0("eq_", grp))
   o <- Judge(g$mean, g$mcse, type = "abs", tol = 0.02)
   o1b <- c(o1b, o)
-  add(1, "(b)", cl, sprintf("I raw - I F1 (%s)", grp), g,
+  add(1, "(b)", cl, sprintf("ICC raw - ICC F1 (%s)", grp), g,
       sprintf("|D| <= %.4f", max(0.02, 3 * g$mcse)), o)
 }
 

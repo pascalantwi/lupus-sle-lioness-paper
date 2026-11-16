@@ -27,7 +27,11 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 
 **Plot:** `pilot-d/results/stability.png`.
 
-**The three pilot answers:** to be filled after the verdict.
+**Status:** `piloted-close-call` (2026-11-16), 200 replicates per cell, 6 cells, three cores, 2,714 seconds; verdict file `pilot-d/results/verdict.rds`. Numbers rounded from `pilot-d/results/cell_summaries.rds`.
+
+1. Does the effect exist? Edges equal their formula in stability (largest difference under 0.0001; 1(b) pass). Stable interferon raised the interferon pairs' stability (from about 0.07 to 0.14 at the measured level, 0.22 when very stable), but cross pairs rose too, and the pre-registered excess was 0.064 at the stress level, below 0.15 (1(a) fail).
+2. Large enough at the measured level? No: excess 0.016 (2(a) fail); the fix changed identification on interferon pairs by 0.004 (2(b) fail).
+3. Is there a fix? Yes: the fixed excess was 0.002 to 0.007 (3(a) pass), and the fix kept a real personal module (3(b) pass). Edges did not predict the next visit's activity (concordance near 0.48; 3(c) fail in cell 6). Single-sample edges were unreliable over visits (intraclass correlation 0.07 to 0.22).
 
 ## 4. ADEMP skeleton
 
