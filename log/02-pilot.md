@@ -58,3 +58,9 @@ The numbered decisions are in `pilot/decisions.md`.
 - The user: "go to C" (2026-11-13), straight on without a separate stop (D-S4). Revision 2 (proposal section 13): every visit, marker-gene cell mix, activity within woman; pass rule unchanged. The "fewer edges" change the agent had proposed was dropped before pre-registration: each share counts pairs tested one by one, so the set tested does not change any pair's result.
 - Marker-gene shift measured (`analysis/02_factor_shift_markers.R`); pre-registration 430b0d4; code and tests; timing 60 s for 10 replicates per cell; amendment to 400 replicates b23e94d, pushed before the run.
 - The run: 10 cells x 400 replicates in 2,233 seconds, one pass. Verdict `piloted-close-call` (`pilot-c/results/verdict.rds`); readings in `pilot-c/decisions.md`, D1; the unequal-groups account of the small artifact in D2.
+
+## Pilot-d (re-scope: personal-network stability)
+
+- 2026-11-16. Spec (256f7b8) and pre-registration (bcc439b) committed, the pre-registration alone. Writing the pre-registration changed the proposal's draft rule: person-specific gene levels make every edge partly personal, so the rule judges the excess of IFN pairs over cross pairs (pre-registration, section 5). Under stage 2, step 1.4, the agent stops and reports this before anything runs.
+- GSE65391 and the GPL10558 table downloaded by `analysis/00_download.R` (not committed); `pilot-d/describe_data.R` run. It showed that the stage-1 scratch check had mis-computed the cell-count stabilities (0.22 and 0.30 against 0.41 and 0.48); amendment of the cell-mix stability to 0.45 before any run (pre-registration, section 6).
+- Code: `R/stability.R` (simulator, intraclass correlation, fingerprinting, replicate, summaries, known-answer checks), `DescribeGse65391()`, `ReadPlatformSymbols()`; tests pass; `devtools::check()` 0 errors, 0 warnings, 0 notes. No timing run yet.

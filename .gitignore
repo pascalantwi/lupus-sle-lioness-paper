@@ -34,3 +34,5 @@ __pycache__/
 
 # The GSE235508 counts (25 MB) are fetched by analysis/00_download.R
 /data/raw/GSE235508_mRNA_counts.txt.gz
+/data/raw/GSE65391_series_matrix.txt.gz
+/data/raw/GPL10558_platform_table.txt

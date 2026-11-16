@@ -36,7 +36,7 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 **Data-generating mechanisms.**
 
 - Factors varied: the IFN factor's within-person intraclass correlation $\kappa_F$ (0, 0.55 as measured, 0.9); a real personal module ($\tau$ 0 or 0.25); visits per person (6, the GSE65391 median, or 3); whether activity changes the module.
-- Factors fixed, and why: 131 people (the GSE65391 children with two or more visits); 50 genes and the loadings of the first project; the cell-mix factor's intraclass correlation 0.22 and activity's 0.39 (both measured); person-specific gene levels of variance 0.5 (people differ in level); normal noise.
+- Factors fixed, and why: 131 people (the GSE65391 children with two or more visits); 50 genes and the loadings of the first project; the cell-mix factor's intraclass correlation 0.45 (measured 0.41 and 0.48) and activity's 0.39; person-specific gene levels of variance 0.5 (people differ in level); normal noise.
 - A cell where the answer is known: the null cell, with no stable factor and no personal module.
 
 **Estimands.** The intraclass correlation of each edge over visits; the excess of the factor pairs' intraclass correlation over that of cross pairs (one factor gene, one module gene), which share the person-level gene effects but not the squared factor; fingerprinting accuracy; the concordance of next-visit activity predictions.

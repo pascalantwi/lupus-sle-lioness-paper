@@ -121,3 +121,67 @@ ShiftSummary <- function(score, pregnant, woman) {
              icc = icc, n_samples = length(z),
              n_women = length(unique(woman)))
 }
+
+#' Probe-to-symbol table of a GEO platform text view
+#'
+#' @param path Path to a GEO platform table saved from the text view
+#'   (`acc.cgi?acc=GPLxxxx&targ=self&form=text&view=data`).
+#' @param symbol_col Name of the column holding the gene symbol.
+#' @return A data frame with `id` and `symbol`.
+#' @export
+ReadPlatformSymbols <- function(path, symbol_col = "Symbol") {
+  l <- readLines(path, warn = FALSE)
+  b <- grep("^!platform_table_begin", l)
+  e <- grep("^!platform_table_end", l)
+  t <- utils::read.delim(text = l[(b + 1):(e - 1)], quote = "",
+                         check.names = FALSE, stringsAsFactors = FALSE)
+  data.frame(id = t[[1]], symbol = t[[symbol_col]], stringsAsFactors = FALSE)
+}
+
+#' Describe the GSE65391 cohort for the pilot report
+#'
+#' The IFN5 score (mean of the standardized probes of EPSTI1, IFI44L, LY6E,
+#' OAS3, RSAD2), and, among children with two or more visits, the
+#' within-child intraclass correlation of the score, of the measured
+#' neutrophil and lymphocyte percentages, and of SLEDAI; the days between
+#' visits; and the authors' training and test split.
+#'
+#' @param sm Output of [ReadSeriesMatrix()] for GSE65391 (with its table).
+#' @param platform Output of [ReadPlatformSymbols()] for GPL10558.
+#' @return A list: `counts`, `icc` (named vector), `gap_days` (summary),
+#'   `split` (children per set), and `samples` (one row per SLE visit with
+#'   the scores).
+#' @export
+DescribeGse65391 <- function(sm, platform) {
+  s <- sm$samples
+  num <- function(v) suppressWarnings(as.numeric(v))
+  ifn_genes <- c("EPSTI1", "IFI44L", "LY6E", "OAS3", "RSAD2")
+  probes <- platform$id[platform$symbol %in% ifn_genes]
+  x <- sm$table[intersect(probes, rownames(sm$table)), s$geo, drop = FALSE]
+  s$ifn <- colMeans(t(scale(t(x))), na.rm = TRUE)
+  p <- s[s$disease.state == "SLE", ]
+  p$sledai <- num(p$sledai)
+  p$neutrophil_percent <- num(p$neutrophil_percent)
+  p$lymphocyte_percent <- num(p$lymphocyte_percent)
+  p$cumulative_time <- num(p$cumulative_time)
+  multi <- stats::ave(rep(1, nrow(p)), p$subject, FUN = length) >= 2
+  q <- p[multi, ]
+  icc1 <- function(v) {
+    ok <- !is.na(v)
+    EdgeICC(v[ok], q$subject[ok])
+  }
+  icc <- c(ifn = icc1(q$ifn), neutrophil_percent = icc1(q$neutrophil_percent),
+           lymphocyte_percent = icc1(q$lymphocyte_percent),
+           sledai = icc1(q$sledai))
+  q <- q[order(q$subject, q$cumulative_time), ]
+  gaps <- stats::na.omit(stats::ave(q$cumulative_time, q$subject,
+                             FUN = function(z) c(diff(z), NA)))
+  list(counts = c(sle_visits = nrow(p),
+                  sle_children = length(unique(p$subject)),
+                  children_multi = length(unique(q$subject)),
+                  visits_multi = nrow(q),
+                  healthy_samples = sum(s$disease.state == "Healthy")),
+       icc = icc, gap_days = summary(as.numeric(gaps)),
+       split = tapply(q$subject, q$set, function(z) length(unique(z))),
+       samples = q)
+}

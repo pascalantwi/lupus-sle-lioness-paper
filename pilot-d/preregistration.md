@@ -61,4 +61,4 @@ $I_T(g)$, $X_T(g)$, and $P_T(g)$ for every type, group, and cell; the concordanc
 - 2026-11-16. Clause 3(a) is two-sided as written.
 
 ## 6. Amendments before the run
-
+- 2026-11-16, after the data description and before any run. **Cell-mix stability corrected from 0.22 to 0.45.** The proposal's value came from the agent's scratch check (`log/01-rescope-data-check/g65_icc.R`), whose intraclass-correlation helper misaligned values and groups whenever a child had a missing count. The package's tested `EdgeICC()`, in `pilot-d/describe_data.R` (`pilot-d/results/data_summary.rds`), gives 0.41 for neutrophil and 0.48 for lymphocyte percentage; the IFN score (0.55) and SLEDAI (0.39) have no missing values and are unchanged. $\kappa_C$ is set to 0.45, between the two, in `PilotDDesign()`.

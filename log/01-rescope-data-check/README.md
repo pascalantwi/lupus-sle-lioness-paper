@@ -11,3 +11,5 @@ Descriptive checks run by the agent outside the package, in base R (`Rscript --v
 | `illum_sero.R` | as above | `illum_sero.txt`: the lab profile and the healthy batches |
 
 The scripts take their input folders as arguments; their paths are the session's, not the repository's, so they are a record, not a pipeline.
+
+**Error found at stage 2 (2026-11-16).** `g65_icc.R`'s helper misaligned values and groups when a child had a missing count, so its neutrophil (0.22) and lymphocyte (0.30) stabilities are wrong; the tested `EdgeICC()` gives 0.41 and 0.48 (`pilot-d/results/data_summary.rds`). Its IFN and SLEDAI values are right (no missing values). Kept as recorded, with this note.
