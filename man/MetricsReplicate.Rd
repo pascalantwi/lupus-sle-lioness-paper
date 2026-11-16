@@ -7,7 +7,9 @@
 MetricsReplicate(design_row, rep)
 }
 \arguments{
-\item{design_row}{One row of \code{\link[=PilotEDesign]{PilotEDesign()}}.}
+\item{design_row}{One row of \code{\link[=PilotEDesign]{PilotEDesign()}} or \code{\link[=PilotFDesign]{PilotFDesign()}}; its
+optional \code{fix} column names the correction (\code{"partial"} by default, or
+\code{"ownset"} for \code{\link[=OwnSetResiduals]{OwnSetResiduals()}}).}
 
 \item{rep}{Replicate index; the seed is the cell seed plus \code{rep}.}
 }

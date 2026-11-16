@@ -18,5 +18,6 @@ first-order intraclass correlation, for every metric), \code{agg_ifn} (raw IFN
 connectivity minus raw IFN edges), \code{expl_ifn} (raw IFN connectivity minus
 the squared IFN score), \code{fix_ifn} and \code{fix_module} (partial connectivity
 of the IFN set or the module minus partial cross connectivity), and
-\code{raw_ifn_excess} (the same for raw edges).
+\code{raw_ifn_excess} (the same for raw edges), and \code{fix_ifn_ownset},
+\code{fix_module_ownset} (the same for the own-module correction).
 }

@@ -67,3 +67,28 @@ test_that("the known-answer checks of pilot-e hold", {
   ids <- k[k$type == "identity", ]
   expect_true(all(abs(ids$computed - ids$known) < 0.02))
 })
+
+test_that("PilotFDesign uses the own-module correction and new seeds", {
+  d <- PilotFDesign()
+  expect_equal(d$fix, rep("ownset", 4))
+  expect_equal(d$seed, 21261116L + 1000L * (1:4))
+})
+
+test_that("OwnSetResiduals are uncorrelated with their own regressors", {
+  set.seed(61)
+  g <- matrix(rnorm(200 * 6), 200, 6) + rnorm(200)
+  cond <- cbind(rnorm(200))
+  r <- OwnSetResiduals(g, list(1:3, 4:6), cond)
+  z <- StandardizeN(g)$z
+  loo1 <- (rowSums(z[, 1:3]) - z[, 1]) / 2
+  expect_lt(abs(cor(r[, 1], loo1)), 1e-10)
+  expect_lt(abs(cor(r[, 5], cond[, 1])), 1e-10)
+})
+
+test_that("MetricsReplicate computes the own-module edge type", {
+  d <- PilotFDesign()
+  d$people <- 20L
+  r <- MetricsReplicate(d[2, ], 1)
+  expect_true(all(c("icc_ownset_conn_ifn", "icc_fo_pathlen") %in% names(r)))
+  expect_false("icc_partial_conn_ifn" %in% names(r))
+})

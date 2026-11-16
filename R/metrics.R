@@ -18,6 +18,46 @@ PilotEDesign <- function() {
   d
 }
 
+#' The design table of pilot-f
+#'
+#' The 4 cells of `pilot-f/preregistration.md` (pilot-e's cells) with the
+#' own-module correction as the fix and seeds `21261116 + 1000c`.
+#'
+#' @return A data frame as [PilotEDesign()], plus `fix` (`"ownset"`).
+#' @export
+PilotFDesign <- function() {
+  d <- PilotEDesign()
+  d$fix <- "ownset"
+  d$seed <- 21261116L + 1000L * d$cell
+  d
+}
+
+#' Residuals of each gene on its own set's leave-one-out score
+#'
+#' For each gene, the residual of its least-squares regression, over all
+#' samples, on an intercept, the mean of the other genes of its set (genes
+#' standardized over the samples), and the conditioning covariates.
+#'
+#' @param g Expression matrix, samples by genes.
+#' @param sets A list of column index sets covering the genes to adjust.
+#' @param cond Covariates to condition on as well (samples in rows), or
+#'   `NULL`.
+#' @return A matrix like `g` holding the residuals.
+#' @export
+OwnSetResiduals <- function(g, sets, cond = NULL) {
+  z <- StandardizeN(g)$z
+  out <- g
+  for (s in sets) {
+    tot <- rowSums(z[, s, drop = FALSE])
+    for (i in s) {
+      loo <- (tot - z[, i]) / (length(s) - 1)
+      d <- cbind(1, loo, cond)
+      out[, i] <- qr.resid(qr(d), g[, i])
+    }
+  }
+  out
+}
+
 #' Gene sets of pilot-e, as node indices over genes 6 to 50
 #'
 #' @return A list of node indices (1 to 45): `ifn` (genes 6 to 20),
@@ -123,7 +163,9 @@ HubOverlap <- function(strength, person, visit, k = 5L) {
 #' the intraclass correlations of the squared IFN score and of raw IFN
 #' edges, and the hub overlap.
 #'
-#' @param design_row One row of [PilotEDesign()].
+#' @param design_row One row of [PilotEDesign()] or [PilotFDesign()]; its
+#'   optional `fix` column names the correction (`"partial"` by default, or
+#'   `"ownset"` for [OwnSetResiduals()]).
 #' @param rep Replicate index; the seed is the cell seed plus `rep`.
 #' @return A one-row data frame.
 #' @export
@@ -135,9 +177,12 @@ MetricsReplicate <- function(design_row, rep) {
   g <- coh$x[, 6:50]
   p <- ncol(g)
   sc <- rowMeans(StandardizeN(coh$x[, 1:5])$z)
-  edges <- list(raw = LionessEdges(g), fo = LionessEdgesFirstOrder(g),
-                partial = LionessPartialEdges(g, cbind(sc, coh$comp)))
   sets <- NodeSetsE()
+  fix <- if (is.null(design_row$fix)) "partial" else design_row$fix
+  edges <- list(raw = LionessEdges(g), fo = LionessEdgesFirstOrder(g))
+  edges[[fix]] <- switch(fix,
+    partial = LionessPartialEdges(g, cbind(sc, coh$comp)),
+    ownset = LionessEdges(OwnSetResiduals(g, sets, cbind(coh$comp))))
   out <- list(cell = design_row$cell, rep = rep)
   for (t in names(edges)) {
     mets <- lapply(seq_len(nrow(g)), function(q) {
@@ -177,7 +222,8 @@ MetricsReplicate <- function(design_row, rep) {
 #' connectivity minus raw IFN edges), `expl_ifn` (raw IFN connectivity minus
 #' the squared IFN score), `fix_ifn` and `fix_module` (partial connectivity
 #' of the IFN set or the module minus partial cross connectivity), and
-#' `raw_ifn_excess` (the same for raw edges).
+#' `raw_ifn_excess` (the same for raw edges), and `fix_ifn_ownset`,
+#' `fix_module_ownset` (the same for the own-module correction).
 #'
 #' @param reps Data frame of replicates from [MetricsReplicate()].
 #' @return A long data frame: `cell`, `quantity`, `mean`, `mcse`, `n_rep`.
@@ -199,6 +245,9 @@ SummarizeCellsE <- function(reps) {
   q$fix_module <- col("icc_partial_conn_module") -
     col("icc_partial_conn_cross")
   q$raw_ifn_excess <- col("icc_raw_conn_ifn") - col("icc_raw_conn_cross")
+  q$fix_ifn_ownset <- col("icc_ownset_conn_ifn") - col("icc_ownset_conn_cross")
+  q$fix_module_ownset <- col("icc_ownset_conn_module") -
+    col("icc_ownset_conn_cross")
   out <- do.call(rbind, lapply(split(seq_len(nrow(reps)), reps$cell),
                                function(rows) {
     do.call(rbind, lapply(names(q), function(nm) {
