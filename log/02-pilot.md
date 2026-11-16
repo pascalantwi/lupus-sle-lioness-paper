@@ -78,3 +78,10 @@ The numbered decisions are in `pilot/decisions.md`.
 
 - The user: "option 1" (re-pilot with the own-module correction). Revision 2 (proposal section 13) and pre-registration (7e71b5f) committed before the code; timing 262 s; amendment to 120 replicates (0189846). A slip in the agent's script edit left `verdict.R` unwritten at the code commit; it was written and committed with the amendment, before the run.
 - The run: 4 cells x 120 replicates in 3,136 seconds. Verdict `piloted-fail` (3(a), 3(b)); the reason is algebraic (`pilot-f/decisions.md`, D2).
+
+## Pilot-g (pathway approach)
+
+- The supervisor asked for LIONESS in a pathway approach; the user: "do it". Revision 3 (proposal section 14, with the closed forms of connectivity and crosstalk) and the pre-registration committed alone (460f665). Code `R/pathways.R` and tests (2b29ba0), `devtools::check()` 0 errors, 0 warnings, 0 notes. Timing 7 s for 10 replicates per cell; amendment to 200 replicates (a5b8b0f), pushed before the run.
+- The run: 3 cells x 200 replicates in 98 seconds, one pass. Verdict `piloted-fail`: clause 3(a) failed for the interferon pathway in cell 3 (residual stability 0.23); every other clause passed.
+- A check after the run, not pre-registered (`log/02-pilot-g-check/`): the residual is about 2 parts per million of the variance and is the next-order expression term; with fourth-order terms its stability is 0.009 (`pilot-g/decisions.md`, D2). The status stays `piloted-fail`.
+- Report rendered, checker clean; Markdown copy `pilot-g/pilot-report.md`.

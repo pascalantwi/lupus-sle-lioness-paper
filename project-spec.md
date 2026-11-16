@@ -41,6 +41,12 @@ A LIONESS edge equals, to first order, $r + z_{qi} z_{qj} - \tfrac{r}{2}(z_{qi}^
 
 **Pilot-f (own-module correction, proposal section 13):** `piloted-fail` (2026-11-16), 120 replicates per cell, 4 cells, 3,136 seconds; verdict file `pilot-f/results/verdict.rds`. Clauses 1 and 2 passed as in pilot-e. The own-module correction left the IFN set's connectivity as stable as raw (about 0.25 at the measured level, 0.62 when interferon was very stable; 3(a) fail), and the personal module's excess was about 0.036 (3(b) fail): a set's connectivity is its squared expression score up to scale, which no within-set adjustment changes (`pilot-f/decisions.md`, D2).
 
+**Pilot-g (pathway approach, proposal section 14):** `piloted-fail` (2026-11-16), 200 replicates per cell, 3 cells, 98 seconds; verdict file `pilot-g/results/verdict.rds`; numbers rounded from `pilot-g/results/cell_summaries.rds`.
+
+1. Closed forms: every pathway's connectivity and every pair's crosstalk were linear in their expression terms ($R^2$ above 0.99999 in every cell); interferon connectivity correlated 0.965 with the squared pathway score.
+2. Stability: at the measured level, interferon connectivity was as stable as the squared score (difference -0.012) and steadier than its single edges by 0.114.
+3. Anything beyond expression: the residual after the terms had stability under 0.05 in 17 of 18 pathway-cell checks; it failed for the interferon pathway when interferon was very stable (0.23). A check after the run found that the residual is the next-order expression term: about 2 parts per million of the variance, and its stability falls to 0.009 with fourth-order terms (`pilot-g/decisions.md`, D2). The personal pathway was steadier than the null pathway (0.084), through its expression terms.
+
 ## 4. ADEMP skeleton
 
 **Aims.** (1) How much of the stability of LIONESS edges over repeated samples comes from a stable shared factor? (2) Does a person's network identify her, and is that identification the factor? (3) Do partial-correlation edges remove the factor's part and keep a real personal network? (4) Do edges predict the next visit's activity beyond the genes, and do they equal their formula throughout?
