@@ -145,7 +145,7 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
 #' crosstalk (the mean edge between them); red is positive, blue negative.
 #' Nodes with negative connectivity are drawn hollow.
 #'
-#' @param conn Named connectivities, names `within_<set>`.
+#' @param conn Named connectivities, names `within_<set>` or `conn_<set>`.
 #' @param cross Named crosstalks, names `cross_<A>_<B>`.
 #' @param scale_conn,scale_cross Values drawn at the largest node and the
 #'   widest line; default to the largest absolute values given.
@@ -154,7 +154,7 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
 #' @export
 PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
                                scale_cross = NULL, main = "") {
-  nm <- sub("^within_", "", names(conn))
+  nm <- sub("^(within|conn)_", "", names(conn))
   k <- length(nm)
   ang <- pi / 2 - 2 * pi * (seq_len(k) - 1) / k
   xy <- cbind(cos(ang), sin(ang))
@@ -281,5 +281,127 @@ PlotStabilityByPathway <- function(summaries, cell,
   }
   graphics::legend("bottomright", kinds, col = cols, pch = pch, cex = 0.7,
                    bg = "white", box.col = "grey80")
+  invisible(m)
+}
+
+#' Labels of the LIONESS metrics
+#'
+#' @param m Metric names as in [LionessMetrics()].
+#' @return Readable labels.
+#' @export
+MetricLabels <- function(m) {
+  pw <- PathwayLabels()
+  lab <- m
+  base <- c(total_weight = "Total edge weight", n_edges = "Number of edges",
+            n_nodes = "Number of nodes", transitivity = "Transitivity",
+            n_nodes_p = "Number of nodes (top 5%)",
+            transitivity_p = "Transitivity (top 5%)")
+  hit <- m %in% names(base)
+  lab[hit] <- base[m[hit]]
+  kinds <- c(conn = "connectivity", strength = "strength",
+             degree_p = "degree (top 5%)", degree = "degree",
+             betweenness_p = "betweenness (top 5%)",
+             betweenness = "betweenness")
+  for (k in names(kinds)) {
+    for (p in names(pw)) {
+      lab[m == paste0(k, "_", p)] <- paste(pw[[p]], kinds[[k]])
+    }
+  }
+  cr <- grepl("^cross_", m)
+  lab[cr] <- vapply(strsplit(sub("^cross_", "", m[cr]), "_"), function(ab) {
+    paste(pw[[ab[1]]], "-", pw[[ab[2]]], "crosstalk")
+  }, character(1))
+  lab
+}
+
+#' Draw the stability of LIONESS metrics against their first-order versions
+#'
+#' One row per metric; a filled point for the LIONESS network and an open
+#' point for the first-order network, each with a bar of two Monte Carlo
+#' standard errors.
+#'
+#' @param summaries Output of [SummarizeStudy()].
+#' @param cell The setting drawn.
+#' @param metrics Metric names, as in [LionessMetrics()].
+#' @param main Plot title.
+#' @return The plotted means, invisibly.
+#' @export
+PlotMetricStability <- function(summaries, cell, metrics, main = "") {
+  get <- function(q, f) {
+    v <- summaries[summaries$cell == cell & summaries$quantity == q, f]
+    if (length(v)) v else NA_real_
+  }
+  raw <- vapply(metrics, function(m) get(paste0("icc_raw_", m), "mean"), 0)
+  fo <- vapply(metrics, function(m) get(paste0("icc_fo_", m), "mean"), 0)
+  se <- vapply(metrics, function(m) get(paste0("icc_raw_", m), "mcse"), 0)
+  yy <- rev(seq_along(metrics))
+  graphics::par(mar = c(4.2, 15, if (nzchar(main)) 2.5 else 1, 1))
+  graphics::plot(NA, xlim = range(c(0, raw, fo), na.rm = TRUE) + c(-0.02, 0.02),
+                 ylim = c(0.5, length(metrics) + 0.5), yaxt = "n", ylab = "",
+                 xlab = "Stability over visits (intraclass correlation)",
+                 main = main, bty = "l", las = 1)
+  graphics::axis(2, at = yy, labels = MetricLabels(metrics), las = 1,
+                 cex.axis = 0.7)
+  graphics::abline(v = 0, col = "grey80")
+  graphics::segments(raw - 2 * se, yy, raw + 2 * se, yy, col = "#e34948")
+  graphics::points(raw, yy, pch = 19, col = "#e34948", cex = 0.9)
+  graphics::points(fo, yy, pch = 1, col = "grey20", cex = 1.3, lwd = 1.2)
+  graphics::legend("bottomright", c("LIONESS network", "First-order network"),
+                   pch = c(19, 1), col = c("#e34948", "grey20"), cex = 0.7,
+                   bg = "white", box.col = "grey80")
+  invisible(cbind(raw = raw, fo = fo))
+}
+
+#' Draw quantities along one factor of the design
+#'
+#' One line per quantity, with bars of two Monte Carlo standard errors.
+#'
+#' @param summaries Output of [SummarizeStudy()].
+#' @param design Output of [StudyDesign()].
+#' @param factor Design column varied (for example `kappa_ifn`).
+#' @param cells The settings on the gradient.
+#' @param quantities Named quantities: names are summary quantities, values
+#'   legend labels.
+#' @param xlab,ylab,main Labels.
+#' @param ref Optional reference line `y = f(x)`, a function.
+#' @return The plotted means, invisibly.
+#' @export
+PlotGradient <- function(summaries, design, factor, cells, quantities,
+                         xlab = factor, ylab = "", main = "", ref = NULL) {
+  x <- design[[factor]][match(cells, design$cell)]
+  o <- order(x)
+  x <- x[o]
+  cells <- cells[o]
+  get <- function(q, f) {
+    vapply(cells, function(c) {
+      v <- summaries[summaries$cell == c & summaries$quantity == q, f]
+      if (length(v)) v else NA_real_
+    }, 0)
+  }
+  m <- sapply(names(quantities), get, f = "mean")
+  se <- sapply(names(quantities), get, f = "mcse")
+  m <- matrix(m, length(cells))
+  se <- matrix(se, length(cells))
+  cols <- c("#2a78d6", "#eb6834", "#1baf7a", "#7d4fc4", "#e34948",
+            "grey35")[seq_along(quantities)]
+  pch <- c(19, 17, 15, 18, 1, 2)[seq_along(quantities)]
+  graphics::par(mar = c(4.2, 4.6, if (nzchar(main)) 2.5 else 1, 1))
+  yl <- range(c(m - 2 * se, m + 2 * se, 0), na.rm = TRUE)
+  graphics::plot(NA, xlim = range(x), ylim = yl, xlab = xlab, ylab = ylab,
+                 main = main, bty = "l", las = 1, xaxt = "n")
+  graphics::axis(1, at = x)
+  if (!is.null(ref)) {
+    xs <- seq(min(x), max(x), length.out = 100)
+    graphics::lines(xs, ref(xs), col = "grey60", lty = 2)
+  }
+  graphics::abline(h = 0, col = "grey85")
+  for (k in seq_along(quantities)) {
+    graphics::lines(x, m[, k], col = cols[k], lwd = 2)
+    graphics::segments(x, m[, k] - 2 * se[, k], x, m[, k] + 2 * se[, k],
+                       col = cols[k])
+    graphics::points(x, m[, k], pch = pch[k], col = cols[k])
+  }
+  graphics::legend("topleft", unname(quantities), col = cols, pch = pch,
+                   lwd = 2, cex = 0.7, bg = "white", box.col = "grey80")
   invisible(m)
 }

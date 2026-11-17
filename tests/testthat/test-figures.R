@@ -30,3 +30,23 @@ test_that("each figure function draws one plot without error", {
   s$mcse <- 0.01
   expect_equal(dim(PlotStabilityByPathway(s, 2)), c(6L, 4L))
 })
+
+test_that("the study figure functions draw one plot each", {
+  f <- tempfile(fileext = ".png")
+  grDevices::png(f)
+  on.exit(grDevices::dev.off(), add = TRUE)
+  expect_equal(MetricLabels(c("conn_ifn", "cross_ifn_null", "degree_p_pb",
+                              "n_edges")),
+               c("Interferon connectivity", "Interferon - Null crosstalk",
+                 "Plasmablast-like degree (top 5%)", "Number of edges"))
+  s <- data.frame(cell = rep(1:2, each = 4),
+                  quantity = rep(c("icc_raw_conn_ifn", "icc_fo_conn_ifn",
+                                   "icc_raw_n_edges", "icc_fo_n_edges"), 2),
+                  mean = runif(8), mcse = 0.01)
+  expect_equal(dim(PlotMetricStability(s, 1, c("conn_ifn", "n_edges"))),
+               c(2L, 2L))
+  d <- data.frame(cell = 1:2, kappa_ifn = c(0, 0.5))
+  m <- PlotGradient(s, d, "kappa_ifn", 1:2,
+                    c(icc_raw_conn_ifn = "connectivity"), ref = function(k) k^2)
+  expect_equal(dim(m), c(2L, 1L))
+})

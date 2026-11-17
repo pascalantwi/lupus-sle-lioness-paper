@@ -1,14 +1,14 @@
 ---
 title: "LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features"
 author:
-  - name: "[FILL: first author]"
+  - name: "[TO CONFIRM: first author]{.tc}"
     corresponding: true
-    email: "[FILL: email]"
+    email: "[TO CONFIRM: email]{.tc}"
     affiliations:
-      - name: "[FILL: affiliation]"
-  - name: "[FILL: second author]"
+      - name: "[TO CONFIRM: affiliation]{.tc}"
+  - name: "[TO CONFIRM: second author, the supervisor]{.tc}"
     affiliations:
-      - name: "[FILL: affiliation]"
+      - name: "[TO CONFIRM: affiliation]{.tc}"
 date: today
 bibliography: references.bib
 csl: biomed-central.csl
@@ -57,30 +57,13 @@ execute:
   message: false
 ---
 
-<!--
-HOW TO USE THIS FILE (the manual is workflow/03-manuscript.md)
-- Replace every [FILL: ...] and delete the HTML comments that instruct you. Chunks marked eval: false
-  are patterns to copy; remove that line once a chunk is real.
-- Every number in the text comes through prov(), from results/. Never type a result.
-- Markers are spans: [TO CONFIRM: the decision]{.tc} for anything a person must decide,
-  [CITE: the claim]{.cite} for a claim without a usable source.
-- Write in this order: purpose draft of the Introduction; the design proposal (stop); the quick run;
-  Methods, Design, Results, Discussion; Introduction revised; Abstract.
-- No workflow words in the paper (pilot, card, worker, quick run, spec, harness, known-answer check, the report).
-- The proofs go in _supplement.qmd, included after the references as the supplementary note.
-- Render: quarto render manuscript.qmd            (draft mode, with the banner and gap table)
-          quarto render manuscript.qmd -P draft:false   (final mode, when production numbers exist)
-          quarto render manuscript.qmd -P draft:false -P memo:true   (memo mode: a pilot's numbers, no marks)
-- Supplementary figures and tables take the labels sfig-... and stbl-... (Figure S1, Table S1); see _supplement.qmd.
-- Check:  python3 -I check-manuscript.py manuscript.qmd manuscript.html --citations citations.csv --bib references.bib --journals ../workflow/journals/journals.csv --journal <slug>
-          (add --final for the final render, or --memo and no --journal for a memo)
--->
 
 ```{r}
 #| label: setup
 #| include: false
 
 source("manuscript-helpers.R")
+devtools::load_all(project_root(), quiet = TRUE)  # the figure functions in R/
 prov_set_mode(params$draft, memo = params$memo)
 # results/run_info.rds, written by the analysis scripts; a memo reads the last pilot's run file instead
 ri <- if (params$memo) read_run_info(pilot_path("run_info.rds")) else read_run_info()
@@ -93,6 +76,44 @@ dat <- readRDS(file.path(project_root(), "pilot-d", "results", "data_summary.rds
 st <- ri$settings
 G <- function(cell, q) sm$mean[sm$cell == cell & sm$quantity == q]
 M <- function(cell, q) sm$mcse[sm$cell == cell & sm$quantity == q]
+pm <- function(cell, q, d = 3) sprintf("%s (MCSE %s)", prov(G(cell, q), d), prov(M(cell, q), d))
+s1 <- design$cell[design$part == "S1"]
+s2 <- design$cell[design$part == "S2"]
+base <- design$cell[design$family == "base"]
+null_cell <- design$cell[design$family == "null"]
+k_cells <- design$cell[design$family %in% c("base", "stability")]
+k_hi <- k_cells[which.max(design$kappa_ifn[match(k_cells, design$cell)])]
+metric_names <- sub("^icc_raw_", "", unique(sm$quantity[grepl("^icc_raw_", sm$quantity)]))
+dd <- do.call(rbind, lapply(s1, function(c) {
+  data.frame(cell = c, metric = metric_names,
+             d = vapply(metric_names, function(m) {
+               a <- G(c, paste0("icc_raw_", m)); b <- G(c, paste0("icc_fo_", m))
+               if (length(a) && length(b)) a - b else NA_real_ }, 0))
+}))
+d_max <- max(abs(dd$d), na.rm = TRUE)
+r2_min <- min(sm$mean[sm$cell %in% s1 & grepl("^r2_1_", sm$quantity)])
+res4 <- sm[sm$cell %in% s1 & grepl("^icc_res4_", sm$quantity), ]
+res1 <- sm[sm$cell %in% s1 & grepl("^icc_res1_", sm$quantity), ]
+shown <- c("total_weight", "n_edges", "n_nodes", "transitivity", "transitivity_p",
+           "conn_ifn", "strength_ifn", "degree_ifn", "betweenness_ifn", "degree_p_ifn",
+           "betweenness_p_ifn", "cross_ifn_pb", "conn_neut", "degree_neut",
+           "conn_personal", "conn_null")
+a_kid <- ex$kept[1]
+ex_rows <- function(v) which(ex$edges_person == a_kid & ex$edges_visit == v)
+ex_i <- function(v) which(ex$person == a_kid & ex$visit == v)
+lm_cols <- colnames(ex$lioness_metrics)
+w_cols <- grep("^conn_", lm_cols, value = TRUE)
+c_cols <- grep("^cross_", lm_cols, value = TRUE)
+kid_rows <- ex$person %in% ex$kept
+sc_e <- max(abs(ex$edges))
+sc_conn <- max(abs(ex$lioness_metrics[kid_rows, w_cols]))
+sc_cross <- max(abs(ex$lioness_metrics[kid_rows, c_cols]))
+cor_ex <- stats::cor(ex$lioness_metrics[, "conn_ifn"], ex$score2[, "ifn"])
+rate <- function(q) vapply(s2, function(c) G(c, q), 0)
+beta_s2 <- design$beta[match(s2, design$cell)]
+cap_design <- paste("Factors of the simulation design. Study S1 varied one factor at a time around the base setting (marked with an asterisk); study S2 used the base setting with the listed activity effects.",
+  "$\\kappa_1$: within-person intraclass correlation of the interferon factor; $\\lambda_1$: its loading; $m_1$: the interferon pathway's size; $\\tau$: spread of person-specific co-expression; $\\beta$: activity effect.")
+cap_stability <- sprintf("Stability over visits (intraclass correlation) of LIONESS metrics in the base setting: filled points on the LIONESS network with bars of two Monte Carlo standard errors, open points on the first-order network. Top %s%% marks the proportional threshold.", lvl(100 * st$prop))
 ```
 
 ```{r}
@@ -119,11 +140,11 @@ Every claim carries a numeric result with its uncertainty, through prov(): an es
 confidence interval or Monte Carlo SE, a rate with its band, a count against its permutation count.
 Quick-run numbers in the first draft. Write it last. -->
 
-**Background.** [FILL]
+**Background.** LIONESS builds a co-expression network for each sample, and network metrics of those networks, read by pathway, are used as personal markers that should track a patient over repeated visits. What these metrics measure has not been derived.
 
-**Results.** [FILL]
+**Results.** A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression, and a pathway's connectivity and crosstalk are, to first order, the squared pathway score and the product of two scores. In simulated children followed over visits, every network metric, among them degree, betweenness, transitivity, and the numbers of edges and nodes, was as stable as the same metric on the first-order network (largest difference `r prov(d_max, 4)`); connectivity and crosstalk had $R^2$ of at least `r prov(r2_min, 5)` on their expression terms, and the residual's stability was at most `r prov(max(res4$mean), 3)` once fourth-order terms were added. Pathway scores predicted same-visit activity, with power up to `r prov(max(rate("same_sup_B")), 2)`, while LIONESS metrics did not (at most `r prov(max(rate("same_sup_A")), 2)`) and were equivalent to first-order metrics in at least `r prov(min(rate("same_eq_A_C")), 2)` of replicates.
 
-**Conclusions.** [FILL]
+**Conclusions.** The stability of a LIONESS network over a person's visits is the stability of the person's expression. A network metric should be compared with the expression terms of its closed form before it is read as co-expression.
 
 # Introduction
 
@@ -142,7 +163,7 @@ LIONESS builds such a network for each sample of a cohort: it compares the co-ex
 With Pearson correlation as the network, the default of its R implementation, every sample receives one weight for every pair of genes [@kuijjer2019lionessr].
 In the paper that introduced lionessR, single-sample networks of bone tumours were built in this way, edges whose weights differed between patients with short and long metastasis-free survival were selected, and limma tested them, beside a separate test of expression levels [@kuijjer2019lionessr].
 A difference in a sample's edge is read there as a difference in how that sample adds to the co-expression of the two genes.
-Co-expression is usually summarized by gene sets: cohort networks by module eigengenes and module connectivity [@langfelder2008wgcna], and blood transcriptomes by fixed module repertoires [@altman2021bloodgen3].
+Co-expression is commonly summarized by gene sets: cohort networks by module eigengenes and module connectivity [@langfelder2008wgcna], and blood transcriptomes by fixed module repertoires [@altman2021bloodgen3].
 For a single-sample network, the natural summaries of a pathway are the mean edge among its genes, its connectivity, and the mean edge between its genes and those of a second pathway, their crosstalk.
 
 Repeated blood samples differ in expression between people and within a person over time.
@@ -252,7 +273,7 @@ Pathways are modules of the BloodGen3 repertoire, built from co-clustering in bl
 
 {{< include parts/reproducibility.md >}}
 
-[FILL: software and package versions, from the session information saved in results/, and the repository URL.]
+The analyses used `r R.version.string`, with glmnet [@friedman2010glmnet] for the elastic net and igraph for the graph metrics.
 
 # Simulation study
 
@@ -266,15 +287,45 @@ estimands; methods precise enough to reimplement; performance measures by target
 Monte Carlo SE they give. This is the production design, approved at the design stop; the run behind the
 numbers is named in the banner, not here. -->
 
-[FILL]
+The study has three aims, the paper's questions: how stable over a person's visits each LIONESS metric is (aim 1); whether that stability equals the stability of the same metric on the first-order network, and whether connectivity and crosstalk are their expression terms (aim 2); and whether LIONESS metrics identify a person and predict activity better than pathway scores, or differently from first-order metrics (aim 3).
+
+Every simulated cohort had `r lvl(design$people[1])` people, the number of children with two or more visits in the application, and ninety or more genes in six pathways.
+Four pathways each loaded on their own factor, a person level plus a visit deviation: an interferon-like pathway, whose factor's within-person intraclass correlation, loading, and size were varied, and neutrophil-like, lymphocyte-like, and plasmablast-like pathways with loading `r lvl(0.6)` and intraclass correlations `r lvl(design$kappa_neut[1])`, `r lvl(design$kappa_lymph[1])`, and `r lvl(design$kappa_pb[1])`, the values measured in the application for the neutrophil and lymphocyte percentages and for disease activity.
+A fifth pathway had a noise correlation that differed between people by up to the spread $\tau$ (person-specific co-expression), and a sixth had a fixed noise correlation.
+Every gene carried a person level of variance `r lvl(0.5)` and unit normal noise, and the factors were independent.
+Each visit had an activity score: the activity effect $\beta$ times the mean of the interferon and plasmablast factors, plus a person level and visit noise with within-person intraclass correlation `r lvl(design$kappa_pb[1])`.
+Study S1 varied one factor at a time around a base setting at the measured values (@tbl-design), and added a null setting with no stable factor and no person-specific co-expression, where every residual stability is zero.
+Study S2 used the base setting with `r lvl(sum(design$part == "S2"))` activity effects, the first zero, which gives the tests' type I error and power.
+
+The estimands were the intraclass correlation over visits of every metric, on the LIONESS network and on its first-order form, and their difference; for connectivity and crosstalk, the $R^2$ on the expression terms of first and of fourth order and the stability of each residual; fingerprinting accuracy, the share of people whose second-visit metrics correlate most with their own first-visit metrics [@finn2015fingerprinting]; and the concordance of predictions of activity with the observed activity.
+The graph metrics used the fixed threshold $\lvert e_{qij}\rvert > `r lvl(st$threshold)`$ and, separately, the `r lvl(100 * st$prop)` percent of pairs with the largest $\lvert e_{qij}\rvert$.
+Three feature sets were compared: A, the metrics of the LIONESS network; B, the six pathway scores (mean standardized expression) and their squares; and C, the metrics of the first-order network.
+Each predicted activity by a Gaussian elastic net with mixing `r lvl(st$alpha)` [@friedman2010glmnet], the penalty chosen by inner cross-validation, in `r lvl(st$folds)`-fold cross-validation with all visits of a person in one fold; next-visit prediction used the features and activity of one visit for the activity of the next, with the current activity unpenalized, against a regression on the current activity alone ($R_0$).
+A concordance was declared above one half when the lower `r lvl(5)` percent quantile of `r lvl(st$n_boot)` bootstrap resamples of people exceeded one half, and two feature sets were declared equivalent when the `r lvl(90)` percent bootstrap interval of their difference lay within $\pm `r lvl(st$margin)`$.
+Each setting had `r lvl(ri$n_rep_production)` replicates in the production design, which give a Monte Carlo standard error of a few thousandths for a stability and at most `r lvl(0.05)` for a rejection rate.
 
 ```{r}
 #| label: tbl-design
-#| tbl-cap: "Factors of the simulation design, their levels, and the reason for each."
-#| eval: false
+#| tbl-cap: !expr cap_design
 
-design_table(data.frame(Factor = c("[FILL]"), Levels = c("[FILL]"), Reason = c("[FILL]")))
+b <- design[design$family == "base", ]
+lv <- function(x, base) paste(ifelse(x == base, paste0(x, "*"), x), collapse = ", ")
+s1 <- design[design$part == "S1" & design$family != "null", ]
+design_table(data.frame(
+  Factor = c("Interferon stability $\\kappa_1$", "Interferon loading $\\lambda_1$", "Interferon pathway size $m_1$",
+             "Co-expression spread $\\tau$", "Visits per person", "Activity effect $\\beta$ (S2)"),
+  Levels = c(lv(sort(unique(s1$kappa_ifn)), b$kappa_ifn), lv(sort(unique(s1$load_ifn)), b$load_ifn),
+             lv(sort(unique(s1$size_ifn)), b$size_ifn), lv(sort(unique(s1$tau)), b$tau),
+             lv(sort(unique(s1$visits)), b$visits), paste(design$beta[design$part == "S2"], collapse = ", ")),
+  Reason = c("from no stable driver to a highly stable one; the base is the stability of the interferon score in the application",
+             "a weak to a strong driving factor, which sets the size of the remainder beyond first order",
+             "small to large gene sets",
+             "none to strong person-specific co-expression, the signal a network should carry",
+             "fewer visits, as in many cohorts; the base is the application's median",
+             "no effect, for the type I error, then effects from low to high power")),
+  widths = c(22, 18, 60))
 ```
+
 
 ## Results
 
@@ -283,51 +334,168 @@ factor levels) and prose that states facts in past tense, cites nothing, and sta
 when it exceeds about three Monte Carlo SEs; otherwise [TO CONFIRM: ...]{.tc}. Every figure and
 table is referenced in the text. Register each output with gap_register() in its chunk. -->
 
-### [FILL: aim 1, as a short heading]
+### LIONESS metrics changed from visit to visit
 
-[FILL: the finding, with every number through prov() and a reference to the figure, written as an at-sign followed by fig-aim1.]
+The LIONESS network of one simulated child changed visibly between two visits in the base setting (@fig-net-v1, @fig-net-v2), and so did its pathway summary (@fig-path-v1, @fig-path-v2).
+Over all children, interferon connectivity and the mean degree of the interferon genes moved up and down across the six visits with little order (@fig-traj-conn, @fig-traj-degree).
+In the base setting, the stability over visits was `r pm(base, "icc_raw_conn_ifn")` for interferon connectivity, `r pm(base, "icc_raw_degree_ifn")` for the interferon genes' degree, `r pm(base, "icc_raw_betweenness_ifn")` for their betweenness, `r pm(base, "icc_raw_transitivity")` for transitivity, `r pm(base, "icc_raw_n_edges")` for the number of edges, `r pm(base, "icc_raw_n_nodes")` for the number of nodes, and `r pm(base, "icc_raw_total_weight")` for the total edge weight (@fig-stability).
+Single interferon edges had a mean stability of `r pm(base, "icc_edges_ifn")`.
+The LIONESS metrics identified `r prov(G(base, "finger_A"), 3)` of the people from one visit to the next, and the pathway scores `r prov(G(base, "finger_B"), 3)`.
 
 ```{r}
-#| label: fig-aim1
-#| fig-cap: "[FILL: what is plotted, what the bars or band mean, the reference line.]"
-#| fig-width: 7
-#| fig-height: 4.2
-#| eval: false
+#| label: fig-net-v1
+#| fig-cap: "The LIONESS network of one simulated child at the first visit, base setting. Genes sit on six circles, one per pathway; the strongest edges are drawn, red positive and blue negative, with width proportional to the absolute edge on a scale shared with the next figure."
+#| fig-width: 6
+#| fig-height: 6
 
-gap_register("fig-aim1", what = "[FILL]", cells = NA, n_rep = ri$n_rep, production = "[FILL: cells and replicates of the production design]")
-# Draw from the results objects only.
+gap_register("fig-net-v1", what = "one child's LIONESS network, visit 1", cells = 1, n_rep = 1, production = "the same cohort")
+PlotSampleNetwork(ex$edges[ex_rows(1), ], ex$sets, scale_max = sc_e)
 ```
 
-### [FILL: aim 2]
+```{r}
+#| label: fig-net-v2
+#| fig-cap: "The LIONESS network of the same child at the second visit, drawn as in the previous figure."
+#| fig-width: 6
+#| fig-height: 6
 
-[FILL]
+gap_register("fig-net-v2", what = "one child's LIONESS network, visit 2", cells = 1, n_rep = 1, production = "the same cohort")
+PlotSampleNetwork(ex$edges[ex_rows(2), ], ex$sets, scale_max = sc_e)
+```
+
+```{r}
+#| label: fig-path-v1
+#| fig-cap: "The same child's LIONESS network at the first visit, summarized by pathway: node area is the pathway's connectivity (hollow when negative) and line width the crosstalk between two pathways, on scales shared with the next figure."
+#| fig-width: 6
+#| fig-height: 6
+
+gap_register("fig-path-v1", what = "one child's pathway network, visit 1", cells = 1, n_rep = 1, production = "the same cohort")
+PlotPathwayNetwork(ex$lioness_metrics[ex_i(1), w_cols], ex$lioness_metrics[ex_i(1), c_cols], scale_conn = sc_conn, scale_cross = sc_cross)
+```
+
+```{r}
+#| label: fig-path-v2
+#| fig-cap: "The same child's pathway network at the second visit, drawn as in the previous figure."
+#| fig-width: 6
+#| fig-height: 6
+
+gap_register("fig-path-v2", what = "one child's pathway network, visit 2", cells = 1, n_rep = 1, production = "the same cohort")
+PlotPathwayNetwork(ex$lioness_metrics[ex_i(2), w_cols], ex$lioness_metrics[ex_i(2), c_cols], scale_conn = sc_conn, scale_cross = sc_cross)
+```
+
+```{r}
+#| label: fig-traj-conn
+#| fig-cap: "Interferon connectivity of the LIONESS networks of twelve simulated children over their visits, base setting; one line per child."
+#| fig-width: 6.5
+#| fig-height: 4.2
+
+gap_register("fig-traj-conn", what = "connectivity over visits", cells = 1, n_rep = 1, production = "the same cohort")
+PlotTrajectories(ex$lioness_metrics[, "conn_ifn"], ex$person, ex$visit, ids = 1:12, ylab = "Interferon connectivity")
+```
+
+```{r}
+#| label: fig-traj-degree
+#| fig-cap: "Mean degree of the interferon genes in the thresholded LIONESS networks of the same twelve children over their visits."
+#| fig-width: 6.5
+#| fig-height: 4.2
+
+gap_register("fig-traj-degree", what = "degree over visits", cells = 1, n_rep = 1, production = "the same cohort")
+PlotTrajectories(ex$lioness_metrics[, "degree_ifn"], ex$person, ex$visit, ids = 1:12, col = "#eb6834", ylab = "Mean degree, interferon genes")
+```
+
+```{r}
+#| label: fig-stability
+#| fig-cap: !expr cap_stability
+#| fig-width: 7
+#| fig-height: 6
+
+gap_register("fig-stability", what = "stability of every shown metric", cells = 1, n_rep = ri$n_rep, production = "the base setting, production replicates")
+PlotMetricStability(sm, base, shown)
+```
+
+### The stability of LIONESS metrics was the stability of expression
+
+Over every metric and every setting of S1, the stability on the LIONESS network differed from the stability on the first-order network by at most `r prov(d_max, 4)` (@fig-stability, @tbl-equivalence).
+Connectivity and crosstalk were linear in their first-order expression terms, with $R^2$ at least `r prov(r2_min, 5)`.
+Interferon connectivity followed the squared interferon score closely in one cohort (correlation `r prov(cor_ex, 3)`, @fig-conn-score), and its stability followed that of the squared score along the gradient of the interferon factor's stability (@fig-gradient): `r pm(base, "icc_raw_conn_ifn")` against `r pm(base, "icc_score2_ifn")` in the base setting and `r pm(k_hi, "icc_raw_conn_ifn")` against `r pm(k_hi, "icc_score2_ifn")` at the most stable factor.
+The residual after the first-order terms was stable only when the factor was: its stability was `r pm(k_hi, "icc_res1_conn_ifn")` at the most stable factor.
+With the fourth-order terms added, the residual's stability was at most `r prov(max(res4$mean), 3)` over every connectivity, crosstalk, and setting.
+
+```{r}
+#| label: tbl-equivalence
+#| tbl-cap: "Largest absolute difference between the stability of a metric on the LIONESS network and on the first-order network, over the S1 settings, by type of metric."
+
+kind <- sub("_(ifn|neut|lymph|pb|personal|null)$", "", sub("^cross_.*", "crosstalk", dd$metric))
+tab <- aggregate(abs(dd$d), list(kind = kind), max, na.rm = TRUE)
+tab$label <- MetricLabels(tab$kind)
+tab$label[tab$kind == "crosstalk"] <- "Crosstalk"
+tab$label <- sub("^(connectivity|strength|degree|betweenness)", "\\\\U\\\\1", tab$label, perl = TRUE)
+kable_w(data.frame(Metric = tab$label, `Largest difference` = vapply(tab$x, prov, "", digits = 4), check.names = FALSE), widths = c(60, 40))
+```
+
+```{r}
+#| label: fig-conn-score
+#| fig-cap: "Interferon connectivity of every sample's LIONESS network against the sample's squared interferon score, one simulated cohort in the base setting, with the least-squares line."
+#| fig-width: 6
+#| fig-height: 4.5
+
+gap_register("fig-conn-score", what = "connectivity against squared score", cells = 1, n_rep = 1, production = "the same cohort")
+PlotConnectivityScore(ex$lioness_metrics[, "conn_ifn"], ex$score2[, "ifn"], xlab = "Squared interferon score", ylab = "Interferon connectivity")
+```
+
+```{r}
+#| label: fig-gradient
+#| fig-cap: "Stability over visits along the interferon factor's within-person intraclass correlation: interferon connectivity, the squared interferon score, and the residual of connectivity after the first-order and after the fourth-order expression terms, with bars of two Monte Carlo standard errors. The dashed line is the stability of a squared normal factor."
+#| fig-width: 6.5
+#| fig-height: 4.5
+
+gap_register("fig-gradient", what = "stability along the factor's stability", cells = length(k_cells), n_rep = ri$n_rep, production = "the five settings, production replicates")
+PlotGradient(sm, design, "kappa_ifn", k_cells,
+             c(icc_raw_conn_ifn = "Connectivity", icc_score2_ifn = "Squared score",
+               icc_res1_conn_ifn = "Residual, first order", icc_res4_conn_ifn = "Residual, fourth order"),
+             xlab = "Interferon factor stability", ylab = "Stability over visits", ref = function(k) k^2)
+```
+
+### LIONESS metrics did not predict beyond expression
+
+Same-visit activity was predicted by the pathway scores, whose superiority test declared a concordance above one half in a share of replicates that rose from `r prov(rate("same_sup_B")[1], 2)` with no effect to `r prov(max(rate("same_sup_B")), 2)` (@fig-power).
+The LIONESS metrics and the first-order metrics were declared above one half in at most `r prov(max(rate("same_sup_A"), rate("same_sup_C")), 2)` of replicates at any effect, and their concordance stayed between `r prov(min(rate("same_c_A")), 3)` and `r prov(max(rate("same_c_A")), 3)` (@tbl-prediction).
+The LIONESS metrics were declared equivalent to the first-order metrics in at least `r prov(min(rate("same_eq_A_C"), rate("next_eq_A_C")), 2)` of replicates, for same-visit and next-visit activity alike.
+For next-visit activity, every feature set reached the concordance of the current activity alone (`r prov(min(rate("next_c_R0")), 3)` to `r prov(max(rate("next_c_R0")), 3)`).
+
+```{r}
+#| label: fig-power
+#| fig-cap: "Share of replicates in which the superiority test declared the concordance of same-visit predictions above one half, by activity effect, for the LIONESS metrics (A), the pathway scores (B), and the first-order metrics (C), with bars of two Monte Carlo standard errors. At no effect, the share is the type I error."
+#| fig-width: 6.5
+#| fig-height: 4.5
+
+gap_register("fig-power", what = "type I error and power", cells = length(s2), n_rep = ri$n_rep, production = "the S2 settings, production replicates")
+PlotGradient(sm, design, "beta", s2,
+             c(same_sup_A = "A, LIONESS metrics", same_sup_B = "B, pathway scores", same_sup_C = "C, first-order metrics"),
+             xlab = "Activity effect", ylab = "Share declared above one half")
+```
+
+```{r}
+#| label: tbl-prediction
+#| tbl-cap: "Prediction of activity in S2, by activity effect: mean concordance of the LIONESS metrics (A), pathway scores (B), first-order metrics (C), and, for the next visit, the current activity alone (R0); and the share of replicates in which A and C were declared equivalent."
+
+kable_w(data.frame(Effect = beta_s2,
+  `Same visit, A` = vapply(rate("same_c_A"), prov, ""), `Same visit, B` = vapply(rate("same_c_B"), prov, ""),
+  `Same visit, C` = vapply(rate("same_c_C"), prov, ""), `Next visit, A` = vapply(rate("next_c_A"), prov, ""),
+  `Next visit, R0` = vapply(rate("next_c_R0"), prov, ""), `A equivalent to C` = vapply(rate("same_eq_A_C"), prov, "", digits = 2),
+  check.names = FALSE), widths = c(10, 15, 15, 15, 15, 15, 15))
+```
 
 # Application
 
 ## Data and comparison
 
-<!-- The dataset's role in one sentence, the comparison (groups, sizes, scale), and where the real data
-sit on the simulation's gradient (the measured shift, the control fraction, the correlation), each
-number through prov() from a results file written by the application script. -->
+The application follows the `r lvl(dat$counts[["children_multi"]])` children of GSE65391 with two or more visits.
+In these children the interferon score had a within-child intraclass correlation of `r lvl(round(dat$icc[["ifn"]], 2))`, the base of the simulation's gradient, and SLEDAI one of `r lvl(round(dat$icc[["sledai"]], 2))`.
+[TO CONFIRM: the BloodGen3 module list must be downloaded before the LIONESS networks of these children are computed; the claims of protocol.md, section 7, are pre-registered for it]{.tc}
 
-[FILL]
+## What the application will show
 
-## [FILL: what the application shows, as a short heading]
-
-<!-- The one thing the analysis shows, as a claim about a user's conclusion. If the analysis has not been
-run, the claim stands with [TO CONFIRM: ...]{.tc} and the chunk stays eval: false. -->
-
-[FILL]
-
-```{r}
-#| label: fig-application
-#| fig-cap: "[FILL]"
-#| fig-width: 7
-#| fig-height: 4.2
-#| eval: false
-
-gap_register("fig-application", what = "[FILL]", cells = NA, n_rep = NA, production = "[FILL]")
-```
+The application tests whether a user who reads a child's LIONESS network metrics over visits learns anything that the child's module expression does not already say. [TO CONFIRM: the analysis has not been run]{.tc}
 
 # Discussion
 
@@ -335,19 +503,39 @@ gap_register("fig-application", what = "[FILL]", cells = NA, n_rep = NA, product
 critique table's rows that did not become design factors; future work from the spec's out-of-scope
 list, item by item. No new results. -->
 
-[FILL: the findings restated and the implication for users.]
+A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression, and its first-order form keeps nearly all of it.
+Every network metric built on the edges, read whole or by pathway, inherited that: in simulated children followed over visits, each metric was exactly as stable as the same metric on the first-order network, connectivity and crosstalk were their expression terms, and the stable part that remained beyond first order was the next-order expression term.
+Pathway connectivity was more stable than single edges because it averaged the edges into a squared pathway score.
+For a user, a change in a child's LIONESS network from one visit to the next is a change in that child's expression, and a network metric should be compared with the expression terms of its closed form before it is read as co-expression.
+LIONESS metrics also lost the sign of expression: activity driven by a factor's level was predicted by pathway scores, while the metrics, which carry squared scores, did not predict it.
+@tbl-novelty sets these results beside earlier work.
 
 ```{r}
 #| label: tbl-novelty
 #| tbl-cap: "What was known and what this paper adds."
-#| eval: false
 
-novelty_table(data.frame(Element = c("[FILL]"), `Prior literature` = c("[FILL]"), `This paper` = c("[FILL]"), check.names = FALSE))
+novelty_table(data.frame(
+  Element = c("Single-sample correlation", "Module connectivity", "LIONESS over repeated samples", "Prediction from LIONESS metrics"),
+  `Prior literature` = c("The product of standardized deviations as a single-sample correlation [@yu2017iena]",
+                         "In a network of all samples, connectivity has an eigengene-based counterpart [@horvath2008geometric]",
+                         "LIONESS networks are built per sample from aggregate networks [@kuijjer2019lioness]",
+                         "Edges tested between patient groups [@kuijjer2019lionessr]"),
+  `This paper` = c("The exact closed form of the LIONESS edge and its expansion",
+                   "One sample's connectivity and crosstalk as its own expression terms",
+                   "The stability of network metrics over visits equals that of their first-order form",
+                   "LIONESS metrics equal first-order metrics in prediction and lose the sign of expression"),
+  check.names = FALSE))
 ```
 
-[FILL: limitations.]
+The study has limits.
+The simulation used disjoint pathways of equal size, independent factors, normal noise, and equal numbers of visits; real gene sets overlap and real visits are irregular.
+Person-level differences in gene levels were independent across genes.
+The thresholds of the graph metrics were one fixed value and one proportion.
+The application has not yet been run. [TO CONFIRM: the supervisor's confirmation of the re-scope and of the paper's message]{.tc}
 
-[FILL: future work, one item per out-of-scope entry.]
+Several questions were left out on purpose.
+Lupus was not compared with rheumatoid arthritis or with healthy controls, single-sample methods other than LIONESS were not studied, and drug effects, ancestry, sex, and subtypes were not modelled.
+No dataset was merged with another study.
 
 # Statement on AI use {.unnumbered}
 
@@ -355,7 +543,7 @@ novelty_table(data.frame(Element = c("[FILL]"), `Prior literature` = c("[FILL]")
 
 # Data and code availability {.unnumbered}
 
-[FILL: the data source with accession or URL; the code repository URL. The code is organized as a research compendium (@marwick2018).]
+The expression data are Gene Expression Omnibus series GSE65391. The code is organized as a research compendium [@marwick2018]. [TO CONFIRM: the repository URL]{.tc}
 
 # References {.unnumbered}
 
