@@ -1,0 +1,6 @@
+Residual stability (ICC) after the first-order terms, mean of 10:
+   ifn   neut  lymph 
+ 0.040  0.091 -0.005 
+MCSE:
+   ifn   neut  lymph 
+0.0144 0.0252 0.0102 
