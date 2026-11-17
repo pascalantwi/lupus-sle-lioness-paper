@@ -31,8 +31,12 @@ sledai <- as.numeric(q$sledai)
 bg3 <- ReadBloodGen3(file.path(raw, "BloodGen3Module_1.20.0.tar.gz"))
 x_all <- ExpressionByGene(sm$table[, q$geo], platform,
                           unique(bg3$modules$gene))
-# a gene with no variation cannot be standardized
+# a gene with no variation cannot be standardized; a gene that varies in
+# one sample only has no variance without it, so its LIONESS edges are
+# undefined (protocol.md, section 8)
 x_all <- x_all[, apply(x_all, 2, stats::sd) > 0, drop = FALSE]
+z_max <- apply(StandardizeN(x_all)$z^2, 2, max)
+x_all <- x_all[, z_max < nrow(x_all) - 1 - 1e-8, drop = FALSE]
 
 Sys.setenv(OPENBLAS_NUM_THREADS = "1", OMP_NUM_THREADS = "1")
 cl <- makePSOCKcluster(n_workers)

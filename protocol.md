@@ -96,6 +96,7 @@ The application (dataset, modules, and procedure) is in section 9.
   - Gradient placement: for each analysed module, the stability of its score over visits and the share of variance of its first principal component.
   - Figures: the LIONESS gene network and pathway network of two children (the highest and the median mean interferon score), visits 1 and 2.
   - Seed 21461118; script `analysis/04_application.R`, results `results/application_*.rds`.
+- 2026-11-17, after a first application run stopped before writing any result. A gene that varies in only one sample has zero variance without it, so its leave-one-out correlation, and its LIONESS edge, is undefined (supplement S1.1: $1 - \varepsilon z_{qi}^2 = 0$). Such genes are dropped, with genes of zero variance. In GSE65391 this removed 2 of 10,086 matched genes, none in the four pathways.
 
 ## 9. Application
 
