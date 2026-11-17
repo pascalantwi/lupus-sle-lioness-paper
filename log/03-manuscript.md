@@ -94,3 +94,18 @@ The study has two parts. S1 (describe and explain) varies, one at a time around 
 
 - The first calibration run (2026-11-17) computed every replicate and then stopped with a parse error: the agent edited `analysis/03_simulation.R` (the settings in the run file) while Rscript was still reading it. Nothing was written. Rerun unchanged: 5 effects x 12 replicates in 386 s. Lesson: never edit a script while it runs.
 - Calibration result and the chosen effects: `protocol.md`, section 8 (0.15, 0.18, 0.21, 0.24).
+- Quick run: `Rscript analysis/03_simulation.R --run quick --reps 10`, 18 settings x 10 replicates in 613 s; `results/run_info.rds` says `run = "quick"`.
+
+## Step 3.4: drafting
+
+- Carried from earlier files: the closed forms (proposal 14.1, pilot-g report), the paper test's framing. Written new: the exact closed form of the LIONESS edge (S1.1, found while writing the Methods and checked numerically to 1e-14, now `LionessEdgesClosedForm()` with a test), its expansion (S1.2), strength and total weight (S1.4, with a test), Methods, Design, Results, Discussion, Abstract, the AI-use statement (moved into the Methods, as BMC's policy asks).
+- The manuscript loads the package (`devtools::load_all()`) so its chunks call the figure functions in `R/`; every figure is one plot (the user's rule): two gene-network diagrams, two pathway-network diagrams, two trajectories, metric stability, connectivity against squared score, the stability gradient, power.
+- The GSE65391 sizes and stabilities are read from `pilot-d/results/data_summary.rds`; the application script will write them to `results/` (marker in the draft).
+
+## Revision pass
+
+1. Paragraph pass. Results, aim 1: the first sentence described a figure; it now states the answer ("Every LIONESS metric changed from visit to visit, and none was stable"), and the figures follow. Aim 2 and aim 3 opened with a number; each now opens with its answer. Fingerprinting: "identified 0.018 of the people" became "fingerprinting accuracy was ... against ... by chance", since a reader cannot judge the share without chance.
+2. Sentence pass. Zero and one rates printed as "at most 0.00" and "at least 1.00"; the sentences now read "in no replicate" and "in every replicate", built from the numbers. "Co-expression is usually summarized" and "from no stable driver to a very stable one" reworded (checker words).
+3. Cross-checks. The Abstract's numbers (largest difference, $R^2$, residual stability, power, equivalence) come from the same expressions as the Results. The Introduction's three questions are answered in the Discussion in order (change over visits; expression; prediction). Table 2's labels were garbled (pathway suffixes stripped wrongly); rebuilt from a fixed label map.
+4. Second pass not due: no section changed more than three sentences after the first pass.
+- Checker: 0 errors; one warning kept: bib entries never cited (pregnancy-scope and stage-1 entries); `build-bib.py --qmd` drops them at the reference review.
