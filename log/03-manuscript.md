@@ -89,3 +89,8 @@ The study has two parts. S1 (describe and explain) varies, one at a time around 
 - Refinements made while writing `protocol.md` (before any run): (1) feature set C is the metrics of the first-order network rather than the closed-form terms, because degree, betweenness, transitivity, and the counts have no closed form; the terms remain the diagnostic of aim 2. (2) Graph metrics (degree, betweenness, transitivity, number of nodes) are computed on the thresholded graph, at a fixed threshold ($\lvert e\rvert > 1$, as pilot-e) and a proportional one (the top 5% of pairs), so that no result rests on one threshold; betweenness on the full weighted graph would add about 5 s per replicate. (3) The superiority test uses a child-level bootstrap instead of a permutation, which would refit every model per permutation.
 - `protocol.md` committed alone (3007d5b); the code (dd9d60e); `devtools::check()` clean.
 - A first full-size S2 replicate during timing (effect 0.3) gave same-visit concordance 0.55 for the pathway scores and 0.48 for the LIONESS metrics: the metrics carry squared expression and lose its sign. A debugging observation, not a result.
+
+## Step 3.3: calibration and quick run
+
+- The first calibration run (2026-11-17) computed every replicate and then stopped with a parse error: the agent edited `analysis/03_simulation.R` (the settings in the run file) while Rscript was still reading it. Nothing was written. Rerun unchanged: 5 effects x 12 replicates in 386 s. Lesson: never edit a script while it runs.
+- Calibration result and the chosen effects: `protocol.md`, section 8 (0.15, 0.18, 0.21, 0.24).

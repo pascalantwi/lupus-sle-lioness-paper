@@ -17,7 +17,7 @@ devtools::load_all(here::here(), quiet = TRUE)
 library(parallel)
 
 # ---- parameter block (protocol.md, sections 2 and 6) -------------------------
-beta <- c(0, 0.15, 0.3, 0.45, 0.6)  # S2 activity effects; set by calibration
+beta <- c(0, 0.15, 0.18, 0.21, 0.24)  # S2 effects (protocol.md, section 8)
 n_rep_production <- 100L
 n_workers <- 3L                     # the core cap
 n_boot <- 200L                      # bootstrap resamples of the tests

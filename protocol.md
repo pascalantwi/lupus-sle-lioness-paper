@@ -84,7 +84,7 @@ The application (dataset, modules, and procedure) is in section 9.
 
 ## 8. Dated entries before production
 
-(none yet)
+- 2026-11-17, before the quick run. Calibration (`Rscript analysis/03_simulation.R --calibrate`, `results/calibration.rds`; 12 replicates per effect, seeds offset by 500000 from the study's): power of B's superiority test for same-visit activity 0.00 at 0.05 and 0.10, 0.25 at 0.15, 0.42 at 0.20, 0.92 at 0.25 (MCSE up to 0.15). Interpolated: $\beta_1, \dots, \beta_4 = 0.15, 0.18, 0.21, 0.24$. A and C were declared above one half in no replicate at any effect.
 
 ## 9. Application
 
