@@ -313,23 +313,30 @@ KnownAnswerChecksG <- function(summaries = NULL, seed = 1L) {
 #' pathway scores, and the full edge vectors of every visit of a few
 #' people.
 #'
-#' @param design_row One row of a design table with the columns of
-#'   [PilotGDesign()].
+#' @param design_row One row of [PilotGDesign()] or of [StudyDesign()]
+#'   (then simulated by [SimulateStudyCohort()]).
 #' @param rep Replicate index; the seed is the row's seed plus `rep`.
 #' @param people_kept How many people's edges to keep: the person with the
 #'   highest and the one with the lowest mean interferon score, then the
 #'   people nearest the median, in that order.
 #' @return A list: `person`, `visit`, `metrics` (samples by blocks),
 #'   `score2` (samples by pathways), `kept` (the people kept), `edges` (their
-#'   samples by pairs), `edges_person`, `edges_visit`, and `sets`.
+#'   samples by pairs), `edges_person`, `edges_visit`, `sets`, and for a
+#'   study row `lioness_metrics` ([LionessMetrics()]) and `activity`.
 #' @export
 ExampleNetworks <- function(design_row, rep = 1L, people_kept = 2L) {
   set.seed(design_row$seed + rep)
-  coh <- SimulatePathwayCohort(design_row$people, design_row$visits,
-                               design_row$kappa_ifn, design_row$kappa_neut,
-                               design_row$kappa_lymph, design_row$kappa_pb,
-                               design_row$tau)
-  sets <- PathwaySetsG()
+  study <- "load_ifn" %in% names(design_row)
+  if (study) {
+    coh <- SimulateStudyCohort(design_row)
+    sets <- coh$sets
+  } else {
+    coh <- SimulatePathwayCohort(design_row$people, design_row$visits,
+                                 design_row$kappa_ifn, design_row$kappa_neut,
+                                 design_row$kappa_lymph, design_row$kappa_pb,
+                                 design_row$tau)
+    sets <- PathwaySetsG()
+  }
   e <- LionessEdges(coh$x)
   met <- PathwayMetrics(e, PathwayBlocks(sets, ncol(coh$x)))
   z <- StandardizeN(coh$x)$z
@@ -343,5 +350,7 @@ ExampleNetworks <- function(design_row, rep = 1L, people_kept = 2L) {
   list(person = coh$person, visit = coh$visit, metrics = met,
        score2 = score2, kept = kept, edges = e[rows, , drop = FALSE],
        edges_person = coh$person[rows], edges_visit = coh$visit[rows],
-       sets = sets)
+       sets = sets,
+       lioness_metrics = if (study) LionessMetrics(e, sets) else NULL,
+       activity = if (study) coh$activity else NULL)
 }

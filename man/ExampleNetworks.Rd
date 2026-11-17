@@ -7,8 +7,8 @@
 ExampleNetworks(design_row, rep = 1L, people_kept = 2L)
 }
 \arguments{
-\item{design_row}{One row of a design table with the columns of
-\code{\link[=PilotGDesign]{PilotGDesign()}}.}
+\item{design_row}{One row of \code{\link[=PilotGDesign]{PilotGDesign()}} or of \code{\link[=StudyDesign]{StudyDesign()}}
+(then simulated by \code{\link[=SimulateStudyCohort]{SimulateStudyCohort()}}).}
 
 \item{rep}{Replicate index; the seed is the row's seed plus \code{rep}.}
 
@@ -19,7 +19,8 @@ people nearest the median, in that order.}
 \value{
 A list: \code{person}, \code{visit}, \code{metrics} (samples by blocks),
 \code{score2} (samples by pathways), \code{kept} (the people kept), \code{edges} (their
-samples by pairs), \code{edges_person}, \code{edges_visit}, and \code{sets}.
+samples by pairs), \code{edges_person}, \code{edges_visit}, \code{sets}, and for a
+study row \code{lioness_metrics} (\code{\link[=LionessMetrics]{LionessMetrics()}}) and \code{activity}.
 }
 \description{
 Simulates one cohort of a design row, computes its LIONESS edges, and
