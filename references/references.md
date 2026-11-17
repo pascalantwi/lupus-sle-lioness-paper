@@ -377,3 +377,82 @@ Carried on 2026-11-13 from the first LIONESS project (`work-flow-for-lioness-pap
 - doi: 10.1038/s41467-026-73218-6
 - record: Europe PMC record PMID 42215465, opened 2026-11-16
 - full_text: abstract only (PMC13392353 is open); cited as supporting
+
+### altman2021bloodgen3
+
+> Altman, M. C., Rinchai, D., Baldwin, N., Toufiq, M., Whalen, E., Garand, M., Syed Ahamed Kabeer, B., Alfaki, M., Presnell, S. R., Khaenam, P., Ayllón-Benítez, A., Mougin, F., Thébault, P., Chiche, L., Jourde-Chiche, N., Phillips, J. T., Klintmalm, G., O'Garra, A., Berry, M., ..., & Chaussabel, D. (2021). Development of a fixed module repertoire for the analysis and interpretation of blood transcriptome data. *Nature Communications*, 12(1), 4385. https://doi.org/10.1038/s41467-021-24584-w
+
+- type: article
+- author: Altman, M. C. and Rinchai, D. and Baldwin, N. and Toufiq, M. and Whalen, E. and Garand, M. and Syed Ahamed Kabeer, B. and Alfaki, M. and Presnell, S. R. and Khaenam, P. and Ayllón-Benítez, A. and Mougin, F. and Thébault, P. and Chiche, L. and Jourde-Chiche, N. and Phillips, J. T. and Klintmalm, G. and O'Garra, A. and Berry, M. and Bloom, C. and Wilkinson, R. J. and Graham, C. M. and Lipman, M. and Lertmemongkolchai, G. and Bedognetti, D. and Thiebaut, R. and Kheradmand, F. and Mejias, A. and Ramilo, O. and Palucka, K. and Pascual, V. and Banchereau, J. and Chaussabel, D.
+- title: Development of a fixed module repertoire for the analysis and interpretation of blood transcriptome data
+- journal: Nature Communications
+- year: 2021
+- volume: 12
+- number: 1
+- pages: 4385
+- doi: 10.1038/s41467-021-24584-w
+- record: Crossref record for the DOI, opened 2026-11-17; Europe PMC record PMID 34282143, opened 2026-11-17
+- full_text: https://europepmc.org/article/PMC/PMC8289976 (open, CC BY 4.0), read 2026-11-17
+
+### rinchai2021bloodgen3module
+
+> Rinchai, D., Roelands, J., Toufiq, M., Hendrickx, W., Altman, M. C., Bedognetti, D., & Chaussabel, D. (2021). BloodGen3Module: blood transcriptional module repertoire analysis and visualization using R. *Bioinformatics*, 37(16), 2382-2389. https://doi.org/10.1093/bioinformatics/btab121
+
+- type: article
+- author: Rinchai, D. and Roelands, J. and Toufiq, M. and Hendrickx, W. and Altman, M. C. and Bedognetti, D. and Chaussabel, D.
+- title: BloodGen3Module: blood transcriptional module repertoire analysis and visualization using R
+- journal: Bioinformatics
+- year: 2021
+- volume: 37
+- number: 16
+- pages: 2382-2389
+- doi: 10.1093/bioinformatics/btab121
+- record: Crossref record for the DOI, opened 2026-11-17; Europe PMC record PMID 33624743, opened 2026-11-17; Bioconductor package page (BloodGen3Module 1.20.0, GPL-2), opened 2026-11-17
+- full_text: abstract only (PMC8388021 is open); cited as definitional for the module lists
+
+### liberzon2015hallmark
+
+> Liberzon, A., Birger, C., Thorvaldsdóttir, H., Ghandi, M., Mesirov, J. P., & Tamayo, P. (2015). The Molecular Signatures Database Hallmark gene set collection. *Cell Systems*, 1(6), 417-425. https://doi.org/10.1016/j.cels.2015.12.004
+
+- type: article
+- author: Liberzon, A. and Birger, C. and Thorvaldsdóttir, H. and Ghandi, M. and Mesirov, J. P. and Tamayo, P.
+- title: The Molecular Signatures Database Hallmark gene set collection
+- journal: Cell Systems
+- year: 2015
+- volume: 1
+- number: 6
+- pages: 417-425
+- doi: 10.1016/j.cels.2015.12.004
+- record: Crossref record for the DOI, opened 2026-11-17; Europe PMC record PMID 26771021, opened 2026-11-17
+- full_text: abstract only (PMC4707969 is open); cited as definitional for the gene sets
+
+### horvath2008geometric
+
+> Horvath, S., & Dong, J. (2008). Geometric interpretation of gene coexpression network analysis. *PLoS Computational Biology*, 4(8), e1000117. https://doi.org/10.1371/journal.pcbi.1000117
+
+- type: article
+- author: Horvath, S. and Dong, J.
+- title: Geometric interpretation of gene coexpression network analysis
+- journal: PLoS Computational Biology
+- year: 2008
+- volume: 4
+- number: 8
+- pages: e1000117
+- doi: 10.1371/journal.pcbi.1000117
+- record: Crossref record for the DOI, opened 2026-11-17; Europe PMC record PMID 18704157, opened 2026-11-17
+- full_text: https://europepmc.org/article/PMC/PMC2446438 (open, CC BY 4.0), read 2026-11-17
+
+### langfelder2008wgcna
+
+> Langfelder, P., & Horvath, S. (2008). WGCNA: an R package for weighted correlation network analysis. *BMC Bioinformatics*, 9, 559. https://doi.org/10.1186/1471-2105-9-559
+
+- type: article
+- author: Langfelder, P. and Horvath, S.
+- title: WGCNA: an R package for weighted correlation network analysis
+- journal: BMC Bioinformatics
+- year: 2008
+- volume: 9
+- pages: 559
+- doi: 10.1186/1471-2105-9-559
+- record: Crossref record for the DOI, opened 2026-11-17; Europe PMC record PMID 19114008, opened 2026-11-17
+- full_text: abstract only (PMC2631488 is open); cited as supporting

@@ -63,3 +63,21 @@ test_that("PathwayReplicate returns the pre-registered quantities", {
   expect_true(all(c("expl_ifn", "agg_ifn", "personal_vs_null") %in%
                     s$quantity))
 })
+
+test_that("ExampleNetworks keeps every visit of the chosen people", {
+  row <- PilotGDesign()[2, ]
+  row$people <- 20L
+  row$visits <- 3L
+  ex <- ExampleNetworks(row, 1, people_kept = 2)
+  expect_length(ex$kept, 2)
+  expect_equal(nrow(ex$edges), 6)
+  expect_equal(ncol(ex$edges), 90 * 89 / 2)
+  expect_equal(dim(ex$metrics), c(60L, 21L))
+  # the kept edges are rows of the cohort's LIONESS edges: their pathway
+  # means equal the stored metrics
+  blocks <- PathwayBlocks(ex$sets, 90)
+  i <- which(ex$person == ex$kept[1])[1]
+  j <- which(ex$edges_person == ex$kept[1])[1]
+  expect_equal(mean(ex$edges[j, blocks$within_ifn]),
+               unname(ex$metrics[i, "within_ifn"]))
+})
