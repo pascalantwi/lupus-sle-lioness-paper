@@ -123,3 +123,20 @@ The study has two parts. S1 (describe and explain) varies, one at a time around 
 - The workflow's step 1 names `analysis/01_simulation.R`; a re-scoped project already holding 01 and 02 scripts needs another number. Worth a sentence in `03-manuscript.md`.
 - The skeleton's separate "Statement on AI use" section conflicts with BMC's rule that AI use is described in the Methods; the profile's placement was followed, as the stage file says.
 - Clone proof (2026-11-17): a fresh clone with `data/raw/` deleted; `renv::restore()` clean; `analysis/00_download.R` refetched every file, checksums equal; tests 185 pass (the acceptance test skipped, as gated); `devtools::check()` 0 errors, 0 warnings, 0 notes; the quick run rerun (623 s) gave per-setting summaries equal to the committed ones to 1e-12; the manuscript rendered. No Python in this project, so no `uv sync`.
+
+## Revision 1 (2026-11-17)
+
+The user answered open points 1 and 2 ("2 and 1"): the BloodGen3 download and the module choice approved.
+
+| Comment | Change | Where |
+|---|---|---|
+| Download approved | BloodGen3Module 1.20.0 source package (Bioconductor 3.23, GPL-2) added to `analysis/00_download.R`; module lists read from its `R/sysdata.rda` as data | `analysis/00_download.R`, `R/application.R` |
+| Module choice approved | Before any edge: the four pathways chosen by BloodGen3 function label (interferon 6 modules, neutrophil 4, lymphocyte 4, plasma cells 5); modules with at least 10 genes on the array | `protocol.md`, section 8 (b713de2) |
+| (run) | First run stopped: two genes vary in one sample only, so their LIONESS edges are undefined; dropped (protocol entry). Second run stopped on an unforced argument in a closure sent to workers; fixed with a cluster test. Third run: 382 modules, 535 network genes, 345 s | `analysis/04_application.R`, `results/application_*.rds` |
+| (results) | Application section written; Data section rewritten; Abstract and Discussion extended; five figures (two gene networks, two pathway networks of one child, module stabilities) and one table | `manuscript/manuscript.qmd` |
+
+Pre-registered application claims (`protocol.md`, section 7): claim 5 failed narrowly (2 of 382 modules below $R^2 = 0.99$ on the first-order terms, lowest 0.981; all at least 0.9992 with fourth-order terms), stated in the Results with a marker; claim 6 passed (largest stability difference 0.006); claim 7 passed (equivalence of LIONESS and first-order metrics declared for same-visit and next-visit SLEDAI). Not foreseen by the simulation: the residual beyond fourth order, under 0.1 percent of the variance, kept a median stability of 0.08 over modules; marked in the Results and named as a limitation.
+
+Check after the run (not pre-registered), behind one sentence of the Application: in the example child, the gene touched by most of the 150 strongest edges (146 at visit 2, 35 at visit 1) was in both visits the gene with the largest absolute standardized expression (TIPIN at 10.8 at visit 2; CHEK1 at 5.6 at visit 1), as the closed form's product term implies.
+
+Figure functions: `PlotSampleNetwork()` and `PlotPathwayNetwork()` take pathway labels and leave room for side labels; `PlotModuleStability()` added. Checker: 0 errors; the uncited-bib warning kept as before.

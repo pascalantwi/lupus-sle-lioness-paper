@@ -50,3 +50,13 @@ test_that("the study figure functions draw one plot each", {
                     c(icc_raw_conn_ifn = "connectivity"), ref = function(k) k^2)
   expect_equal(dim(m), c(2L, 1L))
 })
+
+test_that("PlotModuleStability draws one plot", {
+  f <- tempfile(fileext = ".png")
+  grDevices::png(f)
+  on.exit(grDevices::dev.off(), add = TRUE)
+  set.seed(72)
+  x <- runif(20)
+  expect_gt(PlotModuleStability(x, x + rnorm(20, sd = 0.01),
+                                highlight = x > 0.5), 0.9)
+})

@@ -11,7 +11,7 @@ numbers and markers are apparatus and are stripped in final mode.
 
 - Run: **quick**, 10 replicates per cell over 18 cells, 2026-11-17
   05:28:40; the simulation study of protocol.md.
-- Markers: 11 to confirm, 0 claims without a usable source, 0 unfilled
+- Markers: 9 to confirm, 0 claims without a usable source, 0 unfilled
   slots (listed at the end).
 
 **Status** (the drafting log’s opening line):
@@ -55,7 +55,11 @@ expression terms, and the residual’s stability was at most
 added. Pathway scores predicted same-visit activity, with power up to
 <span class="prov-quick">0.80</span>, while LIONESS metrics were
 declared predictive in no replicate at any effect and were equivalent to
-first-order metrics in every replicate.
+first-order metrics in every replicate. In 131 children with lupus
+followed over 897 visits (GSE65391), LIONESS metrics of BloodGen3
+pathways were as stable as their first-order versions (largest
+difference 0.0058), and predicted SLEDAI no better (concordance 0.523
+against 0.628 for module scores).
 
 **Conclusions.** The stability of a LIONESS network over a person’s
 visits is the stability of the person’s expression. A network metric
@@ -242,14 +246,24 @@ The application uses the longitudinal study of children with systemic
 lupus erythematosus of \[[1](#ref-banchereau2016personalized)\], Gene
 Expression Omnibus series GSE65391, whole-blood expression on the
 Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at
-every visit. The analysis keeps the 131 children with two or more
-visits, 897 visits in all, and the authors’ split into training and test
-children. Pathways are modules of the BloodGen3 repertoire, built from
-co-clustering in blood transcriptomes of sixteen immunological and
-physiological states \[[5](#ref-altman2021bloodgen3)\], taken from its R
-package \[[11](#ref-rinchai2021bloodgen3module)\]. <span class="tc">TO
-CONFIRM: the download of the module list and the minimum module
-size</span>
+every visit. The analysis kept the 131 children with two or more visits,
+897 visits in all, ordered by time within child, and the authors’ split
+into training and test children. Probes were mapped to gene symbols with
+the platform table, keeping for each gene the probe with the highest
+mean expression; genes with no variance, or with variance in a single
+sample only (for which the leave-one-out correlation is undefined), were
+dropped, leaving 10,084 genes that belong to a module. Modules come from
+the BloodGen3 repertoire, built from co-clustering in blood
+transcriptomes of sixteen immunological and physiological states
+\[[5](#ref-altman2021bloodgen3)\], taken from its R package
+\[[11](#ref-rinchai2021bloodgen3module)\]; the 382 modules with at least
+10 genes on the array were analysed one by one. The network was built
+over the genes of four pathways chosen by their BloodGen3 function label
+before any network was computed: interferon (103 genes), neutrophil
+(145), lymphocyte (181), and plasma cell (106). Each child’s LIONESS
+network and its first-order version were computed sample by sample from
+the exact closed form, and the metrics, feature sets, and tests were
+those of the simulation study, with SLEDAI as the activity.
 
 ## Software and reproducibility
 
@@ -619,20 +633,134 @@ and the share of replicates in which A and C were declared equivalent.
 
 ## Data and comparison
 
-The application follows the 131 children of GSE65391 with two or more
-visits. In these children the interferon score had a within-child
-intraclass correlation of 0.55, the base of the simulation’s gradient,
-and SLEDAI one of 0.39. <span class="tc">TO CONFIRM: the BloodGen3
-module list must be downloaded before the LIONESS networks of these
-children are computed; the claims of protocol.md, section 7, are
-pre-registered for it</span>
+GSE65391 placed the children on the simulation’s gradients. In the 131
+children with repeated visits, the interferon score had a within-child
+intraclass correlation of 0.55, the base setting’s value, and SLEDAI one
+of 0.39. Across the 382 modules, the stability of the module score had
+median 0.30 and the first principal component explained a median share
+of 0.27 of the module’s variance.
 
-## What the application will show
+## A child’s LIONESS network over visits is the child’s expression
 
-The application tests whether a user who reads a child’s LIONESS network
-metrics over visits learns anything that the child’s module expression
-does not already say. <span class="tc">TO CONFIRM: the analysis has not
-been run</span>
+A user reading the LIONESS networks of these children sees networks that
+change from visit to visit and metrics that follow the children’s
+expression. The LIONESS network of the child with the highest mean
+interferon score differed between the first two visits
+(<a href="#fig-app-net-v1" class="quarto-xref">Figure 11</a>,
+<a href="#fig-app-net-v2" class="quarto-xref">Figure 12</a>), as did its
+pathway summary
+(<a href="#fig-app-path-v1" class="quarto-xref">Figure 13</a>,
+<a href="#fig-app-path-v2" class="quarto-xref">Figure 14</a>). At the
+second visit, 146 of the 150 strongest edges touched one plasma cell
+gene, against 35 at the first: the network was organized around the gene
+whose expression lay farthest from its mean, as the product term of the
+closed form implies. Over children, interferon connectivity had a
+stability of 0.304, against 0.349 for the squared interferon score; the
+number of edges had 0.278, the number of nodes 0.236, transitivity
+0.184, the interferon genes’ degree 0.260, and their betweenness 0.203
+(<a href="#tbl-app" class="quarto-xref">Table 4</a>). For every metric,
+the stability on the LIONESS networks differed from the stability on the
+first-order networks by at most 0.0058. Across modules, the stability of
+connectivity followed that of the squared module score (correlation
+0.91, <a href="#fig-app-modules" class="quarto-xref">Figure 15</a>).
+Connectivity was linear in its first-order terms with $R^2$ of at least
+0.981; 2 of the 382 modules fell below 0.99, and with the fourth-order
+terms every module reached 0.9992. The residual after the fourth-order
+terms, less than 0.08 percent of the variance, still had a median
+stability of 0.08 over modules. <span class="tc">TO CONFIRM: the
+pre-registered claim that every module has R squared of at least 0.99 on
+the first-order terms failed for two modules; and the small stable
+residual in real data, unlike the simulation, is either higher-order
+expression or person-specific co-expression</span>
+
+The LIONESS metrics identified 0.122 of the children from their first to
+their second visit, the first-order metrics 0.122, and the four pathway
+scores 0.069, against 0.008 by chance. Same-visit SLEDAI was predicted
+by the pathway scores (concordance 0.628, declared above one half) but
+not by the LIONESS metrics (0.523) or the first-order metrics (0.524),
+and the LIONESS and first-order metrics were declared equivalent. For
+next-visit SLEDAI, every feature set reached the concordance of the
+current SLEDAI alone (0.760). On the authors’ test children, the
+concordance was 0.551 for the LIONESS metrics, 0.557 for the first-order
+metrics, and 0.622 for the pathway scores.
+
+<div id="fig-app-net-v1">
+
+![](manuscript_files/figure-commonmark/fig-app-net-v1-1.png)
+
+Figure 11: The LIONESS network of the GSE65391 child with the highest
+mean interferon score at the first visit. Genes of the four pathways sit
+on four circles; the strongest edges are drawn, red positive and blue
+negative, with width on a scale shared with the next figure.
+
+</div>
+
+<div id="fig-app-net-v2">
+
+![](manuscript_files/figure-commonmark/fig-app-net-v2-1.png)
+
+Figure 12: The same child’s LIONESS network at the second visit, drawn
+as in the previous figure.
+
+</div>
+
+<div id="fig-app-path-v1">
+
+![](manuscript_files/figure-commonmark/fig-app-path-v1-1.png)
+
+Figure 13: The same child’s LIONESS network at the first visit,
+summarized by pathway: node area is the pathway’s connectivity (hollow
+when negative) and line width the crosstalk, on scales shared with the
+next figure.
+
+</div>
+
+<div id="fig-app-path-v2">
+
+![](manuscript_files/figure-commonmark/fig-app-path-v2-1.png)
+
+Figure 14: The same child’s pathway network at the second visit, drawn
+as in the previous figure.
+
+</div>
+
+<div id="fig-app-modules">
+
+![](manuscript_files/figure-commonmark/fig-app-modules-1.png)
+
+Figure 15: Stability over visits of each BloodGen3 module’s LIONESS
+connectivity against the stability of its squared module score,
+GSE65391; one point per module, interferon modules highlighted, with the
+identity line.
+
+</div>
+
+<div id="tbl-app">
+
+Table 4: LIONESS metrics of the four-pathway network in GSE65391:
+stability over visits on the LIONESS networks and on their first-order
+versions.
+
+<div class="cell-output-display">
+
+| Metric                             | LIONESS | First order |
+|------------------------------------|---------|-------------|
+| Interferon connectivity            | 0.304   | 0.304       |
+| Neutrophil connectivity            | 0.222   | 0.220       |
+| Lymphocyte connectivity            | 0.258   | 0.258       |
+| Plasma cell connectivity           | 0.354   | 0.354       |
+| Interferon - Plasma cell crosstalk | 0.196   | 0.196       |
+| Total edge weight                  | 0.107   | 0.107       |
+| Number of edges                    | 0.278   | 0.278       |
+| Number of nodes                    | 0.236   | 0.236       |
+| Transitivity                       | 0.184   | 0.184       |
+| Interferon degree                  | 0.260   | 0.260       |
+| Interferon betweenness             | 0.203   | 0.203       |
+| Interferon strength                | 0.166   | 0.166       |
+
+</div>
+
+</div>
 
 # Discussion
 
@@ -649,18 +777,21 @@ first-order network, connectivity and crosstalk were their expression
 terms, and the stable part that remained beyond first order was the
 next-order expression term. Pathway connectivity was more stable than
 single edges because it averaged the edges into a squared pathway score.
+The children of GSE65391 behaved in the same way: their LIONESS metrics
+were as stable as the first-order metrics, identified children no
+better, and predicted disease activity no better than the module scores.
 For a user, a change in a child’s LIONESS network from one visit to the
 next is a change in that child’s expression, and a network metric should
 be compared with the expression terms of its closed form before it is
 read as co-expression. LIONESS metrics also lost the sign of expression:
 activity driven by a factor’s level was predicted by pathway scores,
 while the metrics, which carry squared scores, did not predict it.
-<a href="#tbl-novelty" class="quarto-xref">Table 4</a> sets these
+<a href="#tbl-novelty" class="quarto-xref">Table 5</a> sets these
 results beside earlier work.
 
 <div id="tbl-novelty">
 
-Table 4: What was known and what this paper adds.
+Table 5: What was known and what this paper adds.
 
 <div class="cell-output-display">
 
@@ -679,10 +810,11 @@ The study has limits. The simulation used disjoint pathways of equal
 size, independent factors, normal noise, and equal numbers of visits;
 real gene sets overlap and real visits are irregular. Person-level
 differences in gene levels were independent across genes. The thresholds
-of the graph metrics were one fixed value and one proportion. The
-application has not yet been run. <span class="tc">TO CONFIRM: the
-supervisor’s confirmation of the re-scope and of the paper’s
-message</span>
+of the graph metrics were one fixed value and one proportion. In real
+data the residual beyond the fourth-order terms kept some stability; its
+source, higher-order expression or person-specific co-expression, is not
+separated here. <span class="tc">TO CONFIRM: the supervisor’s
+confirmation of the re-scope and of the paper’s message</span>
 
 Several questions were left out on purpose. Lupus was not compared with
 rheumatoid arthritis or with healthy controls, single-sample methods
@@ -952,6 +1084,11 @@ now, against the production run that replaces it.
 | fig-conn-score | connectivity against squared score | quick | 1 cells, 1 replicates | the same cohort |  |
 | fig-gradient | stability along the factor’s stability | quick | 5 cells, 10 replicates | the five settings, production replicates |  |
 | fig-power | type I error and power | quick | 5 cells, 10 replicates | the S2 settings, production replicates |  |
+| fig-app-net-v1 | a child’s LIONESS network, visit 1 | production | NA cells, NA replicates | the application |  |
+| fig-app-net-v2 | a child’s LIONESS network, visit 2 | production | NA cells, NA replicates | the application |  |
+| fig-app-path-v1 | a child’s pathway network, visit 1 | production | NA cells, NA replicates | the application |  |
+| fig-app-path-v2 | a child’s pathway network, visit 2 | production | NA cells, NA replicates | the application |  |
+| fig-app-modules | module stabilities | production | NA cells, NA replicates | the application |  |
 
 </div>
 
@@ -967,10 +1104,8 @@ source, with its section.
 | TO CONFIRM | affiliation | (front matter) |
 | TO CONFIRM | second author, the supervisor | (front matter) |
 | TO CONFIRM | affiliation | (front matter) |
-| TO CONFIRM | the download of the module list and the minimum module size | Data |
 | TO CONFIRM | whether the journal wants the figure legends to name the AI-assisted code | Software and reproducibility |
-| TO CONFIRM | the BloodGen3 module list must be downloaded before the LIONESS networks of these children are computed; the claims of protocol.md, section 7, are pre-registered for it | Data and comparison |
-| TO CONFIRM | the analysis has not been run | What the application will show |
+| TO CONFIRM | the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression | A child’s LIONESS network over visits is the child’s expression |
 | TO CONFIRM | the supervisor’s confirmation of the re-scope and of the paper’s message | Discussion |
 | TO CONFIRM | the repository URL | Data and code availability |
 

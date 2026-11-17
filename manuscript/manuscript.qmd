@@ -72,7 +72,29 @@ if (!params$draft || params$memo) check_no_markers("manuscript.qmd")
 sm <- read_results("cell_summaries.rds")
 design <- read_results("design.rds")
 ex <- read_results("example_networks.rds")
-dat <- readRDS(file.path(project_root(), "pilot-d", "results", "data_summary.rds"))
+app_s <- read_results("application_summary.rds")
+app_m <- read_results("application_modules.rds")
+app_i <- read_results("application_metrics.rds")
+app_p <- read_results("application_prediction.rds")
+app_e <- read_results("application_examples.rds")
+pa <- function(x, d = 3) prov(x, d, run = "production")
+ai <- function(m, col = "raw") app_i$icc[[col]][app_i$icc$metric == m]
+app_d_max <- max(abs(app_i$icc$d), na.rm = TRUE)
+app_r2_low <- sum(app_m$r2_1 < 0.99)
+app_ifn_mod <- grepl("Interferon", app_m$fun)
+app_kid <- app_e$kids[1]
+app_rows <- function(v) which(app_e$person == app_kid & app_e$visit == v)
+app_w <- grep("^conn_", colnames(app_e$metrics), value = TRUE)
+app_c <- grep("^cross_", colnames(app_e$metrics), value = TRUE)
+app_sc_e <- max(abs(app_e$edges))
+app_sc_conn <- max(abs(app_e$metrics[, app_w]))
+app_sc_cross <- max(abs(app_e$metrics[, app_c]))
+app_pr <- PairIndex(length(unlist(app_e$sets)))
+app_hub <- vapply(1:2, function(v) {
+  top <- order(-abs(app_e$edges[app_rows(v), ]))[1:150]
+  max(table(c(app_pr[top, 1], app_pr[top, 2])))
+}, numeric(1))
+app_lab <- c(ifn = "Interferon", neut = "Neutrophil", lymph = "Lymphocyte", pb = "Plasma cell")
 st <- ri$settings
 G <- function(cell, q) sm$mean[sm$cell == cell & sm$quantity == q]
 M <- function(cell, q) sm$mcse[sm$cell == cell & sm$quantity == q]
@@ -146,7 +168,7 @@ Quick-run numbers in the first draft. Write it last. -->
 
 **Background.** LIONESS builds a co-expression network for each sample, and network metrics of those networks, read by pathway, are used as personal markers that should track a patient over repeated visits. What these metrics measure has not been derived.
 
-**Results.** A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression, and a pathway's connectivity and crosstalk are, to first order, the squared pathway score and the product of two scores. In simulated children followed over visits, every network metric, among them degree, betweenness, transitivity, and the numbers of edges and nodes, was as stable as the same metric on the first-order network (largest difference `r prov(d_max, 4)`); connectivity and crosstalk had $R^2$ of at least `r prov(r2_min, 5)` on their expression terms, and the residual's stability was at most `r prov(max(res4$mean), 3)` once fourth-order terms were added. Pathway scores predicted same-visit activity, with power up to `r prov(max(rate("same_sup_B")), 2)`, while LIONESS metrics were declared predictive `r sup_ac_txt` and were equivalent to first-order metrics `r eq_ac_txt`.
+**Results.** A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression, and a pathway's connectivity and crosstalk are, to first order, the squared pathway score and the product of two scores. In simulated children followed over visits, every network metric, among them degree, betweenness, transitivity, and the numbers of edges and nodes, was as stable as the same metric on the first-order network (largest difference `r prov(d_max, 4)`); connectivity and crosstalk had $R^2$ of at least `r prov(r2_min, 5)` on their expression terms, and the residual's stability was at most `r prov(max(res4$mean), 3)` once fourth-order terms were added. Pathway scores predicted same-visit activity, with power up to `r prov(max(rate("same_sup_B")), 2)`, while LIONESS metrics were declared predictive `r sup_ac_txt` and were equivalent to first-order metrics `r eq_ac_txt`. In `r lvl(app_s$n_children)` children with lupus followed over `r lvl(app_s$n_visits)` visits (GSE65391), LIONESS metrics of BloodGen3 pathways were as stable as their first-order versions (largest difference `r pa(app_d_max, 4)`), and predicted SLEDAI no better (concordance `r pa(app_p$same[["c_A"]])` against `r pa(app_p$same[["c_B"]])` for module scores).
 
 **Conclusions.** The stability of a LIONESS network over a person's visits is the stability of the person's expression. A network metric should be compared with the expression terms of its closed form before it is read as co-expression.
 
@@ -270,8 +292,11 @@ A metric that matches its first-order version, and whose residual is not stable,
 the processing applied. Carried from the report's "The study" subsection. -->
 
 The application uses the longitudinal study of children with systemic lupus erythematosus of @banchereau2016personalized, Gene Expression Omnibus series GSE65391, whole-blood expression on the Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at every visit.
-The analysis keeps the `r lvl(dat$counts[["children_multi"]])` children with two or more visits, `r lvl(dat$counts[["visits_multi"]])` visits in all, and the authors' split into training and test children.
-Pathways are modules of the BloodGen3 repertoire, built from co-clustering in blood transcriptomes of sixteen immunological and physiological states [@altman2021bloodgen3], taken from its R package [@rinchai2021bloodgen3module]. [TO CONFIRM: the download of the module list and the minimum module size]{.tc}
+The analysis kept the `r lvl(app_s$n_children)` children with two or more visits, `r lvl(app_s$n_visits)` visits in all, ordered by time within child, and the authors' split into training and test children.
+Probes were mapped to gene symbols with the platform table, keeping for each gene the probe with the highest mean expression; genes with no variance, or with variance in a single sample only (for which the leave-one-out correlation is undefined), were dropped, leaving `r lvl(app_s$n_genes_matched)` genes that belong to a module.
+Modules come from the BloodGen3 repertoire, built from co-clustering in blood transcriptomes of sixteen immunological and physiological states [@altman2021bloodgen3], taken from its R package [@rinchai2021bloodgen3module]; the `r lvl(app_s$n_modules)` modules with at least `r lvl(10)` genes on the array were analysed one by one.
+The network was built over the genes of four pathways chosen by their BloodGen3 function label before any network was computed: interferon (`r lvl(app_s$pathway_sizes[["ifn"]])` genes), neutrophil (`r lvl(app_s$pathway_sizes[["neut"]])`), lymphocyte (`r lvl(app_s$pathway_sizes[["lymph"]])`), and plasma cell (`r lvl(app_s$pathway_sizes[["pb"]])`).
+Each child's LIONESS network and its first-order version were computed sample by sample from the exact closed form, and the metrics, feature sets, and tests were those of the simulation study, with SLEDAI as the activity.
 
 ## Software and reproducibility
 
@@ -503,13 +528,87 @@ kable_w(data.frame(Effect = beta_s2,
 
 ## Data and comparison
 
-The application follows the `r lvl(dat$counts[["children_multi"]])` children of GSE65391 with two or more visits.
-In these children the interferon score had a within-child intraclass correlation of `r lvl(round(dat$icc[["ifn"]], 2))`, the base of the simulation's gradient, and SLEDAI one of `r lvl(round(dat$icc[["sledai"]], 2))`.
-[TO CONFIRM: the BloodGen3 module list must be downloaded before the LIONESS networks of these children are computed; the claims of protocol.md, section 7, are pre-registered for it]{.tc}
+GSE65391 placed the children on the simulation's gradients.
+In the `r lvl(app_s$n_children)` children with repeated visits, the interferon score had a within-child intraclass correlation of `r pa(app_s$icc_ifn5, 2)`, the base setting's value, and SLEDAI one of `r pa(app_s$icc_sledai, 2)`.
+Across the `r lvl(app_s$n_modules)` modules, the stability of the module score had median `r pa(median(app_m$icc_score), 2)` and the first principal component explained a median share of `r pa(median(app_m$pc1_share), 2)` of the module's variance.
 
-## What the application will show
+## A child's LIONESS network over visits is the child's expression
 
-The application tests whether a user who reads a child's LIONESS network metrics over visits learns anything that the child's module expression does not already say. [TO CONFIRM: the analysis has not been run]{.tc}
+A user reading the LIONESS networks of these children sees networks that change from visit to visit and metrics that follow the children's expression.
+The LIONESS network of the child with the highest mean interferon score differed between the first two visits (@fig-app-net-v1, @fig-app-net-v2), as did its pathway summary (@fig-app-path-v1, @fig-app-path-v2).
+At the second visit, `r lvl(app_hub[2])` of the `r lvl(150)` strongest edges touched one plasma cell gene, against `r lvl(app_hub[1])` at the first: the network was organized around the gene whose expression lay farthest from its mean, as the product term of the closed form implies.
+Over children, interferon connectivity had a stability of `r pa(ai("conn_ifn"))`, against `r pa(app_i$icc_score2[["ifn"]])` for the squared interferon score; the number of edges had `r pa(ai("n_edges"))`, the number of nodes `r pa(ai("n_nodes"))`, transitivity `r pa(ai("transitivity"))`, the interferon genes' degree `r pa(ai("degree_ifn"))`, and their betweenness `r pa(ai("betweenness_ifn"))` (@tbl-app).
+For every metric, the stability on the LIONESS networks differed from the stability on the first-order networks by at most `r pa(app_d_max, 4)`.
+Across modules, the stability of connectivity followed that of the squared module score (correlation `r pa(stats::cor(app_m$icc_conn, app_m$icc_score2), 2)`, @fig-app-modules).
+Connectivity was linear in its first-order terms with $R^2$ of at least `r pa(min(app_m$r2_1), 3)`; `r lvl(app_r2_low)` of the `r lvl(app_s$n_modules)` modules fell below `r lvl(0.99)`, and with the fourth-order terms every module reached `r pa(min(app_m$r2_4), 4)`.
+The residual after the fourth-order terms, less than `r pa(100 * (1 - min(app_m$r2_4)), 2)` percent of the variance, still had a median stability of `r pa(median(app_m$icc_res4), 2)` over modules. [TO CONFIRM: the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression]{.tc}
+
+The LIONESS metrics identified `r pa(app_p$finger[["A"]])` of the children from their first to their second visit, the first-order metrics `r pa(app_p$finger[["C"]])`, and the four pathway scores `r pa(app_p$finger[["B"]])`, against `r pa(app_p$chance)` by chance.
+Same-visit SLEDAI was predicted by the pathway scores (concordance `r pa(app_p$same[["c_B"]])`, declared above one half) but not by the LIONESS metrics (`r pa(app_p$same[["c_A"]])`) or the first-order metrics (`r pa(app_p$same[["c_C"]])`), and the LIONESS and first-order metrics were declared equivalent.
+For next-visit SLEDAI, every feature set reached the concordance of the current SLEDAI alone (`r pa(app_p$next_visit[["c_R0"]])`).
+On the authors' test children, the concordance was `r pa(app_p$split[["A"]])` for the LIONESS metrics, `r pa(app_p$split[["C"]])` for the first-order metrics, and `r pa(app_p$split[["B"]])` for the pathway scores.
+
+```{r}
+#| label: fig-app-net-v1
+#| fig-cap: "The LIONESS network of the GSE65391 child with the highest mean interferon score at the first visit. Genes of the four pathways sit on four circles; the strongest edges are drawn, red positive and blue negative, with width on a scale shared with the next figure."
+#| fig-width: 6
+#| fig-height: 6
+
+gap_register("fig-app-net-v1", what = "a child's LIONESS network, visit 1", cells = NA, n_rep = NA, run = "production", production = "the application")
+PlotSampleNetwork(app_e$edges[app_rows(1), ], app_e$sets, top = 150, scale_max = app_sc_e, node_cex = 0.5, labels = app_lab)
+```
+
+```{r}
+#| label: fig-app-net-v2
+#| fig-cap: "The same child's LIONESS network at the second visit, drawn as in the previous figure."
+#| fig-width: 6
+#| fig-height: 6
+
+gap_register("fig-app-net-v2", what = "a child's LIONESS network, visit 2", cells = NA, n_rep = NA, run = "production", production = "the application")
+PlotSampleNetwork(app_e$edges[app_rows(2), ], app_e$sets, top = 150, scale_max = app_sc_e, node_cex = 0.5, labels = app_lab)
+```
+
+```{r}
+#| label: fig-app-path-v1
+#| fig-cap: "The same child's LIONESS network at the first visit, summarized by pathway: node area is the pathway's connectivity (hollow when negative) and line width the crosstalk, on scales shared with the next figure."
+#| fig-width: 6
+#| fig-height: 6
+
+gap_register("fig-app-path-v1", what = "a child's pathway network, visit 1", cells = NA, n_rep = NA, run = "production", production = "the application")
+PlotPathwayNetwork(app_e$metrics[app_rows(1), app_w], app_e$metrics[app_rows(1), app_c], scale_conn = app_sc_conn, scale_cross = app_sc_cross, labels = app_lab)
+```
+
+```{r}
+#| label: fig-app-path-v2
+#| fig-cap: "The same child's pathway network at the second visit, drawn as in the previous figure."
+#| fig-width: 6
+#| fig-height: 6
+
+gap_register("fig-app-path-v2", what = "a child's pathway network, visit 2", cells = NA, n_rep = NA, run = "production", production = "the application")
+PlotPathwayNetwork(app_e$metrics[app_rows(2), app_w], app_e$metrics[app_rows(2), app_c], scale_conn = app_sc_conn, scale_cross = app_sc_cross, labels = app_lab)
+```
+
+```{r}
+#| label: fig-app-modules
+#| fig-cap: "Stability over visits of each BloodGen3 module's LIONESS connectivity against the stability of its squared module score, GSE65391; one point per module, interferon modules highlighted, with the identity line."
+#| fig-width: 6
+#| fig-height: 5
+
+gap_register("fig-app-modules", what = "module stabilities", cells = NA, n_rep = NA, run = "production", production = "the application")
+PlotModuleStability(app_m$icc_score2, app_m$icc_conn, highlight = app_ifn_mod, xlab = "Stability of the squared module score", ylab = "Stability of LIONESS connectivity")
+```
+
+```{r}
+#| label: tbl-app
+#| tbl-cap: "LIONESS metrics of the four-pathway network in GSE65391: stability over visits on the LIONESS networks and on their first-order versions."
+
+shown_app <- c("conn_ifn", "conn_neut", "conn_lymph", "conn_pb", "cross_ifn_pb", "total_weight", "n_edges", "n_nodes",
+               "transitivity", "degree_ifn", "betweenness_ifn", "strength_ifn")
+lab_app <- sub("Plasmablast-like", "Plasma cell", sub("Neutrophil-like", "Neutrophil", sub("Lymphocyte-like", "Lymphocyte", MetricLabels(shown_app))))
+kable_w(data.frame(Metric = lab_app, LIONESS = vapply(shown_app, function(m) pa(ai(m)), ""),
+                   `First order` = vapply(shown_app, function(m) pa(ai(m, "fo")), ""), check.names = FALSE),
+        widths = c(50, 25, 25))
+```
 
 # Discussion
 
@@ -520,6 +619,7 @@ list, item by item. No new results. -->
 A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression, and its first-order form keeps nearly all of it.
 Every network metric built on the edges, read whole or by pathway, inherited that: in simulated children followed over visits, each metric was exactly as stable as the same metric on the first-order network, connectivity and crosstalk were their expression terms, and the stable part that remained beyond first order was the next-order expression term.
 Pathway connectivity was more stable than single edges because it averaged the edges into a squared pathway score.
+The children of GSE65391 behaved in the same way: their LIONESS metrics were as stable as the first-order metrics, identified children no better, and predicted disease activity no better than the module scores.
 For a user, a change in a child's LIONESS network from one visit to the next is a change in that child's expression, and a network metric should be compared with the expression terms of its closed form before it is read as co-expression.
 LIONESS metrics also lost the sign of expression: activity driven by a factor's level was predicted by pathway scores, while the metrics, which carry squared scores, did not predict it.
 @tbl-novelty sets these results beside earlier work.
@@ -545,7 +645,7 @@ The study has limits.
 The simulation used disjoint pathways of equal size, independent factors, normal noise, and equal numbers of visits; real gene sets overlap and real visits are irregular.
 Person-level differences in gene levels were independent across genes.
 The thresholds of the graph metrics were one fixed value and one proportion.
-The application has not yet been run. [TO CONFIRM: the supervisor's confirmation of the re-scope and of the paper's message]{.tc}
+In real data the residual beyond the fourth-order terms kept some stability; its source, higher-order expression or person-specific co-expression, is not separated here. [TO CONFIRM: the supervisor's confirmation of the re-scope and of the paper's message]{.tc}
 
 Several questions were left out on purpose.
 Lupus was not compared with rheumatoid arthritis or with healthy controls, single-sample methods other than LIONESS were not studied, and drug effects, ancestry, sex, and subtypes were not modelled.

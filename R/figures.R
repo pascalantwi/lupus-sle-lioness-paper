@@ -102,10 +102,13 @@ EdgeColors <- function(e, alpha = 0.55) {
 #' @param scale_max Absolute edge drawn at the widest line; defaults to the
 #'   largest drawn edge.
 #' @param main Plot title.
+#' @param node_cex Size of the gene points.
+#' @param labels Pathway labels, named as `sets`.
 #' @return The drawn edges' indices, invisibly.
 #' @export
 PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
-                              main = "") {
+                              main = "", node_cex = 1.3,
+                              labels = PathwayLabels()) {
   p <- max(unlist(sets))
   pr <- PairIndex(p)
   keep <- order(-abs(e))[seq_len(min(top, length(e)))]
@@ -115,7 +118,7 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
   memb <- rep(NA_character_, p)
   for (k in names(sets)) memb[sets[[k]]] <- k
   graphics::par(mar = c(2, 0.5, if (nzchar(main)) 2.5 else 0.5, 0.5))
-  graphics::plot(NA, xlim = c(-1.75, 1.75), ylim = c(-1.65, 1.65), asp = 1,
+  graphics::plot(NA, xlim = c(-2.4, 2.4), ylim = c(-1.65, 1.65), asp = 1,
                  axes = FALSE, xlab = "", ylab = "", main = main)
   w <- pmin(abs(e[keep]) / scale_max, 1)
   graphics::segments(xy[pr[keep, 1], 1], xy[pr[keep, 1], 2],
@@ -125,9 +128,9 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
   cols <- PathwayColors()[memb]
   cols[is.na(cols)] <- "grey50"
   graphics::points(xy[, 1], xy[, 2], pch = 21, bg = cols, col = "white",
-                   cex = 1.3, lwd = 1)
+                   cex = node_cex, lwd = if (node_cex < 1) 0.3 else 1)
   cen <- attr(xy, "centers")
-  lab <- PathwayLabels()[names(sets)]
+  lab <- labels[names(sets)]
   lab[is.na(lab)] <- names(sets)[is.na(lab)]
   LabelOutside(cen, lab, gap = 0.4)
   graphics::mtext(sprintf(paste("The %d strongest edges; red positive, blue",
@@ -150,10 +153,12 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
 #' @param scale_conn,scale_cross Values drawn at the largest node and the
 #'   widest line; default to the largest absolute values given.
 #' @param main Plot title.
+#' @param labels Pathway labels, named by pathway.
 #' @return `NULL`, invisibly.
 #' @export
 PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
-                               scale_cross = NULL, main = "") {
+                               scale_cross = NULL, main = "",
+                               labels = PathwayLabels()) {
   nm <- sub("^(within|conn)_", "", names(conn))
   k <- length(nm)
   ang <- pi / 2 - 2 * pi * (seq_len(k) - 1) / k
@@ -162,7 +167,7 @@ PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
   if (is.null(scale_conn)) scale_conn <- max(abs(conn))
   if (is.null(scale_cross)) scale_cross <- max(abs(cross))
   graphics::par(mar = c(2, 0.5, if (nzchar(main)) 2.5 else 0.5, 0.5))
-  graphics::plot(NA, xlim = c(-1.75, 1.75), ylim = c(-1.6, 1.6), asp = 1,
+  graphics::plot(NA, xlim = c(-2.3, 2.3), ylim = c(-1.6, 1.6), asp = 1,
                  axes = FALSE, xlab = "", ylab = "", main = main)
   pairs <- strsplit(sub("^cross_", "", names(cross)), "_")
   for (i in seq_along(cross)) {
@@ -176,9 +181,9 @@ PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
   size <- 1.5 + 6 * sqrt(pmin(abs(conn) / scale_conn, 1))
   graphics::points(xy[, 1], xy[, 2], pch = 21, cex = size,
                    bg = ifelse(conn >= 0, cols, "white"), col = cols, lwd = 2)
-  lab <- PathwayLabels()[nm]
+  lab <- labels[nm]
   lab[is.na(lab)] <- nm[is.na(lab)]
-  LabelOutside(xy, lab, gap = 0.22)
+  LabelOutside(xy, lab, gap = 0.34)
   graphics::mtext(paste("Node area: connectivity (hollow if negative);",
                         "line width: crosstalk; red positive, blue negative"),
                   side = 1, line = 0.5, cex = 0.7, col = "grey30")
@@ -404,4 +409,28 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
   graphics::legend("topleft", unname(quantities), col = cols, pch = pch,
                    lwd = 2, cex = 0.7, bg = "white", box.col = "grey80")
   invisible(m)
+}
+
+#' Draw one stability against another, one point per module
+#'
+#' @param x,y Stabilities, one per module.
+#' @param highlight Logical, modules drawn in the accent color.
+#' @param xlab,ylab,main Labels.
+#' @return The correlation, invisibly.
+#' @export
+PlotModuleStability <- function(x, y, highlight = rep(FALSE, length(x)),
+                                xlab = "", ylab = "", main = "") {
+  graphics::par(mar = c(4.2, 4.6, if (nzchar(main)) 2.5 else 1, 1))
+  lim <- range(c(x, y), na.rm = TRUE)
+  graphics::plot(x, y, xlim = lim, ylim = lim, pch = 19, cex = 0.6,
+                 col = ifelse(highlight, "#2a78d6",
+                              grDevices::adjustcolor("grey40", 0.6)),
+                 xlab = xlab, ylab = ylab, main = main, las = 1, bty = "l")
+  graphics::abline(0, 1, col = "grey60", lty = 2)
+  if (any(highlight)) {
+    graphics::legend("topleft", c("Interferon modules", "Other modules"),
+                     pch = 19, col = c("#2a78d6", "grey40"), cex = 0.7,
+                     bg = "white", box.col = "grey80")
+  }
+  invisible(stats::cor(x, y))
 }

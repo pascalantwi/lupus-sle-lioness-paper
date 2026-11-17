@@ -4,7 +4,15 @@
 \alias{PlotSampleNetwork}
 \title{Draw one sample's LIONESS gene network}
 \usage{
-PlotSampleNetwork(e, sets, top = 120L, scale_max = NULL, main = "")
+PlotSampleNetwork(
+  e,
+  sets,
+  top = 120L,
+  scale_max = NULL,
+  main = "",
+  node_cex = 1.3,
+  labels = PathwayLabels()
+)
 }
 \arguments{
 \item{e}{One sample's edges over all gene pairs (\code{\link[=PairIndex]{PairIndex()}} order).}
@@ -17,6 +25,10 @@ PlotSampleNetwork(e, sets, top = 120L, scale_max = NULL, main = "")
 largest drawn edge.}
 
 \item{main}{Plot title.}
+
+\item{node_cex}{Size of the gene points.}
+
+\item{labels}{Pathway labels, named as \code{sets}.}
 }
 \value{
 The drawn edges' indices, invisibly.

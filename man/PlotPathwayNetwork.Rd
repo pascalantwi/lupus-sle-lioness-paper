@@ -9,7 +9,8 @@ PlotPathwayNetwork(
   cross,
   scale_conn = NULL,
   scale_cross = NULL,
-  main = ""
+  main = "",
+  labels = PathwayLabels()
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ PlotPathwayNetwork(
 widest line; default to the largest absolute values given.}
 
 \item{main}{Plot title.}
+
+\item{labels}{Pathway labels, named by pathway.}
 }
 \value{
 \code{NULL}, invisibly.
