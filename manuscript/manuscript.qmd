@@ -1,5 +1,5 @@
 ---
-title: "[FILL: title that names the procedure and the condition]"
+title: "LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features"
 author:
   - name: "[FILL: first author]"
     corresponding: true
@@ -11,6 +11,7 @@ author:
       - name: "[FILL: affiliation]"
 date: today
 bibliography: references.bib
+csl: biomed-central.csl
 link-citations: true
 # csl: copy the file named in the journal's profile (workflow/journals/) beside this
 # file and name it here for the submission render; the draft renders in Quarto's default author-date style.
@@ -18,7 +19,7 @@ link-citations: true
 params:
   draft: true
   memo: false
-  journal: "[FILL: journal slug from workflow/journals/journals.csv]"
+  journal: "bmc-bioinformatics"
 crossref:
   custom:
     - kind: float
@@ -131,11 +132,34 @@ did not do, and ending with what has not been derived. Paragraph 3: what this pa
 order of the sections. Almost every sentence is a fact with a reference; the rest build the tension
 and resolve it. Plain language before the formal statement. The claims are the aims, as questions. -->
 
-[FILL: paragraph 1]
+Blood is sampled again and again in people with lupus, to follow a disease that flares and remits [@banchereau2016personalized].
+A gene network for each sample promises to show how a patient's co-expression changes from one visit to the next, beyond how much each gene is expressed.
+LIONESS builds such a network for each sample of a cohort: it compares the co-expression network of all samples with the network of all samples but one, and assigns the scaled difference to the sample left out [@kuijjer2019lioness].
+With Pearson correlation as the network, the default of its R implementation, every sample receives one weight for every pair of genes [@kuijjer2019lionessr].
+In the paper that introduced lionessR, single-sample networks of bone tumours were built in this way, edges whose weights differed between patients with short and long metastasis-free survival were selected, and limma tested them, beside a separate test of expression levels [@kuijjer2019lionessr].
+A difference in a sample's edge is read there as a difference in how that sample adds to the co-expression of the two genes.
+Co-expression is usually summarized by gene sets: cohort networks by module eigengenes and module connectivity [@langfelder2008wgcna], and blood transcriptomes by fixed module repertoires [@altman2021bloodgen3].
+For a single-sample network, the natural summaries of a pathway are the mean edge among its genes, its connectivity, and the mean edge between its genes and those of a second pathway, their crosstalk.
 
-[FILL: paragraph 2]
+Repeated blood samples differ in expression between people and within a person over time.
+Blood gene expression is partly specific to the individual [@whitney2003individuality], the interferon signature of lupus is stable within patients [@petri2019stability], and cell composition drives much of the co-expression seen in bulk data [@farahbod2020composition].
+A Pearson LIONESS edge between genes $i$ and $j$ in sample $q$ is, to first order in $1/N$ for a cohort of $N$ samples, a function of that sample's own standardized expression $z_{qi}$ and $z_{qj}$ and of the cohort correlation $r_{ij}$:
+$$
+e_{qij} \approx r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right).
+$$
+The product term is the single-sample correlation of earlier work [@yu2017iena].
+Averaged over the pairs of a pathway, the product term becomes the square of the pathway's summed expression, so a sample's connectivity follows its pathway score.
+In a network built from all samples, module networks are approximately factorizable, and a gene's connectivity has a counterpart computed from the module eigengene [@horvath2008geometric].
+That result concerns connectivity across the genes of one cohort network.
+What has not been derived is the closed form of one sample's pathway connectivity and crosstalk, and what it implies for their stability over a person's visits and for their value as predictors.
 
-[FILL: paragraph 3]
+This paper derives the closed forms of a sample's pathway connectivity and crosstalk under Pearson LIONESS and asks three questions.
+How much do pathway connectivity and crosstalk of single-sample networks change across a person's visits?
+Is that change the change in the pathway's own expression, as the closed forms say?
+Do the network summaries predict a person's identity and disease activity, at the same visit and at the next, better than the pathway expression scores and the terms of the closed forms?
+The Methods give the closed forms and a diagnostic that compares a network summary with its expression terms.
+A simulation study of repeated visits varies how stable and how strong a pathway's driving factor is, the pathway's size, and person-specific co-expression.
+The application follows children with lupus over repeated visits.
 
 # Methods
 

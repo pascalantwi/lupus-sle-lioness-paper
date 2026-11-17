@@ -58,3 +58,27 @@ Inventory (new for the re-scope; the stage-1 entries are in `references/referenc
 3. Records that could not be opened: none. Two pages could not be reached (www.nature.com and www.gsea-msigdb.org are outside the session's network); the BloodGen3 article was read from its open Europe PMC copy, and the MSigDB data licence is unconfirmed (msigdbr on CRAN is MIT; the data's own terms were not read).
 - Gene-set licences: BloodGen3 article CC BY 4.0, module lists in the Bioconductor package BloodGen3Module (GPL-2, version 1.20.0); BloodGen3 is the primary collection. Hallmark is the fallback, its data licence `[TO CONFIRM]`.
 - `build-bib.py --check`: 26 entries, one fault (devlin1975robust's full text, not cited here).
+
+## Step 3.1: purpose draft of the Introduction
+
+Written new in `manuscript/manuscript.qmd` (nothing carried from the pregnancy draft): paragraph 1 the procedure and the lionessR example (passage added to `citations.csv`); paragraph 2 the first-order edge, the squared pathway score, and Horvath and Dong's cohort-network result as the closest prior work; paragraph 3 the three questions. Title is the user's; journal BMC Bioinformatics (spec section 6), `biomed-central.csl` copied beside the qmd.
+
+## Step 3.2: design proposal (stop)
+
+The study has two parts. S1 (describe and explain) varies, one at a time around the measured setting, what the pilots showed controls a pathway summary's stability and its remainder beyond the first-order terms. S2 (test) adds a disease-activity outcome and compares prediction from network summaries, pathway scores, and the terms of the closed forms, with type I error and power. Fixed: 131 children; six pathways; the other factor stabilities as measured in GSE65391 (neutrophil 0.41, lymphocyte 0.48, activity 0.39); person gene levels of variance 0.5; normal noise. Starred levels are the base setting.
+
+| Part | Factor | Levels | Reason | Question |
+|---|---|---|---|---|
+| S1 | Interferon factor stability over visits | 0, 0.25, 0.55\*, 0.75, 0.9 | none to very stable; 0.55 is the IFN5 score's measured value; the residual's stability rose with it (pilot-g) | 1, 2 |
+| S1 | Interferon pathway loading | 0.4, 0.6, 0.8\* | a weak to a strong driving factor; the strength sets the higher-order remainder (pilot-g check after the run) | 2 |
+| S1 | Interferon pathway size | 5, 15\*, 40 | small to large modules; the real range from the BloodGen3 list `[TO CONFIRM]` | 2 |
+| S1 | Personal co-expression spread | 0, 0.1, 0.25\* | none to strong; whether co-expression shows beyond the expression terms | 2 |
+| S1 | Visits per child | 3, 6\* | GSE65391 median 6; fewer visits widen the stability estimate | 1 |
+| S1 | A null setting | every factor stability 0, no personal co-expression | the known answer: residual stability 0 | 1, 2 |
+| S2 | Activity effect on the interferon and plasmablast factors | 0, then four levels calibrated with low-replicate cells from low power to about 80% | type I error and power of the prediction tests; GSE65391 placed by its measured association of IFN5 with SLEDAI | 3 |
+
+- Methods compared. S1: raw and first-order LIONESS; the diagnostic with first-order terms and with fourth-order terms added. S2: A network summaries (6 connectivities and 15 crosstalks), B pathway scores and their squares, C the terms of the closed forms, R0 no expression features (the current SLEDAI for next-visit prediction); Gaussian elastic net, folds by child.
+- Measures. S1: $R^2$ on the terms; stability (intraclass correlation over visits) of connectivity, crosstalk, squared score, residual (first and fourth order), and single edges; each with its MCSE. S2: fingerprinting accuracy; concordance for same- and next-visit activity; the differences A minus B and A minus C; rejection rates of two tests used in the application: concordance above 0.5 (one-sided, child-level permutation) and equivalence of A and B within 0.05 (two one-sided tests, child-level bootstrap). Type I error is the first test's rate at effect 0; power its rate at the four levels.
+- Cells and replicates. S1: 13 cells (the base, 4 more stabilities, 2 loadings, 2 sizes, 2 spreads, 3 visits, the null); S2: 5 cells; 200 replicates each (MCSE of a stability difference about 0.002; of a rejection rate at most 0.035).
+- Runtime (timed 2026-11-17, one replicate on one core): 1.4 s at the typical size (90 genes), 0.8 s at the largest (115 genes, without first-order edges), 0.3 s for nine elastic-net fits. S1 about 13 x 200 x 2 s / 3 cores, about 15 minutes; S2 with five-fold fits, permutation, and bootstrap about 30 minutes. Production about 45 minutes; quick run (20 replicates) about 5 minutes.
+- Application plan. GSE65391, the 131 children with two or more visits (897 visits). Gene sets: BloodGen3 modules (download of the module list from Bioconductor `[TO CONFIRM: approval]`), modules with at least 10 genes on the array `[TO CONFIRM]`; crosstalk among pre-specified interferon, neutrophil, lymphocyte, and plasmablast modules `[TO CONFIRM]`. Describe: trajectories over visits, stability per module, gene and pathway network diagrams for two children. Explain: $R^2$ on the terms and residual stability, first and fourth order; each module placed on the stability and loading gradients by its score's measured stability and its first-component share. Test: identity by fingerprinting; same- and next-visit SLEDAI with A, B, C, R0; folds by child and the authors' 91/40 split; the two tests above.
