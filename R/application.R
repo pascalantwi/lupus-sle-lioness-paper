@@ -111,6 +111,11 @@ SampleEdges <- function(zq, rp, pr, n, first_order = FALSE) {
 #' @export
 LionessMetricsBySample <- function(x, sets, first_order = FALSE,
                                    threshold = 1, prop = 0.05, cl = NULL) {
+  # evaluate every argument here: the closure below is sent to the workers
+  force(sets)
+  force(first_order)
+  force(threshold)
+  force(prop)
   n <- nrow(x)
   p <- ncol(x)
   z <- StandardizeN(x)$z

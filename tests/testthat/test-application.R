@@ -71,3 +71,16 @@ test_that("ReadBloodGen3 reads the module lists", {
   expect_equal(nrow(bg3$modules), 14168)
   expect_equal(length(unique(bg3$modules$module)), 382)
 })
+
+test_that("LionessMetricsBySample gives the same answer on a cluster", {
+  skip_on_cran()
+  set.seed(105)
+  x <- matrix(rnorm(30 * 6), 30) + rnorm(30)
+  sets <- list(a = 1:3, b = 4:6)
+  cl <- parallel::makePSOCKcluster(2L)
+  on.exit(parallel::stopCluster(cl), add = TRUE)
+  parallel::clusterEvalQ(cl, devtools::load_all(
+    testthat::test_path("..", ".."), quiet = TRUE))
+  expect_equal(LionessMetricsBySample(x, sets, cl = cl),
+               LionessMetricsBySample(x, sets))
+})
