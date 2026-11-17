@@ -1,45 +1,66 @@
-<!--
-The supplementary note: the derivations the paper relies on, included by manuscript.qmd after the
-references (stage 3, step 3.4). One subsection per result, S1.1, S1.2, and so on. Each derivation is
-one step per line with the step's justification after the display, and ends with where the paper
-uses the result and which test in tests/testthat/ checks it. Markers, prov(), and lvl() work here as
-in the paper, and the checker scans this file too.
+This note derives the closed forms the paper rests on. A Pearson LIONESS edge turns out to be an exact function of two things: the correlation of the two genes over the cohort, and the sample's own standardized values of the two genes. Its first-order form, and the connectivity, crosstalk, strength, and total edge weight built from it, are then sums of products of the sample's own expression. The last result says how stable a squared factor is over visits.
 
-Supplementary figures and tables are numbered Figure S1, Table S1, ... by the cross-reference kinds
-in manuscript.qmd's YAML. Write each as a fenced div whose id starts with sfig- or stbl-, with the
-chunk inside (no fig- or tbl- label) and the caption as the div's last paragraph, and refer to it
-as @sfig-name or @stbl-name. A chunk label of the form sfig-name does not work. Delete these comments.
--->
+Throughout, $N$ is the number of samples, $z_{qi}$ the expression of gene $i$ in sample $q$ standardized over all $N$ samples with divisor $N$ (so $\sum_q z_{qi} = 0$, $\sum_q z_{qi}^2 = N$, and $\sum_q z_{qi} z_{qj} = N r_{ij}$), and $\varepsilon = 1/(N - 1)$.
 
-[FILL: one plain-language paragraph: what this note derives and why the paper needs it.]
+### S1.1 The exact LIONESS edge {.unnumbered}
 
-[FILL: the notation in one sentence, in the paper's symbols.]
-
-### S1.1 [FILL: the first result] {.unnumbered}
-
-[FILL: the statement, in the paper's notation.]
-
+The correlation of genes $i$ and $j$ without sample $q$ is
 $$
 \begin{aligned}
-a &= b \\
-  &= c
+\bar z^{(-q)}_i &= -\varepsilon z_{qi}, \\
+\sum_{p \ne q} (z_{pi} - \bar z^{(-q)}_i)(z_{pj} - \bar z^{(-q)}_j) &= N r_{ij} - z_{qi} z_{qj} - (N - 1)\varepsilon^2 z_{qi} z_{qj} = N r_{ij} - N \varepsilon z_{qi} z_{qj}, \\
+\sum_{p \ne q} (z_{pi} - \bar z^{(-q)}_i)^2 &= N - N \varepsilon z_{qi}^2, \\
+r^{(-q)}_{ij} &= \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}}.
 \end{aligned}
 $$
+Line 1: the standardized values sum to 0, so without $z_{qi}$ the other $N - 1$ sum to $-z_{qi}$. Line 2: the centred cross-product is the raw one, $N r_{ij} - z_{qi} z_{qj}$, minus $(N - 1)$ times the product of the means; $1 + \varepsilon = N \varepsilon$. Line 3: line 2 with $j = i$. Line 4: a correlation does not change under the affine map from expression to standardized expression, and the factor $N$ cancels. The LIONESS edge $e_{qij} = N r_{ij} - (N - 1) r^{(-q)}_{ij}$ is therefore a function of $r_{ij}$, $z_{qi}$, and $z_{qj}$ alone. The paper uses this in the Methods; `LionessEdgesClosedForm()` is tested equal to leave-one-out LIONESS in `tests/testthat/test-lioness.R`.
 
-[FILL: the justification of each line, numbered as the lines; where the paper uses the result; the test that checks it.]
+### S1.2 The first-order form and its remainder {.unnumbered}
 
-### S1.2 [FILL: a supplementary figure or table, if any] {.unnumbered}
+With $u = z_{qi}^2 + z_{qj}^2$ and $v = \tfrac38 (z_{qi}^4 + z_{qj}^4) + \tfrac14 z_{qi}^2 z_{qj}^2$,
+$$
+\begin{aligned}
+\left[(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)\right]^{-1/2} &= 1 + \tfrac{\varepsilon}{2} u + \varepsilon^2 v + O(\varepsilon^3), \\
+(N - 1)\, r^{(-q)}_{ij} &= \tfrac{1}{\varepsilon}(r_{ij} - \varepsilon z_{qi} z_{qj})\left(1 + \tfrac{\varepsilon}{2} u + \varepsilon^2 v\right) + O(\varepsilon^2) \\
+&= \tfrac{r_{ij}}{\varepsilon} - z_{qi} z_{qj} + \tfrac{r_{ij}}{2} u + \varepsilon\left(r_{ij} v - \tfrac12 z_{qi} z_{qj} u\right) + O(\varepsilon^2), \\
+e_{qij} &= r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2} u + \varepsilon\left(\tfrac12 z_{qi} z_{qj} u - r_{ij} v\right) + O(\varepsilon^2).
+\end{aligned}
+$$
+Line 1: $(1 - a)^{-1/2} = 1 + a/2 + 3a^2/8 + O(a^3)$ for each factor, multiplied out; it holds because $z_{qi}^2 \le N - 1$. Lines 2 and 3: S1.1 multiplied by $N - 1 = 1/\varepsilon$ and expanded. Line 4: $N r_{ij} - r_{ij}/\varepsilon = r_{ij}$. The first-order form is the part without $\varepsilon$; the remainder is $\varepsilon$ times a polynomial of degree four in $z_{qi}$ and $z_{qj}$. The paper uses this for the diagnostic's fourth-order terms; the test in `test-lioness.R` checks that the gap to the first-order form shrinks as $N$ grows.
 
-[FILL: the sentence that refers to it, as @sfig-example.]
+### S1.3 Connectivity and crosstalk {.unnumbered}
 
-::: {#sfig-example}
+For disjoint pathways $A$ and $B$, with $S_A$, $Q_A$, $R^B_i$, and $C_A$ as in the Methods, the first-order form summed over pairs gives
+$$
+\begin{aligned}
+\sum_{i < j \in A} z_{qi} z_{qj} &= \tfrac12 \left(S_A^2 - Q_A\right), \\
+\sum_{i < j \in A} \tfrac{r_{ij}}{2} \left(z_{qi}^2 + z_{qj}^2\right) &= \tfrac12 \sum_{i \in A} R^A_i z_{qi}^2, \\
+\sum_{i \in A} \sum_{j \in B} z_{qi} z_{qj} &= S_A S_B, \\
+\sum_{i \in A} \sum_{j \in B} \tfrac{r_{ij}}{2} \left(z_{qi}^2 + z_{qj}^2\right) &= \tfrac12 \Big(\sum_{i \in A} R^B_i z_{qi}^2 + \sum_{j \in B} R^A_j z_{qj}^2\Big).
+\end{aligned}
+$$
+Line 1: $S_A^2$ counts each product of two different genes twice and each square once. Line 2: each $z_{qi}^2$ appears once for every other gene $j$ of $A$, weighted by $r_{ij}$. Lines 3 and 4: the same over the pairs between $A$ and $B$. Dividing by $C_A$ and $m_A m_B$, and adding the mean correlations, gives the Methods' formulas for $W_{qA}$ and $X_{qAB}$. The paper uses them in the Methods and the diagnostic; `KnownAnswerChecksG()` and `tests/testthat/test-pathways.R` check that first-order connectivity and crosstalk equal them to rounding.
 
-```{r}
-#| eval: false
+### S1.4 Strength and total edge weight {.unnumbered}
 
-# Draw from the results objects only; the figure function lives in R/.
-```
+With $S$ and $R_i = \sum_{j \ne i} r_{ij}$ over all $p$ genes,
+$$
+\begin{aligned}
+s_{qi} &= \sum_{j \ne i} \Big[r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right)\Big] = R_i + z_{qi}(S - z_{qi}) - \tfrac12 R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2, \\
+T_q &= \sum_{i < j} r_{ij} + \tfrac12 \left(S^2 - Q\right) - \tfrac12 \sum_i R_i z_{qi}^2.
+\end{aligned}
+$$
+Line 1: the first-order form summed over the other genes. Line 2: S1.3 with $A$ the whole gene set. The paper uses these in the Methods; `tests/testthat/test-study.R` checks the strength formula on first-order edges.
 
-[FILL: the caption, computed numbers through prov() like any caption.]
+### S1.5 The stability of a squared factor {.unnumbered}
 
-:::
+Let a person's factor at a visit be $F = U + V$, with $U \sim N(0, \kappa)$ the person's level, $V \sim N(0, 1 - \kappa)$ the visit's deviation, independent, so that $F$ has intraclass correlation $\kappa$. Then
+$$
+\begin{aligned}
+\operatorname{E}(F^2 \mid U) &= U^2 + 1 - \kappa, \\
+\operatorname{Var}\{\operatorname{E}(F^2 \mid U)\} &= \operatorname{Var}(U^2) = 2\kappa^2, \\
+\operatorname{Var}(F^2) &= 2, \\
+\operatorname{ICC}(F^2) &= \kappa^2.
+\end{aligned}
+$$
+Line 1: $\operatorname{E}(V) = 0$ and $\operatorname{E}(V^2) = 1 - \kappa$. Line 2: the variance of the square of a normal variable with variance $\kappa$ is $2\kappa^2$. Line 3: $F \sim N(0, 1)$. Line 4: the between-person share of the variance. The paper uses this to read the stability of connectivity as that of a squared expression score; `KnownAnswerChecksD()` checks it by simulation.

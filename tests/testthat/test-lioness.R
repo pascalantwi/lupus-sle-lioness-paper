@@ -44,3 +44,17 @@ test_that("first-order test edges approach the exact add-one edges", {
   expect_lt(max(abs(LionessTestEdgesFirstOrder(new, ref) -
                       LionessTestEdges(new, ref))), 0.05)
 })
+
+test_that("the exact closed form equals leave-one-out LIONESS", {
+  set.seed(91)
+  x <- matrix(rnorm(40 * 5), 40) + rnorm(40)
+  expect_equal(LionessEdgesClosedForm(x), LionessEdgesDirect(x),
+               tolerance = 1e-10, ignore_attr = TRUE)
+  # and the first-order form is its expansion: the gap shrinks like 1 / N
+  gap <- sapply(c(50, 400), function(n) {
+    set.seed(92)
+    y <- matrix(rnorm(n * 4), n) + rnorm(n)
+    max(abs(LionessEdgesClosedForm(y) - LionessEdgesFirstOrder(y)))
+  })
+  expect_lt(gap[2], gap[1])
+})

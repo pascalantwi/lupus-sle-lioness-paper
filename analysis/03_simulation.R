@@ -81,7 +81,9 @@ rownames(reps) <- NULL
 summaries <- SummarizeStudy(reps)
 info <- list(run = run, n_rep = n_rep, n_cells = nrow(design),
              date = Sys.time(), elapsed_seconds = elapsed,
-             n_workers = n_workers, n_rep_production = n_rep_production)
+             n_workers = n_workers, n_rep_production = n_rep_production,
+             settings = list(threshold = 1, prop = 0.05, n_boot = n_boot,
+                             margin = 0.05, alpha = 0.5, folds = 5L))
 
 if (calibrate) {
   saveRDS(list(design = design, summaries = summaries, reps = reps),

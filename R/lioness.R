@@ -157,3 +157,27 @@ LionessTestEdgesFirstOrder <- function(x_new, x_ref) {
   zj <- z[, pairs[, 2], drop = FALSE]
   r_mat + zi * zj - r_mat / 2 * (zi^2 + zj^2)
 }
+
+#' Pearson LIONESS edges from their exact closed form
+#'
+#' Removing sample `q` changes the Pearson correlation of genes `i` and `j`
+#' to `(r - z_i z_j / (N - 1)) / sqrt((1 - z_i^2 / (N - 1)) (1 - z_j^2 /
+#' (N - 1)))`, with `z` standardized over all `N` samples (divisor `N`), so
+#' each edge is an exact function of the cohort correlation and the
+#' sample's own two standardized values (manuscript supplement, S1.1).
+#'
+#' @param x Expression matrix, samples by genes.
+#' @return Edges, samples by pairs ([PairIndex()] order).
+#' @export
+LionessEdgesClosedForm <- function(x) {
+  n <- nrow(x)
+  z <- StandardizeN(x)$z
+  r <- stats::cor(x)
+  pr <- PairIndex(ncol(x))
+  eps <- 1 / (n - 1)
+  zi <- z[, pr[, 1], drop = FALSE]
+  zj <- z[, pr[, 2], drop = FALSE]
+  rr <- matrix(r[pr], n, nrow(pr), byrow = TRUE)
+  n * rr - (n - 1) * (rr - eps * zi * zj) /
+    sqrt((1 - eps * zi^2) * (1 - eps * zj^2))
+}

@@ -86,9 +86,13 @@ prov_set_mode(params$draft, memo = params$memo)
 ri <- if (params$memo) read_run_info(pilot_path("run_info.rds")) else read_run_info()
 if (!params$draft || params$memo) check_no_markers("manuscript.qmd")
 
-# [FILL] Load every results file here and compute every quoted number from these objects.
-# reps <- read_results("simulation_replicates.rds")
-# design <- read_results("design.rds")
+sm <- read_results("cell_summaries.rds")
+design <- read_results("design.rds")
+ex <- read_results("example_networks.rds")
+dat <- readRDS(file.path(project_root(), "pilot-d", "results", "data_summary.rds"))
+st <- ri$settings
+G <- function(cell, q) sm$mean[sm$cell == cell & sm$quantity == q]
+M <- function(cell, q) sm$mcse[sm$cell == cell & sm$quantity == q]
 ```
 
 ```{r}
@@ -153,11 +157,12 @@ In a network built from all samples, module networks are approximately factoriza
 That result concerns connectivity across the genes of one cohort network.
 What has not been derived is the closed form of one sample's pathway connectivity and crosstalk, and what it implies for their stability over a person's visits and for their value as predictors.
 
-This paper derives the closed forms of a sample's pathway connectivity and crosstalk under Pearson LIONESS and asks three questions.
-How much do pathway connectivity and crosstalk of single-sample networks change across a person's visits?
-Is that change the change in the pathway's own expression, as the closed forms say?
-Do the network summaries predict a person's identity and disease activity, at the same visit and at the next, better than the pathway expression scores and the terms of the closed forms?
-The Methods give the closed forms and a diagnostic that compares a network summary with its expression terms.
+This paper derives the exact closed form of a Pearson LIONESS edge and, from it, what the usual network metrics of a single-sample network measure, read through pathways: connectivity, crosstalk, total edge weight, strength, degree, betweenness, transitivity, and the numbers of edges and nodes.
+It then asks three questions.
+How much do these LIONESS metrics change across a person's visits?
+Is that change the change in the person's own expression, as the closed forms say?
+Do the LIONESS metrics identify a person and predict disease activity, at the same visit and at the next, better than pathway expression scores, and differently from the same metrics computed on the first-order form of the edges?
+The Methods give the closed forms and a diagnostic that compares a network metric with its expression terms.
 A simulation study of repeated visits varies how stable and how strong a pathway's driving factor is, the pathway's size, and person-specific co-expression.
 The application follows children with lupus over repeated visits.
 
@@ -171,13 +176,26 @@ line, each symbol defined in the sentence that introduces it or in the equation'
 notation. Carried from the report's
 "In symbols" section; the mathematics is the mathematics, the sentences are new. -->
 
-[FILL]
-
+A user who builds a LIONESS network for a blood sample reads it as the co-expression specific to that sample, and reads a network metric of it, such as the connectivity of the interferon genes, as how tightly that pathway's genes move together in that person at that visit.
+Over repeated visits, the stability of the metric is then read as the stability of the person's network.
+The procedure is the following.
+For a cohort of $N$ samples, let $r_{ij}$ be the Pearson correlation of genes $i$ and $j$ over all samples and $r^{(-q)}_{ij}$ the correlation without sample $q$.
+The LIONESS edge of sample $q$ is
+$$
+e_{qij} = N r_{ij} - (N - 1)\, r^{(-q)}_{ij}
+$$
+[@kuijjer2019lioness].
+For a pathway $A$ of $m_A$ genes and a second pathway $B$, the connectivity, the crosstalk, the total edge weight over all $p$ genes, and the strength of gene $i$ are
 $$
 \begin{aligned}
-[FILL: equations, one clause per line]
+W_{qA} &= \binom{m_A}{2}^{-1} \sum_{i < j \in A} e_{qij}, \\
+X_{qAB} &= \frac{1}{m_A m_B} \sum_{i \in A} \sum_{j \in B} e_{qij}, \\
+T_q &= \sum_{i < j} e_{qij}, \\
+s_{qi} &= \sum_{j \ne i} e_{qij}.
 \end{aligned}
 $$
+The graph metrics use the graph $G_q$ that keeps the pairs with $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that a fixed share of pairs is kept: the number of edges and of nodes (genes with at least one edge) of $G_q$, its transitivity (the share of connected triples that close into triangles), and each gene's degree and betweenness, the latter with distance $1/\lvert e_{qij}\rvert$.
+Gene-level metrics are averaged over the genes of each pathway.
 
 
 ## What the procedure estimates
@@ -186,20 +204,49 @@ $$
 large. Where no formula exists for a method or setting, say so plainly. Proofs go to
 _supplement.qmd; state the results here and point at the supplement. -->
 
-[FILL]
+Every LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression.
+With $z_{qi}$ the expression of gene $i$ in sample $q$ standardized over all $N$ samples (divisor $N$) and $\varepsilon = 1/(N - 1)$, removing sample $q$ gives (supplement, S1.1)
+$$
+\begin{aligned}
+r^{(-q)}_{ij} &= \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}}, \\
+e_{qij} &= N r_{ij} - (N - 1)\, r^{(-q)}_{ij}.
+\end{aligned}
+$$
+Expanding in $\varepsilon$ gives the first-order form and a remainder of order $\varepsilon$ that is a polynomial of degree four in $z_{qi}$ and $z_{qj}$ (S1.2):
+$$
+e_{qij} = r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right) + O(\varepsilon).
+$$
+Summing the first-order form over the pairs of a pathway gives the connectivity and crosstalk as linear functions of three expression terms each (S1.3).
+With $S_A = \sum_{i \in A} z_{qi}$, $Q_A = \sum_{i \in A} z_{qi}^2$, $R^B_i = \sum_{j \in B, j \ne i} r_{ij}$, and $C_A = m_A (m_A - 1)/2$,
+$$
+\begin{aligned}
+W_{qA} &\approx \bar r_A + \frac{S_A^2 - Q_A}{2 C_A} - \frac{1}{2 C_A} \sum_{i \in A} R^A_i z_{qi}^2, \\
+X_{qAB} &\approx \bar r_{AB} + \frac{S_A S_B}{m_A m_B} - \frac{1}{2 m_A m_B} \Big( \sum_{i \in A} R^B_i z_{qi}^2 + \sum_{j \in B} R^A_j z_{qj}^2 \Big),
+\end{aligned}
+$$
+where $\bar r_A$ and $\bar r_{AB}$ are the mean cohort correlations within $A$ and between $A$ and $B$.
+The connectivity is, up to small terms, the squared pathway score $(S_A/m_A)^2$, and the crosstalk the product of two pathway scores.
+The total edge weight is the same sum over all genes, and the strength of gene $i$ is $R_i + z_{qi}(S - z_{qi}) - \tfrac{1}{2} R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2$, with $S$ and $R_i$ over all genes (S1.4).
+The graph metrics have no closed form, but they are functions of the edges, and so of the same standardized expression.
+A metric is therefore stable over a person's visits to the extent that the person's expression terms are: the squared score of a pathway driven by a factor with within-person intraclass correlation $\kappa$ has intraclass correlation $\kappa^2$ when the factor is normal (S1.5).
 
 ## The fix or the diagnostic
 
 <!-- What to change so the gap vanishes, or what to check so a user knows whether it matters. -->
 
-[FILL]
+Two checks tell a user whether a LIONESS metric carries anything beyond the sample's expression.
+The first recomputes the metric on the first-order form of the edges, the network the closed form predicts from expression alone, and compares the two metrics' stability over visits and their predictions.
+The second regresses connectivity and crosstalk over samples on their three first-order expression terms, then with the fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the corresponding products for crosstalk), and reports the $R^2$ and the stability of the residual.
+A metric that matches its first-order version, and whose residual is not stable, measures expression.
 
 ## Data
 
 <!-- The cohort or dataset: source paper and accession, who was sampled, sizes, the measurement scale,
 the processing applied. Carried from the report's "The study" subsection. -->
 
-[FILL]
+The application uses the longitudinal study of children with systemic lupus erythematosus of @banchereau2016personalized, Gene Expression Omnibus series GSE65391, whole-blood expression on the Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at every visit.
+The analysis keeps the `r lvl(dat$counts[["children_multi"]])` children with two or more visits, `r lvl(dat$counts[["visits_multi"]])` visits in all, and the authors' split into training and test children.
+Pathways are modules of the BloodGen3 repertoire, built from co-clustering in blood transcriptomes of sixteen immunological and physiological states [@altman2021bloodgen3], taken from its R package [@rinchai2021bloodgen3module]. [TO CONFIRM: the download of the module list and the minimum module size]{.tc}
 
 ## Software and reproducibility
 

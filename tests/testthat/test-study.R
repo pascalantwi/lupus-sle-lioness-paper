@@ -83,3 +83,21 @@ test_that("StudyReplicate returns the S1 and S2 quantities", {
                     "next_d_A_C") %in% names(r)))
   expect_gt(r$r2_1_conn_ifn, 0.99)
 })
+
+test_that("strength and total weight of first-order edges equal their closed forms", {
+  set.seed(85)
+  x <- matrix(rnorm(60 * 6), 60) + rnorm(60)
+  e1 <- LionessEdgesFirstOrder(x)
+  m <- LionessMetrics(e1, list(a = 1:3, b = 4:6))
+  z <- StandardizeN(x)$z
+  r <- cor(x)
+  diag(r) <- 0
+  s <- rowSums(z)
+  rs <- rowSums(r)
+  strength1 <- rs[1] + z[, 1] * (s - z[, 1]) - rs[1] * z[, 1]^2 / 2 -
+    drop(z^2 %*% r[, 1]) / 2
+  pr <- PairIndex(6)
+  expect_equal(rowSums(e1[, pr[, 1] == 1 | pr[, 2] == 1]), unname(strength1))
+  total <- sum(r) / 2 + (s^2 - rowSums(z^2)) / 2 - drop(z^2 %*% rs) / 2
+  expect_equal(unname(m[, "total_weight"]), total)
+})
