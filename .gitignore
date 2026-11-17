@@ -36,3 +36,4 @@ __pycache__/
 /data/raw/GSE235508_mRNA_counts.txt.gz
 /data/raw/GSE65391_series_matrix.txt.gz
 /data/raw/GPL10558_platform_table.txt
+/data/raw/BloodGen3Module_*.tar.gz
