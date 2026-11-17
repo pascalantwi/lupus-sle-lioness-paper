@@ -85,6 +85,17 @@ The application (dataset, modules, and procedure) is in section 9.
 ## 8. Dated entries before production
 
 - 2026-11-17, before the quick run. Calibration (`Rscript analysis/03_simulation.R --calibrate`, `results/calibration.rds`; 12 replicates per effect, seeds offset by 500000 from the study's): power of B's superiority test for same-visit activity 0.00 at 0.05 and 0.10, 0.25 at 0.15, 0.42 at 0.20, 0.92 at 0.25 (MCSE up to 0.15). Interpolated: $\beta_1, \dots, \beta_4 = 0.15, 0.18, 0.21, 0.24$. A and C were declared above one half in no replicate at any effect.
+- 2026-11-17, before any GSE65391 LIONESS edge is computed. The user approved the BloodGen3 download and the module choice. The application, made precise (section 9 is replaced by this entry where they differ):
+  - Samples: the visits of the children with two or more SLE visits (`DescribeGse65391()`), ordered by cumulative time within child; the LIONESS cohort is these visits alone.
+  - Expression: the series matrix values; if their 99th percentile exceeds 50 they are taken as linear and log2-transformed (with an offset making the minimum 1). Probes mapped to gene symbols with the GPL10558 table; for a gene with several probes, the probe with the highest mean expression.
+  - Modules: BloodGen3 (`BloodGen3Module` 1.20.0, `Module_listGen3`), each module's genes matched to the array; a module is analysed when at least 10 of its genes match.
+  - The network: the genes of the four pathways chosen by their BloodGen3 function label, before any edge was computed: interferon ("Interferon", "Type 1 Interferon"; 6 modules), neutrophil ("Neutrophils"; 4), lymphocyte ("Lymphocytes"; 4), plasmablast ("Plasma cells"; 5); a gene in two pathways is kept in the first. LIONESS and first-order networks over these genes are computed one sample at a time from the exact closed form (`LionessEdgesClosedForm()`'s formula), and every metric of section 4 is taken over the four pathways (connectivity, the six crosstalks, strength, degree, betweenness, the whole-network metrics).
+  - Module connectivity: for every analysed module, its LIONESS connectivity, its $R^2$ on the first-order terms and with the fourth-order terms, and the stability of each residual (claim 5).
+  - Feature sets: A and C as section 4 over the four-pathway network; B the four pathway scores and their squares. Activity is SLEDAI. Same-visit and next-visit prediction, folds by child, the bootstrap tests of section 4 (claim 7); in addition, fit on the authors' training children and the concordance on their test children.
+  - Fingerprinting: each child's first two visits.
+  - Gradient placement: for each analysed module, the stability of its score over visits and the share of variance of its first principal component.
+  - Figures: the LIONESS gene network and pathway network of two children (the highest and the median mean interferon score), visits 1 and 2.
+  - Seed 21461118; script `analysis/04_application.R`, results `results/application_*.rds`.
 
 ## 9. Application
 

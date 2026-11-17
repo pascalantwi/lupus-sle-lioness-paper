@@ -1,5 +1,6 @@
 "accession","url","file","fetched","bytes","md5"
 "GSE235508","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE235nnn/GSE235508/matrix/GSE235508_series_matrix.txt.gz","GSE235508_series_matrix.txt.gz",FALSE,16714,"1a6ec82302ba012c213e478108ad972f"
 "GSE235508","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE235nnn/GSE235508/suppl/GSE235508_mRNA_counts.txt.gz","GSE235508_mRNA_counts.txt.gz",FALSE,26093615,"ae8301e531c5a63278c05e80380b13dd"
-"GSE65391","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE65nnn/GSE65391/matrix/GSE65391_series_matrix.txt.gz","GSE65391_series_matrix.txt.gz",TRUE,90788863,"2c50d04ed1fc87abfc4a76c38593ed44"
-"GPL10558","https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL10558&targ=self&form=text&view=data","GPL10558_platform_table.txt",TRUE,72095153,"6815b9afcd3c3ab5f324e2fa69ca7335"
+"GSE65391","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE65nnn/GSE65391/matrix/GSE65391_series_matrix.txt.gz","GSE65391_series_matrix.txt.gz",FALSE,90788863,"2c50d04ed1fc87abfc4a76c38593ed44"
+"GPL10558","https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL10558&targ=self&form=text&view=data","GPL10558_platform_table.txt",FALSE,72095153,"6815b9afcd3c3ab5f324e2fa69ca7335"
+"BloodGen3Module","https://bioconductor.org/packages/3.23/bioc/src/contrib/BloodGen3Module_1.20.0.tar.gz","BloodGen3Module_1.20.0.tar.gz",TRUE,183043,"a986980d96d43142ee2e3930ffb1a1f4"
