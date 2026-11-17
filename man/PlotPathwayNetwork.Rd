@@ -13,7 +13,7 @@ PlotPathwayNetwork(
 )
 }
 \arguments{
-\item{conn}{Named connectivities, names \verb{within_<set>}.}
+\item{conn}{Named connectivities, names \verb{within_<set>} or \verb{conn_<set>}.}
 
 \item{cross}{Named crosstalks, names \verb{cross_<A>_<B>}.}
 
