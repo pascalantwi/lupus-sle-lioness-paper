@@ -5,8 +5,8 @@
 | Workflow version | 0.2.4-md (2026-11-03): tgrimes/research-workflow 0.2.4 with a Markdown reference list and no Zotero |
 | Project | LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features (re-scope 2026-11-16; earlier: LIONESS edges across pregnancy in SLE and RA) |
 | Package | lionesspreg |
-| Stage | 3, design stop |
-| Open stop | stage 3, step 3.2: the design proposal (`log/03-manuscript.md`, section "Step 3.2") |
+| Stage | 3, draft at stop |
+| Open stop | stage 3, step 5: the first draft, `manuscript/manuscript.html` (Markdown copy `manuscript/manuscript.md`) |
 | Last update | 2026-11-17 |
 
 The Stage row reads "stage number, state". The states a stage can be in:
@@ -41,3 +41,4 @@ One line per stage boundary, newest last: the date, the stage reached, the path 
 | 2026-11-16 | 2, piloted-fail (pilot-g, pathway approach; one clause in one cell, a higher-order expression term) | `pilot-g/pilot-report.html` | stage 2 stop: the user decides |
 | 2026-11-17 | 2, piloted-fail (pilot-g) accepted by the user with its reading; stage 3 started on the user's word | `log/03-manuscript.md` | none: stage 3 in progress |
 | 2026-11-17 | 3, design stop | `log/03-manuscript.md`, Step 3.2 | design stop: the user approves the design, the gene-set download, and the open choices |
+| 2026-11-17 | 3, draft at stop (quick run, 10 replicates) | `manuscript/manuscript.html` | stage 3 stop: the user comments on the first draft |

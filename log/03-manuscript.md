@@ -109,3 +109,17 @@ The study has two parts. S1 (describe and explain) varies, one at a time around 
 3. Cross-checks. The Abstract's numbers (largest difference, $R^2$, residual stability, power, equivalence) come from the same expressions as the Results. The Introduction's three questions are answered in the Discussion in order (change over visits; expression; prediction). Table 2's labels were garbled (pathway suffixes stripped wrongly); rebuilt from a fixed label map.
 4. Second pass not due: no section changed more than three sentences after the first pass.
 - Checker: 0 errors; one warning kept: bib entries never cited (pregnancy-scope and stage-1 entries); `build-bib.py --qmd` drops them at the reference review.
+
+## Step 5: render and check
+
+- Citations: 15 distinct keys cited, 13 passage-backed, 2 definitional (`check-manuscript.py`). Deviations from records: none new.
+- Markers left for the user (11 in the rendered draft): the authors (YAML), the BloodGen3 download and module size, the application not yet run, the supervisor's confirmation, the repository URL, whether figure legends must name AI-assisted code.
+- Literature pass for this stage (records opened, 2026-11-17): Altman 2021 (BloodGen3, open full text: CC BY 4.0, modules in the BloodGen3Module package), Rinchai 2021 (package), Liberzon 2015 (Hallmark), Horvath and Dong 2008 (open full text: approximately factorizable module networks and eigengene-based connectivity, for a network of all samples), Langfelder and Horvath 2008 (WGCNA), Kuijjer 2019 lionessR (open full text: limma on edges between survival groups), Morris 2019 and Marwick 2018 (Crossref records). Two pages were outside the session's network (nature.com, gsea-msigdb.org).
+- Time per step (2026-11-17): step 0 and 1 about 1 h with the figure work; references 20 min; design proposal 20 min; protocol, study code, and tests 1.5 h; calibration 2 x 7 min (one lost to the agent's edit of a running script); quick run 10 min; drafting and revision 1.5 h.
+
+## Process feedback
+
+- Editing an R script while Rscript runs it corrupts the run, because Rscript reads the file as it goes; it cost one calibration run.
+- The workflow's step 1 names `analysis/01_simulation.R`; a re-scoped project already holding 01 and 02 scripts needs another number. Worth a sentence in `03-manuscript.md`.
+- The skeleton's separate "Statement on AI use" section conflicts with BMC's rule that AI use is described in the Methods; the profile's placement was followed, as the stage file says.
+- Clone proof (2026-11-17): a fresh clone with `data/raw/` deleted; `renv::restore()` clean; `analysis/00_download.R` refetched every file, checksums equal; tests 185 pass (the acceptance test skipped, as gated); `devtools::check()` 0 errors, 0 warnings, 0 notes; the quick run rerun (623 s) gave per-setting summaries equal to the committed ones to 1e-12; the manuscript rendered. No Python in this project, so no `uv sync`.
