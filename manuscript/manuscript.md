@@ -171,13 +171,14 @@ X_{qAB} &= \frac{1}{m_A m_B} \sum_{i \in A} \sum_{j \in B} e_{qij}, \\
 T_q &= \sum_{i < j} e_{qij}, \\
 s_{qi} &= \sum_{j \ne i} e_{qij}.
 \end{aligned}
-$$ The graph metrics use the graph $G_q$ that keeps the pairs with
+$$ For the graph metrics, we kept in a graph $G_q$ the pairs with
 $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that
-a fixed share of pairs is kept: the number of edges and of nodes (genes
-with at least one edge) of $G_q$, its transitivity (the share of
-connected triples that close into triangles), and each gene’s degree and
-betweenness, the latter with distance $1/\lvert e_{qij}\rvert$.
-Gene-level metrics are averaged over the genes of each pathway.
+a fixed share of pairs is kept, and computed the number of edges and of
+nodes (genes with at least one edge) of $G_q$, its transitivity (the
+share of connected triples that close into triangles), and each gene’s
+degree and betweenness, the latter with distance
+$1/\lvert e_{qij}\rvert$. We averaged the gene-level metrics over the
+genes of each pathway.
 
 ## What the procedure estimates
 
@@ -185,11 +186,11 @@ Gene-level metrics are averaged over the genes of each pathway.
 large. Where no formula exists for a method or setting, say so plainly. Proofs go to
 _supplement.qmd; state the results here and point at the supplement. -->
 
-Every LIONESS edge is an exact function of the cohort correlation and
-the sample’s own standardized expression. With $z_{qi}$ the expression
-of gene $i$ in sample $q$ standardized over all $N$ samples (divisor
-$N$) and $\varepsilon = 1/(N - 1)$, removing sample $q$ gives
-(supplement, S1.1) $$
+We show that every LIONESS edge is an exact function of the cohort
+correlation and the sample’s own standardized expression. With $z_{qi}$
+the expression of gene $i$ in sample $q$ standardized over all $N$
+samples (divisor $N$) and $\varepsilon = 1/(N - 1)$, removing sample $q$
+gives (supplement, S1.1) $$
 \begin{aligned}
 r^{(-q)}_{ij} &= \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}}, \\
 e_{qij} &= N r_{ij} - (N - 1)\, r^{(-q)}_{ij}.
@@ -226,59 +227,61 @@ factor is normal (S1.5).
 
 <!-- What to change so the gap vanishes, or what to check so a user knows whether it matters. -->
 
-Two checks tell a user whether a LIONESS metric carries anything beyond
-the sample’s expression. The first recomputes the metric on the
-first-order form of the edges, the network the closed form predicts from
-expression alone, and compares the two metrics’ stability over visits
-and their predictions. The second regresses connectivity and crosstalk
-over samples on their three first-order expression terms, then with the
-fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$,
-$Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the
-corresponding products for crosstalk), and reports the $R^2$ and the
-stability of the residual. A metric that matches its first-order
-version, and whose residual is not stable, measures expression.
+We propose two checks that tell a user whether a LIONESS metric carries
+anything beyond the sample’s expression. In the first, we recompute the
+metric on the first-order form of the edges, the network the closed form
+predicts from expression alone, and compare the two metrics’ stability
+over visits and their predictions. In the second, we regress
+connectivity and crosstalk over samples on their three first-order
+expression terms, then with the fourth-order terms of the remainder
+added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for
+connectivity; the corresponding products for crosstalk), and report the
+$R^2$ and the stability of the residual. A metric that matches its
+first-order version, and whose residual is not stable, measures
+expression.
 
 ## Data
 
 <!-- The cohort or dataset: source paper and accession, who was sampled, sizes, the measurement scale,
 the processing applied. Carried from the report's "The study" subsection. -->
 
-The application uses the longitudinal study of children with systemic
-lupus erythematosus of \[[1](#ref-banchereau2016personalized)\], Gene
-Expression Omnibus series GSE65391, whole-blood expression on the
-Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at
-every visit. The analysis kept the 131 children with two or more visits,
-897 visits in all, ordered by time within child, and the authors’ split
-into training and test children. Probes were mapped to gene symbols with
-the platform table, keeping for each gene the probe with the highest
-mean expression; genes with no variance, or with variance in a single
-sample only (for which the leave-one-out correlation is undefined), were
-dropped, leaving 10,084 genes that belong to a module. Modules come from
-the BloodGen3 repertoire, built from co-clustering in blood
-transcriptomes of sixteen immunological and physiological states
-\[[5](#ref-altman2021bloodgen3)\], taken from its R package
-\[[11](#ref-rinchai2021bloodgen3module)\]; the 382 modules with at least
-10 genes on the array were analysed one by one. The network was built
-over the genes of four pathways chosen by their BloodGen3 function label
-before any network was computed: interferon (103 genes), neutrophil
-(145), lymphocyte (181), and plasma cell (106). Each child’s LIONESS
-network and its first-order version were computed sample by sample from
-the exact closed form, and the metrics, feature sets, and tests were
-those of the simulation study, with SLEDAI as the activity.
+For the application, we used the longitudinal study of children with
+systemic lupus erythematosus of
+\[[1](#ref-banchereau2016personalized)\], Gene Expression Omnibus series
+GSE65391, whole-blood expression on the Illumina HumanHT-12 array with
+disease activity (SLEDAI) recorded at every visit. We kept the 131
+children with two or more visits, 897 visits in all, ordered by time
+within child, and the authors’ split into training and test children. We
+mapped probes to gene symbols with the platform table, keeping for each
+gene the probe with the highest mean expression, and dropped genes with
+no variance or with variance in a single sample only (for which the
+leave-one-out correlation is undefined), leaving 10,084 genes that
+belong to a module. We took the modules of the BloodGen3 repertoire,
+built from co-clustering in blood transcriptomes of sixteen
+immunological and physiological states
+\[[5](#ref-altman2021bloodgen3)\], from its R package
+\[[11](#ref-rinchai2021bloodgen3module)\], and analysed one by one the
+382 modules with at least 10 genes on the array. We built the network
+over the genes of four pathways, which we chose by their BloodGen3
+function label before computing any network: interferon (103 genes),
+neutrophil (145), lymphocyte (181), and plasma cell (106). We computed
+each child’s LIONESS network and its first-order version sample by
+sample from the exact closed form, and used the metrics, feature sets,
+and tests of the simulation study, with SLEDAI as the activity.
 
 ## Software and reproducibility
 
-The code is organized as a research compendium
+We organized the code as a research compendium
 \[[12](#ref-marwick2018)\]: an R package whose functions are documented
 and tested, analysis scripts that call those functions and write every
 result to a results folder, and this manuscript, which reads only from
 that folder, so that every number, table, and figure in it is computed
 from the saved results when the document is rendered. Each simulation
-cell has its own random seed, derived from the design table, and the
-per-replicate results are saved rather than summaries. The software and
-package versions used are recorded with the results.
+cell has its own random seed, derived from the design table, and we
+saved the per-replicate results rather than summaries. We recorded the
+software and package versions with the results.
 
-The analyses used R version 4.6.2 (2026-10-29), with glmnet
+We used R version 4.6.2 (2026-10-29), with glmnet
 \[[13](#ref-friedman2010glmnet)\] for the elastic net and igraph for the
 graph metrics.
 

@@ -244,8 +244,8 @@ T_q &= \sum_{i < j} e_{qij}, \\
 s_{qi} &= \sum_{j \ne i} e_{qij}.
 \end{aligned}
 $$
-The graph metrics use the graph $G_q$ that keeps the pairs with $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that a fixed share of pairs is kept: the number of edges and of nodes (genes with at least one edge) of $G_q$, its transitivity (the share of connected triples that close into triangles), and each gene's degree and betweenness, the latter with distance $1/\lvert e_{qij}\rvert$.
-Gene-level metrics are averaged over the genes of each pathway.
+For the graph metrics, we kept in a graph $G_q$ the pairs with $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that a fixed share of pairs is kept, and computed the number of edges and of nodes (genes with at least one edge) of $G_q$, its transitivity (the share of connected triples that close into triangles), and each gene's degree and betweenness, the latter with distance $1/\lvert e_{qij}\rvert$.
+We averaged the gene-level metrics over the genes of each pathway.
 
 
 ## What the procedure estimates
@@ -254,7 +254,7 @@ Gene-level metrics are averaged over the genes of each pathway.
 large. Where no formula exists for a method or setting, say so plainly. Proofs go to
 _supplement.qmd; state the results here and point at the supplement. -->
 
-Every LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression.
+We show that every LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression.
 With $z_{qi}$ the expression of gene $i$ in sample $q$ standardized over all $N$ samples (divisor $N$) and $\varepsilon = 1/(N - 1)$, removing sample $q$ gives (supplement, S1.1)
 $$
 \begin{aligned}
@@ -284,9 +284,9 @@ A metric is therefore stable over a person's visits to the extent that the perso
 
 <!-- What to change so the gap vanishes, or what to check so a user knows whether it matters. -->
 
-Two checks tell a user whether a LIONESS metric carries anything beyond the sample's expression.
-The first recomputes the metric on the first-order form of the edges, the network the closed form predicts from expression alone, and compares the two metrics' stability over visits and their predictions.
-The second regresses connectivity and crosstalk over samples on their three first-order expression terms, then with the fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the corresponding products for crosstalk), and reports the $R^2$ and the stability of the residual.
+We propose two checks that tell a user whether a LIONESS metric carries anything beyond the sample's expression.
+In the first, we recompute the metric on the first-order form of the edges, the network the closed form predicts from expression alone, and compare the two metrics' stability over visits and their predictions.
+In the second, we regress connectivity and crosstalk over samples on their three first-order expression terms, then with the fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the corresponding products for crosstalk), and report the $R^2$ and the stability of the residual.
 A metric that matches its first-order version, and whose residual is not stable, measures expression.
 
 ## Data
@@ -294,18 +294,18 @@ A metric that matches its first-order version, and whose residual is not stable,
 <!-- The cohort or dataset: source paper and accession, who was sampled, sizes, the measurement scale,
 the processing applied. Carried from the report's "The study" subsection. -->
 
-The application uses the longitudinal study of children with systemic lupus erythematosus of @banchereau2016personalized, Gene Expression Omnibus series GSE65391, whole-blood expression on the Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at every visit.
-The analysis kept the `r lvl(app_s$n_children)` children with two or more visits, `r lvl(app_s$n_visits)` visits in all, ordered by time within child, and the authors' split into training and test children.
-Probes were mapped to gene symbols with the platform table, keeping for each gene the probe with the highest mean expression; genes with no variance, or with variance in a single sample only (for which the leave-one-out correlation is undefined), were dropped, leaving `r lvl(app_s$n_genes_matched)` genes that belong to a module.
-Modules come from the BloodGen3 repertoire, built from co-clustering in blood transcriptomes of sixteen immunological and physiological states [@altman2021bloodgen3], taken from its R package [@rinchai2021bloodgen3module]; the `r lvl(app_s$n_modules)` modules with at least `r lvl(10)` genes on the array were analysed one by one.
-The network was built over the genes of four pathways chosen by their BloodGen3 function label before any network was computed: interferon (`r lvl(app_s$pathway_sizes[["ifn"]])` genes), neutrophil (`r lvl(app_s$pathway_sizes[["neut"]])`), lymphocyte (`r lvl(app_s$pathway_sizes[["lymph"]])`), and plasma cell (`r lvl(app_s$pathway_sizes[["pb"]])`).
-Each child's LIONESS network and its first-order version were computed sample by sample from the exact closed form, and the metrics, feature sets, and tests were those of the simulation study, with SLEDAI as the activity.
+For the application, we used the longitudinal study of children with systemic lupus erythematosus of @banchereau2016personalized, Gene Expression Omnibus series GSE65391, whole-blood expression on the Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at every visit.
+We kept the `r lvl(app_s$n_children)` children with two or more visits, `r lvl(app_s$n_visits)` visits in all, ordered by time within child, and the authors' split into training and test children.
+We mapped probes to gene symbols with the platform table, keeping for each gene the probe with the highest mean expression, and dropped genes with no variance or with variance in a single sample only (for which the leave-one-out correlation is undefined), leaving `r lvl(app_s$n_genes_matched)` genes that belong to a module.
+We took the modules of the BloodGen3 repertoire, built from co-clustering in blood transcriptomes of sixteen immunological and physiological states [@altman2021bloodgen3], from its R package [@rinchai2021bloodgen3module], and analysed one by one the `r lvl(app_s$n_modules)` modules with at least `r lvl(10)` genes on the array.
+We built the network over the genes of four pathways, which we chose by their BloodGen3 function label before computing any network: interferon (`r lvl(app_s$pathway_sizes[["ifn"]])` genes), neutrophil (`r lvl(app_s$pathway_sizes[["neut"]])`), lymphocyte (`r lvl(app_s$pathway_sizes[["lymph"]])`), and plasma cell (`r lvl(app_s$pathway_sizes[["pb"]])`).
+We computed each child's LIONESS network and its first-order version sample by sample from the exact closed form, and used the metrics, feature sets, and tests of the simulation study, with SLEDAI as the activity.
 
 ## Software and reproducibility
 
 {{< include parts/reproducibility.md >}}
 
-The analyses used `r R.version.string`, with glmnet [@friedman2010glmnet] for the elastic net and igraph for the graph metrics.
+We used `r R.version.string`, with glmnet [@friedman2010glmnet] for the elastic net and igraph for the graph metrics.
 
 {{< include parts/ai-use-statement.md >}} [TO CONFIRM: whether the journal wants the figure legends to name the AI-assisted code]{.tc}
 
