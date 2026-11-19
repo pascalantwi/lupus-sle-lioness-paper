@@ -319,9 +319,39 @@ absolute values, the mixing $a$ was 0.50, and the penalty $\lambda$ was
 chosen by 5-fold cross-validation inside the training samples, with all
 visits of a person in one fold, at the value with the smallest mean
 squared error. A model without features under test was fitted by least
-squares. Every prediction was made out of fold: the people were split
-into 5 folds, and each person’s predictions came from a model fitted on
-the other folds.
+squares.
+
+Each model of <a href="#tbl-ladder-def" class="quarto-xref">Table 1</a>
+is one choice of base terms and features under test. Let
+$\mathbf{s}_{pv}$ be the vector of pathway scores of person $p$ at visit
+$v$ (the mean standardized expression of each pathway’s genes),
+$\mathbf{s}^{2}_{pv}$ its elementwise square, $\mathbf{g}_{pv}$ the
+standardized expression of all genes of the network, $\mathbf{m}_{pv}$
+the LIONESS metrics, and $\mathbf{m}^{(1)}_{pv}$ the same metrics
+computed on the first-order network. For same-visit activity the models
+are $$
+\begin{aligned}
+\mathrm{R1}:\quad y_{pv} &= \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \epsilon_{pv}, \\
+\mathrm{E1}:\quad y_{pv} &= \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \epsilon_{pv}, \\
+\mathrm{N1}:\quad y_{pv} &= \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \boldsymbol{\theta}_m^\top \mathbf{m}_{pv} + \epsilon_{pv}, \\
+\mathrm{F1}:\quad y_{pv} &= \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \boldsymbol{\theta}_f^\top \mathbf{m}^{(1)}_{pv} + \epsilon_{pv}, \\
+\mathrm{A}:\quad y_{pv} &= \alpha + \boldsymbol{\theta}_m^\top \mathbf{m}_{pv} + \epsilon_{pv}, \\
+\mathrm{B}:\quad y_{pv} &= \alpha + \boldsymbol{\theta}_1^\top \mathbf{s}_{pv} + \boldsymbol{\theta}_2^\top \mathbf{s}^{2}_{pv} + \epsilon_{pv}, \\
+\mathrm{C}:\quad y_{pv} &= \alpha + \boldsymbol{\theta}_f^\top \mathbf{m}^{(1)}_{pv} + \epsilon_{pv},
+\end{aligned}
+$$ where the coefficients written $\boldsymbol{\gamma}$ are not
+penalized and those written $\boldsymbol{\theta}$ are penalized by the
+elastic net; R1 has no penalized term and is fitted by least squares.
+For next-visit activity, the outcome is $y_{p,v+1}$, every model adds
+the current activity $\delta\, y_{pv}$ unpenalized, and the ladder
+starts from $$
+\mathrm{R0}:\quad y_{p,v+1} = \alpha + \delta\, y_{pv} + \epsilon_{p,v+1},
+$$ the prediction from today’s activity alone, also fitted by least
+squares. Moving up the ladder adds one kind of information at a time: R1
+the pathway scores, E1 the genes, and N1 the LIONESS metrics, while F1
+replaces the LIONESS metrics by their first-order form. Every prediction
+was made out of fold: the people were split into 5 folds, and each
+person’s predictions came from a model fitted on the other folds.
 
 <div id="tbl-ladder-def">
 
