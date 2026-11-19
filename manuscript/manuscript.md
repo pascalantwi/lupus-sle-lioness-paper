@@ -347,11 +347,11 @@ the current activity $\delta\, y_{pv}$ unpenalized, and the ladder
 starts from $$
 \mathrm{R0}:\quad y_{p,v+1} = \alpha + \delta\, y_{pv} + \epsilon_{p,v+1},
 $$ the prediction from today’s activity alone, also fitted by least
-squares. Moving up the ladder adds one kind of information at a time: R1
-the pathway scores, E1 the genes, and N1 the LIONESS metrics, while F1
-replaces the LIONESS metrics by their first-order form. Every prediction
-was made out of fold: the people were split into 5 folds, and each
-person’s predictions came from a model fitted on the other folds.
+squares. Moving up the ladder adds one source of information at a time:
+R1 the pathway scores, E1 the genes, and N1 the LIONESS metrics, while
+F1 replaces the LIONESS metrics by their first-order form. Every
+prediction was made out of fold: the people were split into 5 folds, and
+each person’s predictions came from a model fitted on the other folds.
 
 <div id="tbl-ladder-def">
 

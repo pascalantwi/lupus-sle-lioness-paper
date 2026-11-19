@@ -2551,7 +2551,7 @@ y_{p,v+1} = \alpha + \delta\, y_{pv} + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} 
 \end{aligned}
 \]</span> where the coefficients written <span class="math inline">\(\boldsymbol{\gamma}\)</span> are not penalized and those written <span class="math inline">\(\boldsymbol{\theta}\)</span> are penalized by the elastic net; R1 has no penalized term and is fitted by least squares. For next-visit activity, the outcome is <span class="math inline">\(y_{p,v+1}\)</span>, every model adds the current activity <span class="math inline">\(\delta\, y_{pv}\)</span> unpenalized, and the ladder starts from <span class="math display">\[
 \mathrm{R0}:\quad y_{p,v+1} = \alpha + \delta\, y_{pv} + \epsilon_{p,v+1},
-\]</span> the prediction from today’s activity alone, also fitted by least squares. Moving up the ladder adds one kind of information at a time: R1 the pathway scores, E1 the genes, and N1 the LIONESS metrics, while F1 replaces the LIONESS metrics by their first-order form. Every prediction was made out of fold: the people were split into 5 folds, and each person’s predictions came from a model fitted on the other folds.</p>
+\]</span> the prediction from today’s activity alone, also fitted by least squares. Moving up the ladder adds one source of information at a time: R1 the pathway scores, E1 the genes, and N1 the LIONESS metrics, while F1 replaces the LIONESS metrics by their first-order form. Every prediction was made out of fold: the people were split into 5 folds, and each person’s predictions came from a model fitted on the other folds.</p>
 <div class="cell">
 <div id="tbl-ladder-def" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
