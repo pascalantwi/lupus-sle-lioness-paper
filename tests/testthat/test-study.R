@@ -80,7 +80,8 @@ test_that("StudyReplicate returns the S1 and S2 quantities", {
   expect_true(all(c("icc_raw_betweenness_ifn", "icc_fo_transitivity",
                     "r2_4_conn_ifn", "icc_res4_conn_ifn", "finger_A",
                     "same_c_A", "same_eq_A_B", "next_sup_R0",
-                    "next_d_A_C") %in% names(r)))
+                    "next_d_A_C", "finger_G", "lsame_d_N1_E1",
+                    "lnext_eq_N1_F1", "lnext_c_R0") %in% names(r)))
   expect_gt(r$r2_1_conn_ifn, 0.99)
 })
 
@@ -100,4 +101,29 @@ test_that("strength and total weight of first-order edges equal their closed for
   expect_equal(rowSums(e1[, pr[, 1] == 1 | pr[, 2] == 1]), unname(strength1))
   total <- sum(r) / 2 + (s^2 - rowSums(z^2)) / 2 - drop(z^2 %*% rs) / 2
   expect_equal(unname(m[, "total_weight"]), total)
+})
+
+test_that("the ladder fits every model and the tests read the contrasts", {
+  set.seed(86)
+  person <- rep(1:30, each = 3)
+  genes <- matrix(rnorm(90 * 6), 90)
+  y <- genes[, 1] + rnorm(90, sd = 0.5)
+  r1 <- cbind(genes[, 2], genes[, 2]^2)
+  m <- matrix(rnorm(90 * 3), 90)
+  outer <- GroupFolds(person, 5L)
+  lad <- LadderPredictions(genes, r1, m, m, y, person, outer)
+  expect_named(lad, c("R1", "E1", "N1", "F1"))
+  lad_c <- LadderPredictions(genes, r1, m, m, y, person, outer,
+                             current = matrix(rnorm(90), ncol = 1))
+  expect_true("R0" %in% names(lad_c))
+  t <- BootstrapLadder(lad, y, person, n_boot = 50L)
+  expect_true(all(c("c_E1", "sup_E1", "d_N1_E1", "supd_N1_E1", "eq_N1_F1",
+                    "d_E1_R1") %in% names(t)))
+  # the genes carry the outcome, so E1 beats R1 and its concordance is high
+  expect_gt(t[["c_E1"]], 0.7)
+  expect_equal(t[["supd_E1_R1"]], 1)
+  # identical predictions are equivalent
+  same <- BootstrapLadder(list(N1 = y, F1 = y), y, person,
+                          contrasts = list(c("N1", "F1")), n_boot = 20L)
+  expect_equal(same[["eq_N1_F1"]], 1)
 })

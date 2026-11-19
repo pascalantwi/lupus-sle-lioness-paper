@@ -99,6 +99,20 @@ nx <- c(lapply(feats, function(f) {
 t_next <- BootstrapTests(nx, sledai[nxt[use]], person[use], n_boot)
 split_c <- SplitConcordance(feats, sledai, person, q$set == "Training")
 
+# ---- the model ladder (protocol.md, section 8, entry of 2026-11-19) ----------
+genes <- scale(x_net)
+finger <- c(finger, G = FingerprintAccuracy(genes, person, visit,
+                                            seq_len(ncol(genes)), 1, 2))
+r1 <- cbind(score, score^2)
+lad <- LadderPredictions(genes, r1, feats$A, feats$C, sledai, person, outer)
+l_same <- BootstrapLadder(lad, sledai, person, n_boot = n_boot)
+lad_n <- LadderPredictions(genes[use, , drop = FALSE], r1[use, , drop = FALSE],
+                           feats$A[use, , drop = FALSE],
+                           feats$C[use, , drop = FALSE], sledai[nxt[use]],
+                           person[use], outer[use], current = ref)
+l_next <- BootstrapLadder(lad_n, sledai[nxt[use]], person[use],
+                          n_boot = n_boot)
+
 # ---- example networks for the figures -----------------------------------------
 ifn_child <- tapply(q$ifn, person, mean)
 kids <- c(names(which.max(ifn_child)),
@@ -126,7 +140,8 @@ saveRDS(modules, file.path(out_dir, "application_modules.rds"))
 saveRDS(list(icc = icc, icc_score2 = icc_score2),
         file.path(out_dir, "application_metrics.rds"))
 saveRDS(list(finger = finger, same = t_same, next_visit = t_next,
-             split = split_c, chance = 1 / length(unique(person))),
+             split = split_c, chance = 1 / length(unique(person)),
+             ladder_same = l_same, ladder_next = l_next),
         file.path(out_dir, "application_prediction.rds"))
 saveRDS(examples, file.path(out_dir, "application_examples.rds"))
 saveRDS(list(run = "production", n_rep = NA_integer_, n_cells = NA_integer_,

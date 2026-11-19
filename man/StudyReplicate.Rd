@@ -25,5 +25,6 @@ the stability of each squared pathway score and of the single edges;
 fingerprinting accuracy of the metrics (raw and first-order) and of the
 pathway scores. S2 settings add prediction of same-visit and next-visit
 activity from A (raw metrics), B (pathway scores and their squares), and
-C (first-order metrics), with \code{\link[=BootstrapTests]{BootstrapTests()}}.
+C (first-order metrics), with \code{\link[=BootstrapTests]{BootstrapTests()}}, and the model ladder
+(\code{\link[=LadderPredictions]{LadderPredictions()}}, \code{\link[=BootstrapLadder]{BootstrapLadder()}}).
 }

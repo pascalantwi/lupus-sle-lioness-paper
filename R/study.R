@@ -313,7 +313,8 @@ BootstrapTests <- function(preds, y, person, n_boot = 200L, margin = 0.05) {
 #' fingerprinting accuracy of the metrics (raw and first-order) and of the
 #' pathway scores. S2 settings add prediction of same-visit and next-visit
 #' activity from A (raw metrics), B (pathway scores and their squares), and
-#' C (first-order metrics), with [BootstrapTests()].
+#' C (first-order metrics), with [BootstrapTests()], and the model ladder
+#' ([LadderPredictions()], [BootstrapLadder()]).
 #'
 #' @param design_row One row of [StudyDesign()].
 #' @param rep Replicate index; the seed is the row's seed plus `rep`.
@@ -366,10 +367,13 @@ StudyReplicate <- function(design_row, rep, n_boot = 200L) {
   }
   feats <- list(A = keep(m_raw), B = keep(cbind(score, score^2)),
                 C = keep(m_fo))
+  genes <- scale(coh$x)
   for (s in names(feats)) {
     out[[paste0("finger_", s)]] <- FingerprintAccuracy(
       feats[[s]], person, coh$visit, seq_len(ncol(feats[[s]])))
   }
+  out$finger_G <- FingerprintAccuracy(genes, person, coh$visit,
+                                      seq_len(ncol(genes)))
   if (design_row$part == "S2") {
     outer <- GroupFolds(person, 5L)
     y <- coh$activity
@@ -389,6 +393,19 @@ StudyReplicate <- function(design_row, rep, n_boot = 200L) {
     t_next <- BootstrapTests(nx, y_next, person[use], n_boot)
     names(t_next) <- paste0("next_", names(t_next))
     out <- c(out, as.list(t_same), as.list(t_next))
+    # the model ladder (protocol.md, section 8, entry of 2026-11-19)
+    r1 <- cbind(score, score^2)
+    lad <- LadderPredictions(genes, r1, feats$A, feats$C, y, person, outer)
+    l_same <- BootstrapLadder(lad, y, person, n_boot = n_boot)
+    names(l_same) <- paste0("lsame_", names(l_same))
+    lad_n <- LadderPredictions(genes[use, , drop = FALSE],
+                               r1[use, , drop = FALSE],
+                               feats$A[use, , drop = FALSE],
+                               feats$C[use, , drop = FALSE], y_next,
+                               person[use], outer[use], current = ref)
+    l_next <- BootstrapLadder(lad_n, y_next, person[use], n_boot = n_boot)
+    names(l_next) <- paste0("lnext_", names(l_next))
+    out <- c(out, as.list(l_same), as.list(l_next))
   }
   as.data.frame(out, check.names = FALSE)
 }
@@ -411,5 +428,83 @@ SummarizeStudy <- function(reps) {
     }))
   }))
   rownames(out) <- NULL
+  out
+}
+
+#' Out-of-fold predictions of the model ladder
+#'
+#' The ladder of the first project (protocol.md, section 8, entry of
+#' 2026-11-19): R0 (the current activity alone, next visit only), R1
+#' (linear regression on the pathway scores and their squares), E1 (elastic
+#' net on the genes with the R1 terms unpenalized), N1 (E1 plus the LIONESS
+#' metrics), F1 (E1 plus the first-order metrics).
+#'
+#' @param genes Gene expression features, samples by genes.
+#' @param scores R1 terms: pathway scores and their squares.
+#' @param m_raw,m_fo LIONESS and first-order metrics.
+#' @param y Outcome.
+#' @param person Person of each sample.
+#' @param outer Outer fold of each sample.
+#' @param current Optional current activity, a one-column matrix, added to
+#'   every model's unpenalized terms; R0 is fitted only when it is given.
+#' @return A named list of out-of-fold predictions.
+#' @export
+LadderPredictions <- function(genes, scores, m_raw, m_fo, y, person, outer,
+                              current = NULL) {
+  n <- length(y)
+  none <- matrix(0, n, 0)
+  base <- cbind(scores, current)
+  out <- list()
+  if (!is.null(current)) {
+    out$R0 <- OutOfFold(none, y, person, outer, ref = current)
+  }
+  out$R1 <- OutOfFold(none, y, person, outer, ref = base)
+  out$E1 <- OutOfFold(genes, y, person, outer, ref = base)
+  out$N1 <- OutOfFold(cbind(genes, m_raw), y, person, outer, ref = base)
+  out$F1 <- OutOfFold(cbind(genes, m_fo), y, person, outer, ref = base)
+  out
+}
+
+#' Child-level bootstrap tests of the model ladder
+#'
+#' Concordance of each model, its superiority over one half, and for each
+#' contrast the difference, its superiority over 0 (the 5% bootstrap
+#' quantile above 0), and equivalence (the 90% interval within the margin).
+#'
+#' @param preds A named list of predictions ([LadderPredictions()]).
+#' @param y Outcome.
+#' @param person Person of each sample.
+#' @param contrasts A list of pairs of model names, first minus second.
+#' @param n_boot Bootstrap resamples.
+#' @param margin Equivalence margin.
+#' @return A named numeric vector: `c_<m>`, `sup_<m>`, and for each contrast
+#'   `d_<a>_<b>`, `supd_<a>_<b>`, `eq_<a>_<b>`.
+#' @export
+BootstrapLadder <- function(preds, y, person,
+                            contrasts = list(c("N1", "E1"), c("N1", "F1"),
+                                             c("E1", "R1")),
+                            n_boot = 200L, margin = 0.05) {
+  ids <- unique(person)
+  rows <- split(seq_along(person), person)[as.character(ids)]
+  est <- vapply(preds, ConcordanceFast, numeric(1), y = y)
+  boot <- t(vapply(seq_len(n_boot), function(b) {
+    take <- unlist(rows[sample.int(length(ids), replace = TRUE)],
+                   use.names = FALSE)
+    vapply(preds, function(pr) ConcordanceFast(pr[take], y[take]),
+           numeric(1))
+  }, numeric(length(preds))))
+  colnames(boot) <- names(preds)
+  out <- c(stats::setNames(est, paste0("c_", names(preds))),
+           stats::setNames(as.numeric(apply(boot, 2, stats::quantile, 0.05) >
+                                        0.5), paste0("sup_", names(preds))))
+  for (ab in contrasts) {
+    if (!all(ab %in% names(preds))) next
+    d <- boot[, ab[1]] - boot[, ab[2]]
+    ci <- stats::quantile(d, c(0.05, 0.95))
+    nm <- paste(ab, collapse = "_")
+    out[paste0("d_", nm)] <- est[[ab[1]]] - est[[ab[2]]]
+    out[paste0("supd_", nm)] <- as.numeric(ci[1] > 0)
+    out[paste0("eq_", nm)] <- as.numeric(ci[1] > -margin & ci[2] < margin)
+  }
   out
 }
