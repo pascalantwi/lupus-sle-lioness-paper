@@ -157,3 +157,13 @@ Figure functions: `PlotSampleNetwork()` and `PlotPathwayNetwork()` take pathway 
 | (draft) | Methods: the ladder and the superiority test of N1 over E1; Results: `tbl-ladder`; Application: `tbl-app-ladder` and text | `manuscript/manuscript.qmd` |
 
 Pre-registered ladder claims: (9, GSE65391) passed: N1 not better than E1 (same visit -0.007, next +0.001), N1 and F1 equivalent at both visits. (8, simulation) N1 and F1 equivalent in every replicate (passes); N1 declared better than E1 in 3 of 10 replicates at the largest effect for next-visit activity, above the limit of 1 in 10 (quick run; marked); in all 6 replicates with such a declaration, N1 and E1 were also declared equivalent, and every mean difference was at most 0.002: the bootstrap declares negligible differences between nearly identical nested predictions. The production run decides the claim.
+
+## Revision 4 (2026-11-19), in progress
+
+The user is revising the draft from the Introduction to the end of the Results and will send the changes; the agent waits for them.
+
+| Comment | Change | Where |
+|---|---|---|
+| "use we in the intro as the writer" | The paragraphs that say what the paper does now use "we" (we derive, we ask, in the Methods we give, in a simulation study we vary, finally we follow); the gap sentence became "We found no derivation of ..."; the sentences about earlier work are unchanged | `manuscript/manuscript.qmd`, Introduction |
+
+Proposed rule for this file (not adopted until the user agrees): the paper's own actions are written with "we" throughout, not only in the Introduction.
