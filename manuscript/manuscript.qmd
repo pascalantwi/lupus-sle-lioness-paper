@@ -351,7 +351,7 @@ The models below differ only in $\mathbf{b}_{pv}$ and $\mathbf{x}_{pv}$ (@tbl-la
 
 kable_w(data.frame(
   Model = c("A", "B", "C", "R0", "R1", "E1", "N1", "F1"),
-  `Base terms (unpenalized)` = c("none", "none", "none", "none (current activity only)", "pathway scores and their squares",
+  `Base terms (unpenalized)` = c("none", "none", "none", "today's activity (next-visit prediction only)", "pathway scores and their squares",
                                  "pathway scores and their squares", "pathway scores and their squares", "pathway scores and their squares"),
   `Features under test (penalized)` = c("LIONESS metrics", "pathway scores and their squares", "first-order metrics", "none", "none",
                                         "all genes of the network", "all genes and the LIONESS metrics", "all genes and the first-order metrics"),

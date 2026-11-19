@@ -349,7 +349,7 @@ has the current activity unpenalized.
 | A | none | LIONESS metrics |
 | B | none | pathway scores and their squares |
 | C | none | first-order metrics |
-| R0 | none (current activity only) | none |
+| R0 | today’s activity (next-visit prediction only) | none |
 | R1 | pathway scores and their squares | none |
 | E1 | pathway scores and their squares | all genes of the network |
 | N1 | pathway scores and their squares | all genes and the LIONESS metrics |
