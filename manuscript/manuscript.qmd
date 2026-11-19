@@ -205,7 +205,7 @@ The product term is the single-sample correlation of earlier work [@yu2017iena].
 Averaged over the pairs of a pathway, the product term becomes the square of the pathway's summed expression, so a sample's connectivity follows its pathway score.
 In a network built from all samples, module networks are approximately factorizable, and a gene's connectivity has a counterpart computed from the module eigengene [@horvath2008geometric].
 That result concerns connectivity across the genes of one cohort network.
-We found no derivation of the closed form of one sample's pathway connectivity and crosstalk, or of what it implies for their stability over a person's visits and for their value as predictors.
+What has not been derived is the closed form of one sample's pathway connectivity and crosstalk, and what it implies for their stability over a person's visits and for their value as predictors.
 
 We derive the exact closed form of a Pearson LIONESS edge and, from it, what the usual network metrics of a single-sample network measure when read through pathways: connectivity, crosstalk, total edge weight, strength, degree, betweenness, transitivity, and the numbers of edges and nodes.
 We then ask three questions.

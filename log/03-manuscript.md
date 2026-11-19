@@ -164,6 +164,6 @@ The user is revising the draft from the Introduction to the end of the Results a
 
 | Comment | Change | Where |
 |---|---|---|
-| "use we in the intro as the writer" | The paragraphs that say what the paper does now use "we" (we derive, we ask, in the Methods we give, in a simulation study we vary, finally we follow); the gap sentence became "We found no derivation of ..."; the sentences about earlier work are unchanged | `manuscript/manuscript.qmd`, Introduction |
+| "use we in the intro as the writer", then "i mean it the last paragraph" | The last paragraph of the Introduction now uses "we" (we derive, we then ask, in the Methods we give, in a simulation study we vary, finally we follow); a change to the second paragraph's last sentence was reverted | `manuscript/manuscript.qmd`, Introduction |
 
 Proposed rule for this file (not adopted until the user agrees): the paper's own actions are written with "we" throughout, not only in the Introduction.

@@ -120,9 +120,9 @@ sample’s connectivity follows its pathway score. In a network built from
 all samples, module networks are approximately factorizable, and a
 gene’s connectivity has a counterpart computed from the module eigengene
 \[[10](#ref-horvath2008geometric)\]. That result concerns connectivity
-across the genes of one cohort network. We found no derivation of the
-closed form of one sample’s pathway connectivity and crosstalk, or of
-what it implies for their stability over a person’s visits and for their
+across the genes of one cohort network. What has not been derived is the
+closed form of one sample’s pathway connectivity and crosstalk, and what
+it implies for their stability over a person’s visits and for their
 value as predictors.
 
 We derive the exact closed form of a Pearson LIONESS edge and, from it,
