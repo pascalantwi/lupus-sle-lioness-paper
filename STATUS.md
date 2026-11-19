@@ -43,3 +43,4 @@ One line per stage boundary, newest last: the date, the stage reached, the path 
 | 2026-11-17 | 3, design stop | `log/03-manuscript.md`, Step 3.2 | design stop: the user approves the design, the gene-set download, and the open choices |
 | 2026-11-17 | 3, draft at stop (quick run, 10 replicates) | `manuscript/manuscript.html` | stage 3 stop: the user comments on the first draft |
 | 2026-11-17 | 3, draft at stop after revision round 1 (application run on GSE65391) | `manuscript/manuscript.html` | stage 3 stop: the user comments on the draft |
+| 2026-11-19 | 3, draft at stop after revision round 3 (model ladder) | `manuscript/manuscript.html` | stage 3 stop: the user comments on the draft |

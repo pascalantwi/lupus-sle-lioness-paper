@@ -9,9 +9,9 @@ CONFIRM: second author, the supervisor</span>
 labeled below and will be replaced by the production run; highlighted
 numbers and markers are apparatus and are stripped in final mode.
 
-- Run: **quick**, 10 replicates per cell over 18 cells, 2026-11-17
-  05:28:40; the simulation study of protocol.md.
-- Markers: 9 to confirm, 0 claims without a usable source, 0 unfilled
+- Run: **quick**, 10 replicates per cell over 18 cells, 2026-11-19
+  05:40:18; the simulation study of protocol.md.
+- Markers: 10 to confirm, 0 claims without a usable source, 0 unfilled
   slots (listed at the end).
 
 **Status** (the drafting log’s opening line):
@@ -350,13 +350,22 @@ cross-validation, in 5-fold cross-validation with all visits of a person
 in one fold; next-visit prediction used the features and activity of one
 visit for the activity of the next, with the current activity
 unpenalized, against a regression on the current activity alone ($R_0$).
-A concordance was declared above one half when the lower 5 percent
-quantile of 200 bootstrap resamples of people exceeded one half, and two
-feature sets were declared equivalent when the 90 percent bootstrap
-interval of their difference lay within $\pm 0.05$. Each setting had 100
-replicates in the production design, which give a Monte Carlo standard
-error of a few thousandths for a stability and at most 0.05 for a
-rejection rate.
+A second comparison followed the model ladder of earlier work on LIONESS
+edges: R1, a linear regression on the pathway scores and their squares;
+E1, an elastic net on all genes of the network with the R1 terms
+unpenalized; N1, E1 with the LIONESS metrics added; F1, E1 with the
+first-order metrics added; and, for the next visit, R0, the current
+activity alone, whose term entered every other model unpenalized. The
+contrast N1 minus E1 measures what the LIONESS network adds beyond the
+genes it is built from, and N1 minus F1 what it adds beyond its own
+first-order form. A concordance was declared above one half when the
+lower 5 percent quantile of 200 bootstrap resamples of people exceeded
+one half, two feature sets were declared equivalent when the 90 percent
+bootstrap interval of their difference lay within $\pm 0.05$, and N1 was
+declared better than E1 when the lower 5 percent quantile of their
+difference exceeded zero. Each setting had 100 replicates in the
+production design, which give a Monte Carlo standard error of a few
+thousandths for a stability and at most 0.05 for a rejection rate.
 
 <div id="tbl-design">
 
@@ -629,6 +638,44 @@ and the share of replicates in which A and C were declared equivalent.
 
 </div>
 
+In the model ladder, adding the LIONESS metrics to the genes did not
+raise the concordance: N1 was declared better than E1 in at most
+<span class="prov-quick">0.30</span> of replicates in any setting, and
+N1 and F1 were declared equivalent in every replicate
+(<a href="#tbl-ladder" class="quarto-xref">Table 4</a>). The mean
+difference in concordance between N1 and E1 was at most
+<span class="prov-quick">0.002</span> in absolute value in every
+setting, and N1 and E1 were declared equivalent in every replicate where
+N1 was declared better. <span class="tc">TO CONFIRM: the pre-registered
+limit of one in ten replicates for N1 declared better than E1 was
+exceeded at the largest activity effect for next-visit activity in the
+quick run; the production run decides</span> The genes themselves added
+little to the pathway scores: E1 exceeded R1 by at most
+<span class="prov-quick">0.002</span> in mean same-visit concordance.
+
+<div id="tbl-ladder">
+
+Table 4: The model ladder in S2, by activity effect: mean concordance of
+same-visit predictions from R1 (pathway scores and their squares), E1
+(all genes on top of R1), N1 (E1 with the LIONESS metrics), and F1 (E1
+with the first-order metrics); and the share of replicates in which N1
+was declared better than E1 and in which N1 and F1 were declared
+equivalent, for same-visit and next-visit activity.
+
+<div class="cell-output-display">
+
+| Effect | R1 | E1 | N1 | F1 | N1 better than E1, same / next | N1 equivalent to F1, same / next |
+|----|----|----|----|----|----|----|
+| 0.00 | <span class="prov-quick">0.494</span> | <span class="prov-quick">0.496</span> | <span class="prov-quick">0.496</span> | <span class="prov-quick">0.496</span> | <span class="prov-quick">0.00</span> / <span class="prov-quick">0.00</span> | <span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span> |
+| 0.15 | <span class="prov-quick">0.511</span> | <span class="prov-quick">0.510</span> | <span class="prov-quick">0.509</span> | <span class="prov-quick">0.508</span> | <span class="prov-quick">0.00</span> / <span class="prov-quick">0.00</span> | <span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span> |
+| 0.18 | <span class="prov-quick">0.527</span> | <span class="prov-quick">0.529</span> | <span class="prov-quick">0.528</span> | <span class="prov-quick">0.528</span> | <span class="prov-quick">0.10</span> / <span class="prov-quick">0.10</span> | <span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span> |
+| 0.21 | <span class="prov-quick">0.544</span> | <span class="prov-quick">0.542</span> | <span class="prov-quick">0.544</span> | <span class="prov-quick">0.543</span> | <span class="prov-quick">0.00</span> / <span class="prov-quick">0.10</span> | <span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span> |
+| 0.24 | <span class="prov-quick">0.543</span> | <span class="prov-quick">0.541</span> | <span class="prov-quick">0.541</span> | <span class="prov-quick">0.542</span> | <span class="prov-quick">0.00</span> / <span class="prov-quick">0.30</span> | <span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span> |
+
+</div>
+
+</div>
+
 # Application
 
 ## Data and comparison
@@ -658,7 +705,7 @@ closed form implies. Over children, interferon connectivity had a
 stability of 0.304, against 0.349 for the squared interferon score; the
 number of edges had 0.278, the number of nodes 0.236, transitivity
 0.184, the interferon genes’ degree 0.260, and their betweenness 0.203
-(<a href="#tbl-app" class="quarto-xref">Table 5</a>). For every metric,
+(<a href="#tbl-app" class="quarto-xref">Table 7</a>). For every metric,
 the stability on the LIONESS networks differed from the stability on the
 first-order networks by at most 0.0058. Across modules, the stability of
 connectivity followed that of the squared module score (correlation
@@ -683,8 +730,13 @@ next-visit SLEDAI, every feature set reached the concordance of the
 current SLEDAI alone (0.760). On the authors’ test children, the
 concordance was 0.551 for the LIONESS metrics, 0.557 for the first-order
 metrics, and 0.622 for the pathway scores.
-<a href="#tbl-app-pred" class="quarto-xref">Table 4</a> collects these
-results.
+<a href="#tbl-app-pred" class="quarto-xref">Table 5</a> collects these
+results. In the model ladder, adding the LIONESS metrics to the
+network’s genes changed the same-visit concordance by -0.007 and the
+next-visit concordance by 0.001; N1 was declared better than E1 at
+neither visit, and N1 and F1 were declared equivalent at both
+(<a href="#tbl-app-ladder" class="quarto-xref">Table 6</a>). The genes
+identified 0.221 of the children.
 
 <div id="fig-app-net-v1">
 
@@ -739,7 +791,7 @@ identity line.
 
 <div id="tbl-app-pred">
 
-Table 4: Identity and prediction in GSE65391 by feature set: the LIONESS
+Table 5: Identity and prediction in GSE65391 by feature set: the LIONESS
 metrics, the four pathway scores and their squares, the first-order
 metrics, and the current SLEDAI alone. Identity is the share of children
 whose second-visit features correlate most with their own first-visit
@@ -764,9 +816,35 @@ Above one half: the lower bootstrap bound exceeds one half.
 
 </div>
 
+<div id="tbl-app-ladder">
+
+Table 6: The model ladder in GSE65391: concordance of SLEDAI predictions
+at the same and the next visit from R0 (current SLEDAI alone), R1
+(pathway scores and their squares), E1 (the network’s genes on top of
+R1), N1 (E1 with the LIONESS metrics), and F1 (E1 with the first-order
+metrics); then the contrasts, with whether N1 was declared better than
+E1 and whether the two models of a contrast were declared equivalent.
+
+<div class="cell-output-display">
+
+| Row | Same visit | Next visit |
+|----|----|----|
+| R0 |  | 0.760 |
+| R1 | 0.633 | 0.755 |
+| E1 | 0.645 | 0.755 |
+| N1 | 0.638 | 0.755 |
+| F1 | 0.640 | 0.756 |
+| N1 minus E1 | -0.007 (better: no; equivalent: yes) | 0.001 (better: no; equivalent: yes) |
+| N1 minus F1 | -0.002 (equivalent: yes) | -0.000 (equivalent: yes) |
+| E1 minus R1 | 0.013 (better: no) | -0.001 (better: no) |
+
+</div>
+
+</div>
+
 <div id="tbl-app">
 
-Table 5: LIONESS metrics of the four-pathway network in GSE65391:
+Table 7: LIONESS metrics of the four-pathway network in GSE65391:
 stability over visits on the LIONESS networks and on their first-order
 versions.
 
@@ -815,12 +893,12 @@ be compared with the expression terms of its closed form before it is
 read as co-expression. LIONESS metrics also lost the sign of expression:
 activity driven by a factor’s level was predicted by pathway scores,
 while the metrics, which carry squared scores, did not predict it.
-<a href="#tbl-novelty" class="quarto-xref">Table 6</a> sets these
+<a href="#tbl-novelty" class="quarto-xref">Table 8</a> sets these
 results beside earlier work.
 
 <div id="tbl-novelty">
 
-Table 6: What was known and what this paper adds.
+Table 8: What was known and what this paper adds.
 
 <div class="cell-output-display">
 
@@ -1134,6 +1212,7 @@ source, with its section.
 | TO CONFIRM | second author, the supervisor | (front matter) |
 | TO CONFIRM | affiliation | (front matter) |
 | TO CONFIRM | whether the journal wants the figure legends to name the AI-assisted code | Software and reproducibility |
+| TO CONFIRM | the pre-registered limit of one in ten replicates for N1 declared better than E1 was exceeded at the largest activity effect for next-visit activity in the quick run; the production run decides | LIONESS metrics did not predict beyond expression |
 | TO CONFIRM | the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression | A child’s LIONESS network over visits is the child’s expression |
 | TO CONFIRM | the supervisor’s confirmation of the re-scope and of the paper’s message | Discussion |
 | TO CONFIRM | the repository URL | Data and code availability |

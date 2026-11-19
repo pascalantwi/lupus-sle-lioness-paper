@@ -2435,8 +2435,8 @@ window.Quarto = {
 <div class="apparatus">
 <p><strong>Draft.</strong> This rendering is a draft: its numbers come from the run labeled below and will be replaced by the production run; highlighted numbers and markers are apparatus and are stripped in final mode.</p>
 <ul>
-<li>Run: <strong>quick</strong>, 10 replicates per cell over 18 cells, 2026-11-17 05:28:40; the simulation study of protocol.md.</li>
-<li>Markers: 9 to confirm, 0 claims without a usable source, 0 unfilled slots (listed at the end).</li>
+<li>Run: <strong>quick</strong>, 10 replicates per cell over 18 cells, 2026-11-19 05:40:18; the simulation study of protocol.md.</li>
+<li>Markers: 10 to confirm, 0 claims without a usable source, 0 unfilled slots (listed at the end).</li>
 </ul>
 <p><strong>Status</strong> (the drafting log’s opening line):</p>
 <p>Status: LIONESS edges, network metrics, and pathway connectivity and crosstalk are, to first order and in practice, fixed quadratic functions of the sample’s own expression, so over repeated visits they describe, explain, and predict as the expression scores do; there is no correction (pilot-f) and no fix, only a diagnostic (compare with the expression terms); prediction with pathway metrics and real gene sets has not been piloted.</p>
@@ -2538,7 +2538,7 @@ Monte Carlo SE they give. This is the production design, approved at the design 
 numbers is named in the banner, not here. -->
 <p>The study has three aims, the paper’s questions: how stable over a person’s visits each LIONESS metric is (aim 1); whether that stability equals the stability of the same metric on the first-order network, and whether connectivity and crosstalk are their expression terms (aim 2); and whether LIONESS metrics identify a person and predict activity better than pathway scores, or differently from first-order metrics (aim 3).</p>
 <p>Every simulated cohort had 131 people, the number of children with two or more visits in the application, and ninety or more genes in six pathways. Four pathways each loaded on their own factor, a person level plus a visit deviation: an interferon-like pathway, whose factor’s within-person intraclass correlation, loading, and size were varied, and neutrophil-like, lymphocyte-like, and plasmablast-like pathways with loading 0.60 and intraclass correlations 0.41, 0.48, and 0.39, the values measured in the application for the neutrophil and lymphocyte percentages and for disease activity. A fifth pathway had a noise correlation that differed between people by up to the spread <span class="math inline">\(\tau\)</span> (person-specific co-expression), and a sixth had a fixed noise correlation. Every gene carried a person level of variance 0.50 and unit normal noise, and the factors were independent. Each visit had an activity score: the activity effect <span class="math inline">\(\beta\)</span> times the mean of the interferon and plasmablast factors, plus a person level and visit noise with within-person intraclass correlation 0.39. Study S1 varied one factor at a time around a base setting at the measured values (<a href="#tbl-design" class="quarto-xref">Table 1</a>), and added a null setting with no stable factor and no person-specific co-expression, where every residual stability is zero. Study S2 used the base setting with 5 activity effects, the first zero, which gives the tests’ type I error and power.</p>
-<p>The estimands were the intraclass correlation over visits of every metric, on the LIONESS network and on its first-order form, and their difference; for connectivity and crosstalk, the <span class="math inline">\(R^2\)</span> on the expression terms of first and of fourth order and the stability of each residual; fingerprinting accuracy, the share of people whose second-visit metrics correlate most with their own first-visit metrics <span class="citation" data-cites="finn2015fingerprinting">[<a href="#ref-finn2015fingerprinting" role="doc-biblioref">15</a>]</span>; and the concordance of predictions of activity with the observed activity. The graph metrics used the fixed threshold <span class="math inline">\(\lvert e_{qij}\rvert &gt; 1\)</span> and, separately, the 5 percent of pairs with the largest <span class="math inline">\(\lvert e_{qij}\rvert\)</span>. Three feature sets were compared: A, the metrics of the LIONESS network; B, the six pathway scores (mean standardized expression) and their squares; and C, the metrics of the first-order network. Each predicted activity by a Gaussian elastic net with mixing 0.50 <span class="citation" data-cites="friedman2010glmnet">[<a href="#ref-friedman2010glmnet" role="doc-biblioref">13</a>]</span>, the penalty chosen by inner cross-validation, in 5-fold cross-validation with all visits of a person in one fold; next-visit prediction used the features and activity of one visit for the activity of the next, with the current activity unpenalized, against a regression on the current activity alone (<span class="math inline">\(R_0\)</span>). A concordance was declared above one half when the lower 5 percent quantile of 200 bootstrap resamples of people exceeded one half, and two feature sets were declared equivalent when the 90 percent bootstrap interval of their difference lay within <span class="math inline">\(\pm 0.05\)</span>. Each setting had 100 replicates in the production design, which give a Monte Carlo standard error of a few thousandths for a stability and at most 0.05 for a rejection rate.</p>
+<p>The estimands were the intraclass correlation over visits of every metric, on the LIONESS network and on its first-order form, and their difference; for connectivity and crosstalk, the <span class="math inline">\(R^2\)</span> on the expression terms of first and of fourth order and the stability of each residual; fingerprinting accuracy, the share of people whose second-visit metrics correlate most with their own first-visit metrics <span class="citation" data-cites="finn2015fingerprinting">[<a href="#ref-finn2015fingerprinting" role="doc-biblioref">15</a>]</span>; and the concordance of predictions of activity with the observed activity. The graph metrics used the fixed threshold <span class="math inline">\(\lvert e_{qij}\rvert &gt; 1\)</span> and, separately, the 5 percent of pairs with the largest <span class="math inline">\(\lvert e_{qij}\rvert\)</span>. Three feature sets were compared: A, the metrics of the LIONESS network; B, the six pathway scores (mean standardized expression) and their squares; and C, the metrics of the first-order network. Each predicted activity by a Gaussian elastic net with mixing 0.50 <span class="citation" data-cites="friedman2010glmnet">[<a href="#ref-friedman2010glmnet" role="doc-biblioref">13</a>]</span>, the penalty chosen by inner cross-validation, in 5-fold cross-validation with all visits of a person in one fold; next-visit prediction used the features and activity of one visit for the activity of the next, with the current activity unpenalized, against a regression on the current activity alone (<span class="math inline">\(R_0\)</span>). A second comparison followed the model ladder of earlier work on LIONESS edges: R1, a linear regression on the pathway scores and their squares; E1, an elastic net on all genes of the network with the R1 terms unpenalized; N1, E1 with the LIONESS metrics added; F1, E1 with the first-order metrics added; and, for the next visit, R0, the current activity alone, whose term entered every other model unpenalized. The contrast N1 minus E1 measures what the LIONESS network adds beyond the genes it is built from, and N1 minus F1 what it adds beyond its own first-order form. A concordance was declared above one half when the lower 5 percent quantile of 200 bootstrap resamples of people exceeded one half, two feature sets were declared equivalent when the 90 percent bootstrap interval of their difference lay within <span class="math inline">\(\pm 0.05\)</span>, and N1 was declared better than E1 when the lower 5 percent quantile of their difference exceeded zero. Each setting had 100 replicates in the production design, which give a Monte Carlo standard error of a few thousandths for a stability and at most 0.05 for a rejection rate.</p>
 <div class="cell">
 <div id="tbl-design" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2917,6 +2917,89 @@ Table 3: Prediction of activity in S2, by activity effect: mean concordance of 
 </figure>
 </div>
 </div>
+<p>In the model ladder, adding the LIONESS metrics to the genes did not raise the concordance: N1 was declared better than E1 in at most <span class="prov-quick">0.30</span> of replicates in any setting, and N1 and F1 were declared equivalent in every replicate (<a href="#tbl-ladder" class="quarto-xref">Table 4</a>). The mean difference in concordance between N1 and E1 was at most <span class="prov-quick">0.002</span> in absolute value in every setting, and N1 and E1 were declared equivalent in every replicate where N1 was declared better. <span class="tc">TO CONFIRM: the pre-registered limit of one in ten replicates for N1 declared better than E1 was exceeded at the largest activity effect for next-visit activity in the quick run; the production run decides</span> The genes themselves added little to the pathway scores: E1 exceeded R1 by at most <span class="prov-quick">0.002</span> in mean same-visit concordance.</p>
+<div class="cell">
+<div id="tbl-ladder" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 4: The model ladder in S2, by activity effect: mean concordance of same-visit predictions from R1 (pathway scores and their squares), E1 (all genes on top of R1), N1 (E1 with the LIONESS metrics), and F1 (E1 with the first-order metrics); and the share of replicates in which N1 was declared better than E1 and in which N1 and F1 were declared equivalent, for same-visit and next-visit activity.
+</figcaption>
+<div aria-describedby="tbl-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 25%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Effect</th>
+<th>R1</th>
+<th>E1</th>
+<th>N1</th>
+<th>F1</th>
+<th>N1 better than E1, same / next</th>
+<th>N1 equivalent to F1, same / next</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.00</td>
+<td><span class="prov-quick">0.494</span></td>
+<td><span class="prov-quick">0.496</span></td>
+<td><span class="prov-quick">0.496</span></td>
+<td><span class="prov-quick">0.496</span></td>
+<td><span class="prov-quick">0.00</span> / <span class="prov-quick">0.00</span></td>
+<td><span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span></td>
+</tr>
+<tr class="even">
+<td>0.15</td>
+<td><span class="prov-quick">0.511</span></td>
+<td><span class="prov-quick">0.510</span></td>
+<td><span class="prov-quick">0.509</span></td>
+<td><span class="prov-quick">0.508</span></td>
+<td><span class="prov-quick">0.00</span> / <span class="prov-quick">0.00</span></td>
+<td><span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span></td>
+</tr>
+<tr class="odd">
+<td>0.18</td>
+<td><span class="prov-quick">0.527</span></td>
+<td><span class="prov-quick">0.529</span></td>
+<td><span class="prov-quick">0.528</span></td>
+<td><span class="prov-quick">0.528</span></td>
+<td><span class="prov-quick">0.10</span> / <span class="prov-quick">0.10</span></td>
+<td><span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span></td>
+</tr>
+<tr class="even">
+<td>0.21</td>
+<td><span class="prov-quick">0.544</span></td>
+<td><span class="prov-quick">0.542</span></td>
+<td><span class="prov-quick">0.544</span></td>
+<td><span class="prov-quick">0.543</span></td>
+<td><span class="prov-quick">0.00</span> / <span class="prov-quick">0.10</span></td>
+<td><span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span></td>
+</tr>
+<tr class="odd">
+<td>0.24</td>
+<td><span class="prov-quick">0.543</span></td>
+<td><span class="prov-quick">0.541</span></td>
+<td><span class="prov-quick">0.541</span></td>
+<td><span class="prov-quick">0.542</span></td>
+<td><span class="prov-quick">0.00</span> / <span class="prov-quick">0.30</span></td>
+<td><span class="prov-quick">1.00</span> / <span class="prov-quick">1.00</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
 </section>
 </section>
 </section>
@@ -2928,8 +3011,8 @@ Table 3: Prediction of activity in S2, by activity effect: mean concordance of 
 </section>
 <section id="a-childs-lioness-network-over-visits-is-the-childs-expression" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="a-childs-lioness-network-over-visits-is-the-childs-expression"><span class="header-section-number">4.2</span> A child’s LIONESS network over visits is the child’s expression</h2>
-<p>A user reading the LIONESS networks of these children sees networks that change from visit to visit and metrics that follow the children’s expression. The LIONESS network of the child with the highest mean interferon score differed between the first two visits (<a href="#fig-app-net-v1" class="quarto-xref">Figure 11</a>, <a href="#fig-app-net-v2" class="quarto-xref">Figure 12</a>), as did its pathway summary (<a href="#fig-app-path-v1" class="quarto-xref">Figure 13</a>, <a href="#fig-app-path-v2" class="quarto-xref">Figure 14</a>). At the second visit, 146 of the 150 strongest edges touched one plasma cell gene, against 35 at the first: the network was organized around the gene whose expression lay farthest from its mean, as the product term of the closed form implies. Over children, interferon connectivity had a stability of 0.304, against 0.349 for the squared interferon score; the number of edges had 0.278, the number of nodes 0.236, transitivity 0.184, the interferon genes’ degree 0.260, and their betweenness 0.203 (<a href="#tbl-app" class="quarto-xref">Table 5</a>). For every metric, the stability on the LIONESS networks differed from the stability on the first-order networks by at most 0.0058. Across modules, the stability of connectivity followed that of the squared module score (correlation 0.91, <a href="#fig-app-modules" class="quarto-xref">Figure 15</a>). Connectivity was linear in its first-order terms with <span class="math inline">\(R^2\)</span> of at least 0.981; 2 of the 382 modules fell below 0.99, and with the fourth-order terms every module reached 0.9992. The residual after the fourth-order terms, less than 0.08 percent of the variance, still had a median stability of 0.08 over modules. <span class="tc">TO CONFIRM: the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression</span></p>
-<p>The LIONESS metrics identified 0.122 of the children from their first to their second visit, the first-order metrics 0.122, and the four pathway scores 0.069, against 0.008 by chance. Same-visit SLEDAI was predicted by the pathway scores (concordance 0.628, declared above one half) but not by the LIONESS metrics (0.523) or the first-order metrics (0.524), and the LIONESS and first-order metrics were declared equivalent. For next-visit SLEDAI, every feature set reached the concordance of the current SLEDAI alone (0.760). On the authors’ test children, the concordance was 0.551 for the LIONESS metrics, 0.557 for the first-order metrics, and 0.622 for the pathway scores. <a href="#tbl-app-pred" class="quarto-xref">Table 4</a> collects these results.</p>
+<p>A user reading the LIONESS networks of these children sees networks that change from visit to visit and metrics that follow the children’s expression. The LIONESS network of the child with the highest mean interferon score differed between the first two visits (<a href="#fig-app-net-v1" class="quarto-xref">Figure 11</a>, <a href="#fig-app-net-v2" class="quarto-xref">Figure 12</a>), as did its pathway summary (<a href="#fig-app-path-v1" class="quarto-xref">Figure 13</a>, <a href="#fig-app-path-v2" class="quarto-xref">Figure 14</a>). At the second visit, 146 of the 150 strongest edges touched one plasma cell gene, against 35 at the first: the network was organized around the gene whose expression lay farthest from its mean, as the product term of the closed form implies. Over children, interferon connectivity had a stability of 0.304, against 0.349 for the squared interferon score; the number of edges had 0.278, the number of nodes 0.236, transitivity 0.184, the interferon genes’ degree 0.260, and their betweenness 0.203 (<a href="#tbl-app" class="quarto-xref">Table 7</a>). For every metric, the stability on the LIONESS networks differed from the stability on the first-order networks by at most 0.0058. Across modules, the stability of connectivity followed that of the squared module score (correlation 0.91, <a href="#fig-app-modules" class="quarto-xref">Figure 15</a>). Connectivity was linear in its first-order terms with <span class="math inline">\(R^2\)</span> of at least 0.981; 2 of the 382 modules fell below 0.99, and with the fourth-order terms every module reached 0.9992. The residual after the fourth-order terms, less than 0.08 percent of the variance, still had a median stability of 0.08 over modules. <span class="tc">TO CONFIRM: the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression</span></p>
+<p>The LIONESS metrics identified 0.122 of the children from their first to their second visit, the first-order metrics 0.122, and the four pathway scores 0.069, against 0.008 by chance. Same-visit SLEDAI was predicted by the pathway scores (concordance 0.628, declared above one half) but not by the LIONESS metrics (0.523) or the first-order metrics (0.524), and the LIONESS and first-order metrics were declared equivalent. For next-visit SLEDAI, every feature set reached the concordance of the current SLEDAI alone (0.760). On the authors’ test children, the concordance was 0.551 for the LIONESS metrics, 0.557 for the first-order metrics, and 0.622 for the pathway scores. <a href="#tbl-app-pred" class="quarto-xref">Table 5</a> collects these results. In the model ladder, adding the LIONESS metrics to the network’s genes changed the same-visit concordance by -0.007 and the next-visit concordance by 0.001; N1 was declared better than E1 at neither visit, and N1 and F1 were declared equivalent at both (<a href="#tbl-app-ladder" class="quarto-xref">Table 6</a>). The genes identified 0.221 of the children.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-app-net-v1" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -3004,7 +3087,7 @@ Figure 15: Stability over visits of each BloodGen3 module’s LIONESS connectiv
 <div id="tbl-app-pred" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-app-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table 4: Identity and prediction in GSE65391 by feature set: the LIONESS metrics, the four pathway scores and their squares, the first-order metrics, and the current SLEDAI alone. Identity is the share of children whose second-visit features correlate most with their own first-visit features. SLEDAI is predicted by elastic net with all visits of a child in one cross-validation fold (concordance; one half is chance), and on the authors’ test children after fitting on their training children. Above one half: the lower bootstrap bound exceeds one half.
+Table 5: Identity and prediction in GSE65391 by feature set: the LIONESS metrics, the four pathway scores and their squares, the first-order metrics, and the current SLEDAI alone. Identity is the share of children whose second-visit features correlate most with their own first-visit features. SLEDAI is predicted by elastic net with all visits of a child in one cross-validation fold (concordance; one half is chance), and on the authors’ test children after fitting on their training children. Above one half: the lower bootstrap bound exceeds one half.
 </figcaption>
 <div aria-describedby="tbl-app-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -3083,10 +3166,79 @@ Table 4: Identity and prediction in GSE65391 by feature set: the LIONESS metric
 </div>
 </div>
 <div class="cell">
+<div id="tbl-app-ladder" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-app-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 6: The model ladder in GSE65391: concordance of SLEDAI predictions at the same and the next visit from R0 (current SLEDAI alone), R1 (pathway scores and their squares), E1 (the network’s genes on top of R1), N1 (E1 with the LIONESS metrics), and F1 (E1 with the first-order metrics); then the contrasts, with whether N1 was declared better than E1 and whether the two models of a contrast were declared equivalent.
+</figcaption>
+<div aria-describedby="tbl-app-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 40%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Row</th>
+<th>Same visit</th>
+<th>Next visit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>R0</td>
+<td></td>
+<td>0.760</td>
+</tr>
+<tr class="even">
+<td>R1</td>
+<td>0.633</td>
+<td>0.755</td>
+</tr>
+<tr class="odd">
+<td>E1</td>
+<td>0.645</td>
+<td>0.755</td>
+</tr>
+<tr class="even">
+<td>N1</td>
+<td>0.638</td>
+<td>0.755</td>
+</tr>
+<tr class="odd">
+<td>F1</td>
+<td>0.640</td>
+<td>0.756</td>
+</tr>
+<tr class="even">
+<td>N1 minus E1</td>
+<td>-0.007 (better: no; equivalent: yes)</td>
+<td>0.001 (better: no; equivalent: yes)</td>
+</tr>
+<tr class="odd">
+<td>N1 minus F1</td>
+<td>-0.002 (equivalent: yes)</td>
+<td>-0.000 (equivalent: yes)</td>
+</tr>
+<tr class="even">
+<td>E1 minus R1</td>
+<td>0.013 (better: no)</td>
+<td>-0.001 (better: no)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
 <div id="tbl-app" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-app-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table 5: LIONESS metrics of the four-pathway network in GSE65391: stability over visits on the LIONESS networks and on their first-order versions.
+Table 7: LIONESS metrics of the four-pathway network in GSE65391: stability over visits on the LIONESS networks and on their first-order versions.
 </figcaption>
 <div aria-describedby="tbl-app-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -3178,12 +3330,12 @@ Table 5: LIONESS metrics of the four-pathway network in GSE65391: stability ove
 <!-- What was found and what a user should do differently; the novelty table; limitations from the
 critique table's rows that did not become design factors; future work from the spec's out-of-scope
 list, item by item. No new results. -->
-<p>A Pearson LIONESS edge is an exact function of the cohort correlation and the sample’s own standardized expression, and its first-order form keeps nearly all of it. Every network metric built on the edges, read whole or by pathway, inherited that: in simulated children followed over visits, each metric was exactly as stable as the same metric on the first-order network, connectivity and crosstalk were their expression terms, and the stable part that remained beyond first order was the next-order expression term. Pathway connectivity was more stable than single edges because it averaged the edges into a squared pathway score. The children of GSE65391 behaved in the same way: their LIONESS metrics were as stable as the first-order metrics, identified children no better, and predicted disease activity no better than the module scores. For a user, a change in a child’s LIONESS network from one visit to the next is a change in that child’s expression, and a network metric should be compared with the expression terms of its closed form before it is read as co-expression. LIONESS metrics also lost the sign of expression: activity driven by a factor’s level was predicted by pathway scores, while the metrics, which carry squared scores, did not predict it. <a href="#tbl-novelty" class="quarto-xref">Table 6</a> sets these results beside earlier work.</p>
+<p>A Pearson LIONESS edge is an exact function of the cohort correlation and the sample’s own standardized expression, and its first-order form keeps nearly all of it. Every network metric built on the edges, read whole or by pathway, inherited that: in simulated children followed over visits, each metric was exactly as stable as the same metric on the first-order network, connectivity and crosstalk were their expression terms, and the stable part that remained beyond first order was the next-order expression term. Pathway connectivity was more stable than single edges because it averaged the edges into a squared pathway score. The children of GSE65391 behaved in the same way: their LIONESS metrics were as stable as the first-order metrics, identified children no better, and predicted disease activity no better than the module scores. For a user, a change in a child’s LIONESS network from one visit to the next is a change in that child’s expression, and a network metric should be compared with the expression terms of its closed form before it is read as co-expression. LIONESS metrics also lost the sign of expression: activity driven by a factor’s level was predicted by pathway scores, while the metrics, which carry squared scores, did not predict it. <a href="#tbl-novelty" class="quarto-xref">Table 8</a> sets these results beside earlier work.</p>
 <div class="cell">
 <div id="tbl-novelty" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-novelty-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table 6: What was known and what this paper adds.
+Table 8: What was known and what this paper adds.
 </figcaption>
 <div aria-describedby="tbl-novelty-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -3534,15 +3686,20 @@ T_q &amp;= \sum_{i &lt; j} r_{ij} + \tfrac12 \left(S^2 - Q\right) - \tfrac12 \su
 </tr>
 <tr class="odd">
 <td>TO CONFIRM</td>
+<td>the pre-registered limit of one in ten replicates for N1 declared better than E1 was exceeded at the largest activity effect for next-visit activity in the quick run; the production run decides</td>
+<td>LIONESS metrics did not predict beyond expression</td>
+</tr>
+<tr class="even">
+<td>TO CONFIRM</td>
 <td>the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression</td>
 <td>A child’s LIONESS network over visits is the child’s expression</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>TO CONFIRM</td>
 <td>the supervisor’s confirmation of the re-scope and of the paper’s message</td>
 <td>Discussion</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>TO CONFIRM</td>
 <td>the repository URL</td>
 <td>Data and code availability</td>

@@ -147,3 +147,13 @@ Figure functions: `PlotSampleNetwork()` and `PlotPathwayNetwork()` take pathway 
 |---|---|---|
 | "Where is the prediction results ... to show to Tyler" | The application's identity and SLEDAI prediction results were in the text only, against the rule that every finding has a table or figure; added a table of identity, same-visit and next-visit concordance, the superiority test, and the authors' split, by feature set | `manuscript/manuscript.qmd`, `tbl-app-pred` |
 | Model ladder of the first method (R0, R1, E1, N1, F1) | Not done; proposed to the user as a design change (needs a dated protocol entry before any run); waiting for the answer | this log |
+
+## Revision 3 (2026-11-19): the model ladder
+
+| Comment | Change | Where |
+|---|---|---|
+| "Yes" to the model ladder of the first project | Protocol entry before any ladder fit (aba5f68); `LadderPredictions()`, `BootstrapLadder()` with tests; ladder added to S2 and the application beside A, B, C; fingerprinting of the genes added | `protocol.md` section 8; `R/study.R`; `analysis/03_simulation.R`, `analysis/04_application.R` |
+| (runs) | Quick run rerun with the ladder (1,048 s); application rerun (431 s); the S1 numbers are unchanged (the ladder draws its random numbers after them) | `results/` |
+| (draft) | Methods: the ladder and the superiority test of N1 over E1; Results: `tbl-ladder`; Application: `tbl-app-ladder` and text | `manuscript/manuscript.qmd` |
+
+Pre-registered ladder claims: (9, GSE65391) passed: N1 not better than E1 (same visit -0.007, next +0.001), N1 and F1 equivalent at both visits. (8, simulation) N1 and F1 equivalent in every replicate (passes); N1 declared better than E1 in 3 of 10 replicates at the largest effect for next-visit activity, above the limit of 1 in 10 (quick run; marked); in all 6 replicates with such a declaration, N1 and E1 were also declared equivalent, and every mean difference was at most 0.002: the bootstrap declares negligible differences between nearly identical nested predictions. The production run decides the claim.
