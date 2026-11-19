@@ -235,7 +235,7 @@ $$
 e_{qij} = N r_{ij} - (N - 1)\, r^{(-q)}_{ij}
 $$
 [@kuijjer2019lioness].
-For a pathway $A$ of $m_A$ genes and a second pathway $B$, the connectivity, the crosstalk, the total edge weight over all $p$ genes, and the strength of gene $i$ are
+For a pathway $A$ of $m_A$ genes and a second pathway $B$ of $m_B$ genes, disjoint from $A$, the connectivity $W_{qA}$, the crosstalk $X_{qAB}$, the total edge weight $T_q$ over all $p$ genes of the network, and the strength $s_{qi}$ of gene $i$ in sample $q$ are
 $$
 \begin{aligned}
 W_{qA} &= \binom{m_A}{2}^{-1} \sum_{i < j \in A} e_{qij}, \\
@@ -244,6 +244,7 @@ T_q &= \sum_{i < j} e_{qij}, \\
 s_{qi} &= \sum_{j \ne i} e_{qij}.
 \end{aligned}
 $$
+where $\binom{m_A}{2}$ is the number of pairs of genes in $A$, the first sum runs over those pairs, the second over every gene $i$ of $A$ with every gene $j$ of $B$, and the last over the $p - 1$ other genes.
 For the graph metrics, we kept in a graph $G_q$ the pairs with $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that a fixed share of pairs is kept, and computed the number of edges and of nodes (genes with at least one edge) of $G_q$, its transitivity (the share of connected triples that close into triangles), and each gene's degree and betweenness, the latter with distance $1/\lvert e_{qij}\rvert$.
 We averaged the gene-level metrics over the genes of each pathway.
 
@@ -262,12 +263,14 @@ r^{(-q)}_{ij} &= \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilo
 e_{qij} &= N r_{ij} - (N - 1)\, r^{(-q)}_{ij}.
 \end{aligned}
 $$
+Here $r^{(-q)}_{ij}$ is the correlation of the two genes without sample $q$, $r_{ij}$ their correlation over all samples, and $z_{qi} z_{qj}$ the product of the sample's two standardized values.
 Expanding in $\varepsilon$ gives the first-order form and a remainder of order $\varepsilon$ that is a polynomial of degree four in $z_{qi}$ and $z_{qj}$ (S1.2):
 $$
 e_{qij} = r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right) + O(\varepsilon).
 $$
+where $O(\varepsilon)$ stands for a term no larger than a constant times $\varepsilon$, so that it vanishes as the cohort grows.
 Summing the first-order form over the pairs of a pathway gives the connectivity and crosstalk as linear functions of three expression terms each (S1.3).
-With $S_A = \sum_{i \in A} z_{qi}$, $Q_A = \sum_{i \in A} z_{qi}^2$, $R^B_i = \sum_{j \in B, j \ne i} r_{ij}$, and $C_A = m_A (m_A - 1)/2$,
+Let $S_A = \sum_{i \in A} z_{qi}$ be the sum of the sample's standardized values over the genes of $A$, $Q_A = \sum_{i \in A} z_{qi}^2$ the sum of their squares, $R^B_i = \sum_{j \in B, j \ne i} r_{ij}$ the summed cohort correlation of gene $i$ with the genes of $B$, and $C_A = m_A (m_A - 1)/2$ the number of pairs in $A$. Then
 $$
 \begin{aligned}
 W_{qA} &\approx \bar r_A + \frac{S_A^2 - Q_A}{2 C_A} - \frac{1}{2 C_A} \sum_{i \in A} R^A_i z_{qi}^2, \\
@@ -276,7 +279,7 @@ X_{qAB} &\approx \bar r_{AB} + \frac{S_A S_B}{m_A m_B} - \frac{1}{2 m_A m_B} \Bi
 $$
 where $\bar r_A$ and $\bar r_{AB}$ are the mean cohort correlations within $A$ and between $A$ and $B$.
 The connectivity is, up to small terms, the squared pathway score $(S_A/m_A)^2$, and the crosstalk the product of two pathway scores.
-The total edge weight is the same sum over all genes, and the strength of gene $i$ is $R_i + z_{qi}(S - z_{qi}) - \tfrac{1}{2} R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2$, with $S$ and $R_i$ over all genes (S1.4).
+The total edge weight is the same sum over all genes, and the strength of gene $i$ is $R_i + z_{qi}(S - z_{qi}) - \tfrac{1}{2} R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2$, where $S = \sum_{j} z_{qj}$ is the sum of the sample's standardized values over all genes and $R_i = \sum_{j \ne i} r_{ij}$ the summed cohort correlation of gene $i$ with all other genes (S1.4).
 The graph metrics have no closed form, but they are functions of the edges, and so of the same standardized expression.
 A metric is therefore stable over a person's visits to the extent that the person's expression terms are: the squared score of a pathway driven by a factor with within-person intraclass correlation $\kappa$ has intraclass correlation $\kappa^2$ when the factor is normal (S1.5).
 
@@ -288,6 +291,75 @@ We propose two checks that tell a user whether a LIONESS metric carries anything
 In the first, we recompute the metric on the first-order form of the edges, the network the closed form predicts from expression alone, and compare the two metrics' stability over visits and their predictions.
 In the second, we regress connectivity and crosstalk over samples on their three first-order expression terms, then with the fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the corresponding products for crosstalk), and report the $R^2$ and the stability of the residual.
 A metric that matches its first-order version, and whose residual is not stable, measures expression.
+
+## Stability, identification, and prediction of disease activity
+
+We measured four things for each feature set: how stable it is over a person's visits, whether it identifies the person, and how well it predicts disease activity at the same visit and at the next one.
+A feature set is a vector $\mathbf{x}_{pv}$ of numbers for person $p$ at visit $v$: the LIONESS metrics, the first-order metrics, the pathway scores, or the genes (@tbl-ladder-def).
+
+*Stability over visits.* For one feature, let $x_{pv}$ be its value for person $p$ at visit $v$, $k_p$ the number of visits of person $p$, $P$ the number of people, and $n = \sum_p k_p$ the number of samples.
+We used the one-way intraclass correlation
+$$
+\begin{aligned}
+\mathrm{MSB} &= \frac{1}{P - 1} \sum_{p} k_p \left(\bar x_{p\cdot} - \bar x_{\cdot\cdot}\right)^2, \\
+\mathrm{MSW} &= \frac{1}{n - P} \sum_{p} \sum_{v} \left(x_{pv} - \bar x_{p\cdot}\right)^2, \\
+n_0 &= \frac{1}{P - 1}\Big(n - \frac{1}{n}\sum_p k_p^2\Big), \\
+I &= \frac{\mathrm{MSB} - \mathrm{MSW}}{\mathrm{MSB} + (n_0 - 1)\,\mathrm{MSW}},
+\end{aligned}
+$$
+where $\bar x_{p\cdot}$ is the mean of person $p$'s visits, $\bar x_{\cdot\cdot}$ the mean of all samples, MSB and MSW the mean squares between and within people, and $n_0$ the average number of visits per person corrected for unequal numbers.
+$I$ is the share of the feature's variance that belongs to the person rather than to the visit: it is zero when a person's visits differ as much as different people do, and one when every visit of a person gives the same value.
+
+*Identification.* For each person, let $\mathbf{f}_{p1}$ and $\mathbf{f}_{p2}$ be the feature vectors of the first two visits, each feature standardized over all samples.
+The person predicted for the second visit of person $p$ is the person whose first visit is most correlated with it, and the fingerprinting accuracy is the share of people predicted correctly [@finn2015fingerprinting]:
+$$
+\begin{aligned}
+\hat p &= \arg\max_{p'} \operatorname{cor}\left(\mathbf{f}_{p2}, \mathbf{f}_{p'1}\right), \\
+\mathrm{Acc} &= \frac{1}{P} \sum_{p} \mathbb{1}\left(\hat p = p\right),
+\end{aligned}
+$$
+where $\operatorname{cor}$ is the Pearson correlation over the features and $\mathbb{1}(\cdot)$ is one when its condition holds and zero otherwise; guessing gives $1/P$.
+
+*Prediction of disease activity.* Let $y_{pv}$ be the disease activity of person $p$ at visit $v$ (SLEDAI in the application).
+For the same visit we fitted
+$$
+y_{pv} = \alpha + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{pv},
+$$
+and for the next visit
+$$
+y_{p,v+1} = \alpha + \delta\, y_{pv} + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{p,v+1},
+$$
+where $\alpha$ is an intercept, $\mathbf{b}_{pv}$ a vector of base terms with coefficients $\boldsymbol{\gamma}$, $\mathbf{x}_{pv}$ the features under test with coefficients $\boldsymbol{\theta}$, $\delta$ the coefficient of the current activity, and $\epsilon$ an error with mean zero.
+The base terms and the current activity were not penalized; the features under test were, by the elastic net [@friedman2010glmnet], which over the $n$ training samples minimizes
+$$
+\frac{1}{2n} \sum_{k = 1}^{n} \left(y_k - \alpha - \delta y^{\mathrm{cur}}_k - \boldsymbol{\gamma}^\top \mathbf{b}_k - \boldsymbol{\theta}^\top \mathbf{x}_k\right)^2 + \lambda \left[\frac{1 - a}{2} \lVert \boldsymbol{\theta} \rVert_2^2 + a \lVert \boldsymbol{\theta} \rVert_1\right],
+$$
+where $k$ indexes the training samples, $y^{\mathrm{cur}}_k$ is the current activity (absent, $\delta = 0$, for same-visit prediction), $\lVert \boldsymbol{\theta} \rVert_2^2$ is the sum of the squared coefficients and $\lVert \boldsymbol{\theta} \rVert_1$ the sum of their absolute values, the mixing $a$ was `r lvl(st$alpha)`, and the penalty $\lambda$ was chosen by `r lvl(st$folds)`-fold cross-validation inside the training samples, with all visits of a person in one fold, at the value with the smallest mean squared error.
+A model without features under test was fitted by least squares.
+Every prediction was made out of fold: the people were split into `r lvl(st$folds)` folds, and each person's predictions came from a model fitted on the other folds.
+
+```{r}
+#| label: tbl-ladder-def
+#| tbl-cap: "The models compared. Base terms enter unpenalized; features under test enter penalized. The pathway scores are the means of each pathway's standardized expression; for the next visit, every model also has the current activity unpenalized."
+
+kable_w(data.frame(
+  Model = c("A", "B", "C", "R0", "R1", "E1", "N1", "F1"),
+  `Base terms (unpenalized)` = c("none", "none", "none", "none (current activity only)", "pathway scores and their squares",
+                                 "pathway scores and their squares", "pathway scores and their squares", "pathway scores and their squares"),
+  `Features under test (penalized)` = c("LIONESS metrics", "pathway scores and their squares", "first-order metrics", "none", "none",
+                                        "all genes of the network", "all genes and the LIONESS metrics", "all genes and the first-order metrics"),
+  check.names = FALSE), widths = c(10, 40, 50))
+```
+
+*Scoring and tests.* Predictions $\hat y$ were scored by the concordance
+$$
+C = \frac{\sum_{(k, l):\, y_k > y_l} \left[\mathbb{1}(\hat y_k > \hat y_l) + \tfrac12\, \mathbb{1}(\hat y_k = \hat y_l)\right]}{\#\{(k, l): y_k > y_l\}},
+$$
+the share of pairs of samples with different activity that the predictions put in the right order, ties counting one half; $C = 1/2$ is chance and $C = 1$ a perfect ordering (S1.6).
+To test, we drew `r lvl(st$n_boot)` bootstrap samples of people, with replacement and with all of a person's visits, and recomputed $C^{*}_b$ for each sample $b$ without refitting.
+A model was declared better than chance when $Q_{0.05}(C^{*}) > 1/2$, where $Q_{0.05}$ is the lower `r lvl(5)` percent quantile over the bootstrap samples.
+For two models $M_1$ and $M_2$ with difference $\Delta = C(M_1) - C(M_2)$, $M_1$ was declared better when $Q_{0.05}(\Delta^{*}) > 0$, and the two were declared equivalent when $\left[Q_{0.05}(\Delta^{*}), Q_{0.95}(\Delta^{*})\right] \subset (-\eta, \eta)$ with margin $\eta = `r lvl(st$margin)`$.
+The key contrasts were $\Delta_1 = C(\mathrm{N1}) - C(\mathrm{E1})$, what the LIONESS metrics add to the genes, and $\Delta_2 = C(\mathrm{N1}) - C(\mathrm{F1})$, what they add to their own first-order form.
 
 ## Data
 

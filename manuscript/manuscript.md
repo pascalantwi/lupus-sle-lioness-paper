@@ -163,15 +163,20 @@ $i$ and $j$ over all samples and $r^{(-q)}_{ij}$ the correlation without
 sample $q$. The LIONESS edge of sample $q$ is $$
 e_{qij} = N r_{ij} - (N - 1)\, r^{(-q)}_{ij}
 $$ \[[2](#ref-kuijjer2019lioness)\]. For a pathway $A$ of $m_A$ genes
-and a second pathway $B$, the connectivity, the crosstalk, the total
-edge weight over all $p$ genes, and the strength of gene $i$ are $$
+and a second pathway $B$ of $m_B$ genes, disjoint from $A$, the
+connectivity $W_{qA}$, the crosstalk $X_{qAB}$, the total edge weight
+$T_q$ over all $p$ genes of the network, and the strength $s_{qi}$ of
+gene $i$ in sample $q$ are $$
 \begin{aligned}
 W_{qA} &= \binom{m_A}{2}^{-1} \sum_{i < j \in A} e_{qij}, \\
 X_{qAB} &= \frac{1}{m_A m_B} \sum_{i \in A} \sum_{j \in B} e_{qij}, \\
 T_q &= \sum_{i < j} e_{qij}, \\
 s_{qi} &= \sum_{j \ne i} e_{qij}.
 \end{aligned}
-$$ For the graph metrics, we kept in a graph $G_q$ the pairs with
+$$ where $\binom{m_A}{2}$ is the number of pairs of genes in $A$, the
+first sum runs over those pairs, the second over every gene $i$ of $A$
+with every gene $j$ of $B$, and the last over the $p - 1$ other genes.
+For the graph metrics, we kept in a graph $G_q$ the pairs with
 $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that
 a fixed share of pairs is kept, and computed the number of edges and of
 nodes (genes with at least one edge) of $G_q$, its transitivity (the
@@ -195,16 +200,23 @@ gives (supplement, S1.1) $$
 r^{(-q)}_{ij} &= \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}}, \\
 e_{qij} &= N r_{ij} - (N - 1)\, r^{(-q)}_{ij}.
 \end{aligned}
-$$ Expanding in $\varepsilon$ gives the first-order form and a remainder
-of order $\varepsilon$ that is a polynomial of degree four in $z_{qi}$
-and $z_{qj}$ (S1.2): $$
+$$ Here $r^{(-q)}_{ij}$ is the correlation of the two genes without
+sample $q$, $r_{ij}$ their correlation over all samples, and
+$z_{qi} z_{qj}$ the product of the sample’s two standardized values.
+Expanding in $\varepsilon$ gives the first-order form and a remainder of
+order $\varepsilon$ that is a polynomial of degree four in $z_{qi}$ and
+$z_{qj}$ (S1.2): $$
 e_{qij} = r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right) + O(\varepsilon).
-$$ Summing the first-order form over the pairs of a pathway gives the
-connectivity and crosstalk as linear functions of three expression terms
-each (S1.3). With $S_A = \sum_{i \in A} z_{qi}$,
-$Q_A = \sum_{i \in A} z_{qi}^2$,
-$R^B_i = \sum_{j \in B, j \ne i} r_{ij}$, and $C_A = m_A (m_A - 1)/2$,
-$$
+$$ where $O(\varepsilon)$ stands for a term no larger than a constant
+times $\varepsilon$, so that it vanishes as the cohort grows. Summing
+the first-order form over the pairs of a pathway gives the connectivity
+and crosstalk as linear functions of three expression terms each (S1.3).
+Let $S_A = \sum_{i \in A} z_{qi}$ be the sum of the sample’s
+standardized values over the genes of $A$,
+$Q_A = \sum_{i \in A} z_{qi}^2$ the sum of their squares,
+$R^B_i = \sum_{j \in B, j \ne i} r_{ij}$ the summed cohort correlation
+of gene $i$ with the genes of $B$, and $C_A = m_A (m_A - 1)/2$ the
+number of pairs in $A$. Then $$
 \begin{aligned}
 W_{qA} &\approx \bar r_A + \frac{S_A^2 - Q_A}{2 C_A} - \frac{1}{2 C_A} \sum_{i \in A} R^A_i z_{qi}^2, \\
 X_{qAB} &\approx \bar r_{AB} + \frac{S_A S_B}{m_A m_B} - \frac{1}{2 m_A m_B} \Big( \sum_{i \in A} R^B_i z_{qi}^2 + \sum_{j \in B} R^A_j z_{qj}^2 \Big),
@@ -215,13 +227,15 @@ terms, the squared pathway score $(S_A/m_A)^2$, and the crosstalk the
 product of two pathway scores. The total edge weight is the same sum
 over all genes, and the strength of gene $i$ is
 $R_i + z_{qi}(S - z_{qi}) - \tfrac{1}{2} R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2$,
-with $S$ and $R_i$ over all genes (S1.4). The graph metrics have no
-closed form, but they are functions of the edges, and so of the same
-standardized expression. A metric is therefore stable over a person’s
-visits to the extent that the person’s expression terms are: the squared
-score of a pathway driven by a factor with within-person intraclass
-correlation $\kappa$ has intraclass correlation $\kappa^2$ when the
-factor is normal (S1.5).
+where $S = \sum_{j} z_{qj}$ is the sum of the sample’s standardized
+values over all genes and $R_i = \sum_{j \ne i} r_{ij}$ the summed
+cohort correlation of gene $i$ with all other genes (S1.4). The graph
+metrics have no closed form, but they are functions of the edges, and so
+of the same standardized expression. A metric is therefore stable over a
+person’s visits to the extent that the person’s expression terms are:
+the squared score of a pathway driven by a factor with within-person
+intraclass correlation $\kappa$ has intraclass correlation $\kappa^2$
+when the factor is normal (S1.5).
 
 ## The fix or the diagnostic
 
@@ -239,6 +253,118 @@ connectivity; the corresponding products for crosstalk), and report the
 $R^2$ and the stability of the residual. A metric that matches its
 first-order version, and whose residual is not stable, measures
 expression.
+
+## Stability, identification, and prediction of disease activity
+
+We measured four things for each feature set: how stable it is over a
+person’s visits, whether it identifies the person, and how well it
+predicts disease activity at the same visit and at the next one. A
+feature set is a vector $\mathbf{x}_{pv}$ of numbers for person $p$ at
+visit $v$: the LIONESS metrics, the first-order metrics, the pathway
+scores, or the genes
+(<a href="#tbl-ladder-def" class="quarto-xref">Table 1</a>).
+
+*Stability over visits.* For one feature, let $x_{pv}$ be its value for
+person $p$ at visit $v$, $k_p$ the number of visits of person $p$, $P$
+the number of people, and $n = \sum_p k_p$ the number of samples. We
+used the one-way intraclass correlation $$
+\begin{aligned}
+\mathrm{MSB} &= \frac{1}{P - 1} \sum_{p} k_p \left(\bar x_{p\cdot} - \bar x_{\cdot\cdot}\right)^2, \\
+\mathrm{MSW} &= \frac{1}{n - P} \sum_{p} \sum_{v} \left(x_{pv} - \bar x_{p\cdot}\right)^2, \\
+n_0 &= \frac{1}{P - 1}\Big(n - \frac{1}{n}\sum_p k_p^2\Big), \\
+I &= \frac{\mathrm{MSB} - \mathrm{MSW}}{\mathrm{MSB} + (n_0 - 1)\,\mathrm{MSW}},
+\end{aligned}
+$$ where $\bar x_{p\cdot}$ is the mean of person $p$’s visits,
+$\bar x_{\cdot\cdot}$ the mean of all samples, MSB and MSW the mean
+squares between and within people, and $n_0$ the average number of
+visits per person corrected for unequal numbers. $I$ is the share of the
+feature’s variance that belongs to the person rather than to the visit:
+it is zero when a person’s visits differ as much as different people do,
+and one when every visit of a person gives the same value.
+
+*Identification.* For each person, let $\mathbf{f}_{p1}$ and
+$\mathbf{f}_{p2}$ be the feature vectors of the first two visits, each
+feature standardized over all samples. The person predicted for the
+second visit of person $p$ is the person whose first visit is most
+correlated with it, and the fingerprinting accuracy is the share of
+people predicted correctly \[[11](#ref-finn2015fingerprinting)\]: $$
+\begin{aligned}
+\hat p &= \arg\max_{p'} \operatorname{cor}\left(\mathbf{f}_{p2}, \mathbf{f}_{p'1}\right), \\
+\mathrm{Acc} &= \frac{1}{P} \sum_{p} \mathbb{1}\left(\hat p = p\right),
+\end{aligned}
+$$ where $\operatorname{cor}$ is the Pearson correlation over the
+features and $\mathbb{1}(\cdot)$ is one when its condition holds and
+zero otherwise; guessing gives $1/P$.
+
+*Prediction of disease activity.* Let $y_{pv}$ be the disease activity
+of person $p$ at visit $v$ (SLEDAI in the application). For the same
+visit we fitted $$
+y_{pv} = \alpha + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{pv},
+$$ and for the next visit $$
+y_{p,v+1} = \alpha + \delta\, y_{pv} + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{p,v+1},
+$$ where $\alpha$ is an intercept, $\mathbf{b}_{pv}$ a vector of base
+terms with coefficients $\boldsymbol{\gamma}$, $\mathbf{x}_{pv}$ the
+features under test with coefficients $\boldsymbol{\theta}$, $\delta$
+the coefficient of the current activity, and $\epsilon$ an error with
+mean zero. The base terms and the current activity were not penalized;
+the features under test were, by the elastic net
+\[[12](#ref-friedman2010glmnet)\], which over the $n$ training samples
+minimizes $$
+\frac{1}{2n} \sum_{k = 1}^{n} \left(y_k - \alpha - \delta y^{\mathrm{cur}}_k - \boldsymbol{\gamma}^\top \mathbf{b}_k - \boldsymbol{\theta}^\top \mathbf{x}_k\right)^2 + \lambda \left[\frac{1 - a}{2} \lVert \boldsymbol{\theta} \rVert_2^2 + a \lVert \boldsymbol{\theta} \rVert_1\right],
+$$ where $k$ indexes the training samples, $y^{\mathrm{cur}}_k$ is the
+current activity (absent, $\delta = 0$, for same-visit prediction),
+$\lVert \boldsymbol{\theta} \rVert_2^2$ is the sum of the squared
+coefficients and $\lVert \boldsymbol{\theta} \rVert_1$ the sum of their
+absolute values, the mixing $a$ was 0.50, and the penalty $\lambda$ was
+chosen by 5-fold cross-validation inside the training samples, with all
+visits of a person in one fold, at the value with the smallest mean
+squared error. A model without features under test was fitted by least
+squares. Every prediction was made out of fold: the people were split
+into 5 folds, and each person’s predictions came from a model fitted on
+the other folds.
+
+<div id="tbl-ladder-def">
+
+Table 1: The models compared. Base terms enter unpenalized; features
+under test enter penalized. The pathway scores are the means of each
+pathway’s standardized expression; for the next visit, every model also
+has the current activity unpenalized.
+
+<div class="cell-output-display">
+
+| Model | Base terms (unpenalized) | Features under test (penalized) |
+|----|----|----|
+| A | none | LIONESS metrics |
+| B | none | pathway scores and their squares |
+| C | none | first-order metrics |
+| R0 | none (current activity only) | none |
+| R1 | pathway scores and their squares | none |
+| E1 | pathway scores and their squares | all genes of the network |
+| N1 | pathway scores and their squares | all genes and the LIONESS metrics |
+| F1 | pathway scores and their squares | all genes and the first-order metrics |
+
+</div>
+
+</div>
+
+*Scoring and tests.* Predictions $\hat y$ were scored by the concordance
+$$
+C = \frac{\sum_{(k, l):\, y_k > y_l} \left[\mathbb{1}(\hat y_k > \hat y_l) + \tfrac12\, \mathbb{1}(\hat y_k = \hat y_l)\right]}{\#\{(k, l): y_k > y_l\}},
+$$ the share of pairs of samples with different activity that the
+predictions put in the right order, ties counting one half; $C = 1/2$ is
+chance and $C = 1$ a perfect ordering (S1.6). To test, we drew 200
+bootstrap samples of people, with replacement and with all of a person’s
+visits, and recomputed $C^{*}_b$ for each sample $b$ without refitting.
+A model was declared better than chance when $Q_{0.05}(C^{*}) > 1/2$,
+where $Q_{0.05}$ is the lower 5 percent quantile over the bootstrap
+samples. For two models $M_1$ and $M_2$ with difference
+$\Delta = C(M_1) - C(M_2)$, $M_1$ was declared better when
+$Q_{0.05}(\Delta^{*}) > 0$, and the two were declared equivalent when
+$\left[Q_{0.05}(\Delta^{*}), Q_{0.95}(\Delta^{*})\right] \subset (-\eta, \eta)$
+with margin $\eta = 0.05$. The key contrasts were
+$\Delta_1 = C(\mathrm{N1}) - C(\mathrm{E1})$, what the LIONESS metrics
+add to the genes, and $\Delta_2 = C(\mathrm{N1}) - C(\mathrm{F1})$, what
+they add to their own first-order form.
 
 ## Data
 
@@ -260,7 +386,7 @@ belong to a module. We took the modules of the BloodGen3 repertoire,
 built from co-clustering in blood transcriptomes of sixteen
 immunological and physiological states
 \[[5](#ref-altman2021bloodgen3)\], from its R package
-\[[11](#ref-rinchai2021bloodgen3module)\], and analysed one by one the
+\[[13](#ref-rinchai2021bloodgen3module)\], and analysed one by one the
 382 modules with at least 10 genes on the array. We built the network
 over the genes of four pathways, which we chose by their BloodGen3
 function label before computing any network: interferon (103 genes),
@@ -272,7 +398,7 @@ and tests of the simulation study, with SLEDAI as the activity.
 ## Software and reproducibility
 
 We organized the code as a research compendium
-\[[12](#ref-marwick2018)\]: an R package whose functions are documented
+\[[14](#ref-marwick2018)\]: an R package whose functions are documented
 and tested, analysis scripts that call those functions and write every
 result to a results folder, and this manuscript, which reads only from
 that folder, so that every number, table, and figure in it is computed
@@ -282,7 +408,7 @@ saved the per-replicate results rather than summaries. We recorded the
 software and package versions with the results.
 
 We used R version 4.6.2 (2026-10-29), with glmnet
-\[[13](#ref-friedman2010glmnet)\] for the elastic net and igraph for the
+\[[12](#ref-friedman2010glmnet)\] for the elastic net and igraph for the
 graph metrics.
 
 {{< include parts/ai-use-statement.md >}} <span class="tc">TO CONFIRM:
@@ -294,7 +420,7 @@ code</span>
 ## Design
 
 The simulation study is reported in the ADEMP structure
-\[[14](#ref-morris2019)\]: aims, data-generating mechanisms, estimands,
+\[[15](#ref-morris2019)\]: aims, data-generating mechanisms, estimands,
 methods, and performance measures, with a Monte Carlo standard error for
 every reported rate and average.
 
@@ -329,7 +455,7 @@ activity score: the activity effect $\beta$ times the mean of the
 interferon and plasmablast factors, plus a person level and visit noise
 with within-person intraclass correlation 0.39. Study S1 varied one
 factor at a time around a base setting at the measured values
-(<a href="#tbl-design" class="quarto-xref">Table 1</a>), and added a
+(<a href="#tbl-design" class="quarto-xref">Table 2</a>), and added a
 null setting with no stable factor and no person-specific co-expression,
 where every residual stability is zero. Study S2 used the base setting
 with 5 activity effects, the first zero, which gives the tests’ type I
@@ -341,7 +467,7 @@ difference; for connectivity and crosstalk, the $R^2$ on the expression
 terms of first and of fourth order and the stability of each residual;
 fingerprinting accuracy, the share of people whose second-visit metrics
 correlate most with their own first-visit metrics
-\[[15](#ref-finn2015fingerprinting)\]; and the concordance of
+\[[11](#ref-finn2015fingerprinting)\]; and the concordance of
 predictions of activity with the observed activity. The graph metrics
 used the fixed threshold $\lvert e_{qij}\rvert > 1$ and, separately, the
 5 percent of pairs with the largest $\lvert e_{qij}\rvert$. Three
@@ -349,7 +475,7 @@ feature sets were compared: A, the metrics of the LIONESS network; B,
 the six pathway scores (mean standardized expression) and their squares;
 and C, the metrics of the first-order network. Each predicted activity
 by a Gaussian elastic net with mixing 0.50
-\[[13](#ref-friedman2010glmnet)\], the penalty chosen by inner
+\[[12](#ref-friedman2010glmnet)\], the penalty chosen by inner
 cross-validation, in 5-fold cross-validation with all visits of a person
 in one fold; next-visit prediction used the features and activity of one
 visit for the activity of the next, with the current activity
@@ -373,7 +499,7 @@ thousandths for a stability and at most 0.05 for a rejection rate.
 
 <div id="tbl-design">
 
-Table 1: Factors of the simulation design. Study S1 varied one factor at
+Table 2: Factors of the simulation design. Study S1 varied one factor at
 a time around the base setting (marked with an asterisk); study S2 used
 the base setting with the listed activity effects. $\kappa_1$:
 within-person intraclass correlation of the interferon factor;
@@ -514,7 +640,7 @@ first-order network: over every metric and every setting of study S1,
 the stability on the LIONESS network differed from the stability on the
 first-order network by at most <span class="prov-quick">0.0024</span>
 (<a href="#fig-stability" class="quarto-xref">Figure 7</a>,
-<a href="#tbl-equivalence" class="quarto-xref">Table 2</a>).
+<a href="#tbl-equivalence" class="quarto-xref">Table 3</a>).
 Connectivity and crosstalk were linear in their first-order expression
 terms, with $R^2$ at least <span class="prov-quick">0.99999</span>.
 Interferon connectivity followed the squared interferon score closely in
@@ -540,7 +666,7 @@ crosstalk, and setting.
 
 <div id="tbl-equivalence">
 
-Table 2: Largest absolute difference between the stability of a metric
+Table 3: Largest absolute difference between the stability of a metric
 on the LIONESS network and on the first-order network, over the S1
 settings, by type of metric. Top share marks the proportional threshold.
 
@@ -602,7 +728,7 @@ metrics and the first-order metrics were declared above one half in no
 replicate at any effect, and their concordance stayed below one half,
 between <span class="prov-quick">0.464</span> and
 <span class="prov-quick">0.477</span>
-(<a href="#tbl-prediction" class="quarto-xref">Table 3</a>). The LIONESS
+(<a href="#tbl-prediction" class="quarto-xref">Table 4</a>). The LIONESS
 metrics were declared equivalent to the first-order metrics in every
 replicate, for same-visit and next-visit activity alike. For next-visit
 activity, every feature set reached the concordance of the current
@@ -623,7 +749,7 @@ At no effect, the share is the type I error.
 
 <div id="tbl-prediction">
 
-Table 3: Prediction of activity in S2, by activity effect: mean
+Table 4: Prediction of activity in S2, by activity effect: mean
 concordance of the LIONESS metrics (A), pathway scores (B), first-order
 metrics (C), and, for the next visit, the current activity alone (R0);
 and the share of replicates in which A and C were declared equivalent.
@@ -646,7 +772,7 @@ In the model ladder, adding the LIONESS metrics to the genes did not
 raise the concordance: N1 was declared better than E1 in at most
 <span class="prov-quick">0.30</span> of replicates in any setting, and
 N1 and F1 were declared equivalent in every replicate
-(<a href="#tbl-ladder" class="quarto-xref">Table 4</a>). The mean
+(<a href="#tbl-ladder" class="quarto-xref">Table 5</a>). The mean
 difference in concordance between N1 and E1 was at most
 <span class="prov-quick">0.002</span> in absolute value in every
 setting, and N1 and E1 were declared equivalent in every replicate where
@@ -659,7 +785,7 @@ little to the pathway scores: E1 exceeded R1 by at most
 
 <div id="tbl-ladder">
 
-Table 4: The model ladder in S2, by activity effect: mean concordance of
+Table 5: The model ladder in S2, by activity effect: mean concordance of
 same-visit predictions from R1 (pathway scores and their squares), E1
 (all genes on top of R1), N1 (E1 with the LIONESS metrics), and F1 (E1
 with the first-order metrics); and the share of replicates in which N1
@@ -709,7 +835,7 @@ closed form implies. Over children, interferon connectivity had a
 stability of 0.304, against 0.349 for the squared interferon score; the
 number of edges had 0.278, the number of nodes 0.236, transitivity
 0.184, the interferon genes’ degree 0.260, and their betweenness 0.203
-(<a href="#tbl-app" class="quarto-xref">Table 7</a>). For every metric,
+(<a href="#tbl-app" class="quarto-xref">Table 8</a>). For every metric,
 the stability on the LIONESS networks differed from the stability on the
 first-order networks by at most 0.0058. Across modules, the stability of
 connectivity followed that of the squared module score (correlation
@@ -734,12 +860,12 @@ next-visit SLEDAI, every feature set reached the concordance of the
 current SLEDAI alone (0.760). On the authors’ test children, the
 concordance was 0.551 for the LIONESS metrics, 0.557 for the first-order
 metrics, and 0.622 for the pathway scores.
-<a href="#tbl-app-pred" class="quarto-xref">Table 5</a> collects these
+<a href="#tbl-app-pred" class="quarto-xref">Table 6</a> collects these
 results. In the model ladder, adding the LIONESS metrics to the
 network’s genes changed the same-visit concordance by -0.007 and the
 next-visit concordance by 0.001; N1 was declared better than E1 at
 neither visit, and N1 and F1 were declared equivalent at both
-(<a href="#tbl-app-ladder" class="quarto-xref">Table 6</a>). The genes
+(<a href="#tbl-app-ladder" class="quarto-xref">Table 7</a>). The genes
 identified 0.221 of the children.
 
 <div id="fig-app-net-v1">
@@ -795,7 +921,7 @@ identity line.
 
 <div id="tbl-app-pred">
 
-Table 5: Identity and prediction in GSE65391 by feature set: the LIONESS
+Table 6: Identity and prediction in GSE65391 by feature set: the LIONESS
 metrics, the four pathway scores and their squares, the first-order
 metrics, and the current SLEDAI alone. Identity is the share of children
 whose second-visit features correlate most with their own first-visit
@@ -822,7 +948,7 @@ Above one half: the lower bootstrap bound exceeds one half.
 
 <div id="tbl-app-ladder">
 
-Table 6: The model ladder in GSE65391: concordance of SLEDAI predictions
+Table 7: The model ladder in GSE65391: concordance of SLEDAI predictions
 at the same and the next visit from R0 (current SLEDAI alone), R1
 (pathway scores and their squares), E1 (the network’s genes on top of
 R1), N1 (E1 with the LIONESS metrics), and F1 (E1 with the first-order
@@ -848,7 +974,7 @@ E1 and whether the two models of a contrast were declared equivalent.
 
 <div id="tbl-app">
 
-Table 7: LIONESS metrics of the four-pathway network in GSE65391:
+Table 8: LIONESS metrics of the four-pathway network in GSE65391:
 stability over visits on the LIONESS networks and on their first-order
 versions.
 
@@ -897,12 +1023,12 @@ be compared with the expression terms of its closed form before it is
 read as co-expression. LIONESS metrics also lost the sign of expression:
 activity driven by a factor’s level was predicted by pathway scores,
 while the metrics, which carry squared scores, did not predict it.
-<a href="#tbl-novelty" class="quarto-xref">Table 8</a> sets these
+<a href="#tbl-novelty" class="quarto-xref">Table 9</a> sets these
 results beside earlier work.
 
 <div id="tbl-novelty">
 
-Table 8: What was known and what this paper adds.
+Table 9: What was known and what this paper adds.
 
 <div class="cell-output-display">
 
@@ -936,7 +1062,7 @@ study.
 # Data and code availability
 
 The expression data are Gene Expression Omnibus series GSE65391. The
-code is organized as a research compendium \[[12](#ref-marwick2018)\].
+code is organized as a research compendium \[[14](#ref-marwick2018)\].
 <span class="tc">TO CONFIRM: the repository URL</span>
 
 # References
@@ -1029,9 +1155,26 @@ network analysis. PLoS Computational Biology. 2008;4:e1000117.
 
 </div>
 
+<div id="ref-finn2015fingerprinting" class="csl-entry">
+
+11\. Finn ES, Shen X, Scheinost D, Rosenberg MD, Huang J, Chun MM, et
+al. Functional connectome fingerprinting: Identifying individuals using
+patterns of brain connectivity. Nature Neuroscience. 2015;18:1664–71.
+<https://doi.org/10.1038/nn.4135>.
+
+</div>
+
+<div id="ref-friedman2010glmnet" class="csl-entry">
+
+12\. Friedman J, Hastie T, Tibshirani R. Regularization paths for
+generalized linear models via coordinate descent. Journal of Statistical
+Software. 2010;33. <https://doi.org/10.18637/jss.v033.i01>.
+
+</div>
+
 <div id="ref-rinchai2021bloodgen3module" class="csl-entry">
 
-11\. Rinchai D, Roelands J, Toufiq M, Hendrickx W, Altman MC, Bedognetti
+13\. Rinchai D, Roelands J, Toufiq M, Hendrickx W, Altman MC, Bedognetti
 D, et al. BloodGen3Module: Blood transcriptional module repertoire
 analysis and visualization using r. Bioinformatics. 2021;37:2382–9.
 <https://doi.org/10.1093/bioinformatics/btab121>.
@@ -1040,34 +1183,17 @@ analysis and visualization using r. Bioinformatics. 2021;37:2382–9.
 
 <div id="ref-marwick2018" class="csl-entry">
 
-12\. Marwick B, Boettiger C, Mullen L. Packaging data analytical work
+14\. Marwick B, Boettiger C, Mullen L. Packaging data analytical work
 reproducibly using R (and friends). The American Statistician.
 2018;72:80–8. <https://doi.org/10.1080/00031305.2017.1375986>.
 
 </div>
 
-<div id="ref-friedman2010glmnet" class="csl-entry">
-
-13\. Friedman J, Hastie T, Tibshirani R. Regularization paths for
-generalized linear models via coordinate descent. Journal of Statistical
-Software. 2010;33. <https://doi.org/10.18637/jss.v033.i01>.
-
-</div>
-
 <div id="ref-morris2019" class="csl-entry">
 
-14\. Morris TP, White IR, Crowther MJ. Using simulation studies to
+15\. Morris TP, White IR, Crowther MJ. Using simulation studies to
 evaluate statistical methods. Statistics in Medicine. 2019;38:2074–102.
 <https://doi.org/10.1002/sim.8086>.
-
-</div>
-
-<div id="ref-finn2015fingerprinting" class="csl-entry">
-
-15\. Finn ES, Shen X, Scheinost D, Rosenberg MD, Huang J, Chun MM, et
-al. Functional connectome fingerprinting: Identifying individuals using
-patterns of brain connectivity. Nature Neuroscience. 2015;18:1664–71.
-<https://doi.org/10.1038/nn.4135>.
 
 </div>
 
@@ -1177,6 +1303,28 @@ $F \sim N(0, 1)$. Line 4: the between-person share of the variance. The
 paper uses this to read the stability of connectivity as that of a
 squared expression score; `KnownAnswerChecksD()` checks it by
 simulation.
+
+### S1.6 The concordance from Kendall’s tau
+
+The concordance of the Methods counts ordered pairs; the code computes
+it from Kendall’s tau, which is faster. Let $n$ be the number of
+samples, $n_0 = n(n - 1)/2$ the number of pairs, $D$ the number of pairs
+ordered the same way by $\hat y$ and $y$ minus the number ordered the
+opposite way, $t_{\hat y}$ the number of pairs tied in $\hat y$, $t_y$
+the number tied in $y$, and $\tau_b$ Kendall’s tau-b. Then $$
+\begin{aligned}
+\tau_b &= \frac{D}{\sqrt{(n_0 - t_{\hat y})(n_0 - t_y)}}, \\
+C &= \frac{1}{n_0 - t_y}\Big[\tfrac12 \left(n_0 - t_y + D\right)\Big] = \frac12 + \frac{\tau_b \sqrt{(n_0 - t_{\hat y})(n_0 - t_y)}}{2\,(n_0 - t_y)}.
+\end{aligned}
+$$ Line 1: the definition of tau-b. Line 2: among the $n_0 - t_y$ pairs
+with different activity, let $c$ be ordered the same way, $d$ the
+opposite way, and $h$ tied in $\hat y$; then $c + d + h = n_0 - t_y$ and
+$c - d = D$ (pairs tied in $y$ count in neither), so
+$c + h/2 = \tfrac12(n_0 - t_y + D)$, which divided by $n_0 - t_y$ is
+$C$; substituting $D$ from line 1 gives the right-hand side. A constant
+prediction has $C = 1/2$. The paper uses this for every concordance;
+`tests/testthat/test-study.R` checks `ConcordanceFast()` against a
+literal count of pairs, ties included.
 
 <div class="apparatus">
 

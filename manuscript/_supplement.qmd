@@ -64,3 +64,15 @@ $$
 \end{aligned}
 $$
 Line 1: $\operatorname{E}(V) = 0$ and $\operatorname{E}(V^2) = 1 - \kappa$. Line 2: the variance of the square of a normal variable with variance $\kappa$ is $2\kappa^2$. Line 3: $F \sim N(0, 1)$. Line 4: the between-person share of the variance. The paper uses this to read the stability of connectivity as that of a squared expression score; `KnownAnswerChecksD()` checks it by simulation.
+
+### S1.6 The concordance from Kendall's tau {.unnumbered}
+
+The concordance of the Methods counts ordered pairs; the code computes it from Kendall's tau, which is faster. Let $n$ be the number of samples, $n_0 = n(n - 1)/2$ the number of pairs, $D$ the number of pairs ordered the same way by $\hat y$ and $y$ minus the number ordered the opposite way, $t_{\hat y}$ the number of pairs tied in $\hat y$, $t_y$ the number tied in $y$, and $\tau_b$ Kendall's tau-b. Then
+$$
+\begin{aligned}
+\tau_b &= \frac{D}{\sqrt{(n_0 - t_{\hat y})(n_0 - t_y)}}, \\
+C &= \frac{1}{n_0 - t_y}\Big[\tfrac12 \left(n_0 - t_y + D\right)\Big] = \frac12 + \frac{\tau_b \sqrt{(n_0 - t_{\hat y})(n_0 - t_y)}}{2\,(n_0 - t_y)}.
+\end{aligned}
+$$
+Line 1: the definition of tau-b. Line 2: among the $n_0 - t_y$ pairs with different activity, let $c$ be ordered the same way, $d$ the opposite way, and $h$ tied in $\hat y$; then $c + d + h = n_0 - t_y$ and $c - d = D$ (pairs tied in $y$ count in neither), so $c + h/2 = \tfrac12(n_0 - t_y + D)$, which divided by $n_0 - t_y$ is $C$; substituting $D$ from line 1 gives the right-hand side. A constant prediction has $C = 1/2$. The paper uses this for every concordance; `tests/testthat/test-study.R` checks `ConcordanceFast()` against a literal count of pairs, ties included.
+
