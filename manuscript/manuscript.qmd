@@ -546,7 +546,7 @@ The residual after the fourth-order terms, less than `r pa(100 * (1 - min(app_m$
 The LIONESS metrics identified `r pa(app_p$finger[["A"]])` of the children from their first to their second visit, the first-order metrics `r pa(app_p$finger[["C"]])`, and the four pathway scores `r pa(app_p$finger[["B"]])`, against `r pa(app_p$chance)` by chance.
 Same-visit SLEDAI was predicted by the pathway scores (concordance `r pa(app_p$same[["c_B"]])`, declared above one half) but not by the LIONESS metrics (`r pa(app_p$same[["c_A"]])`) or the first-order metrics (`r pa(app_p$same[["c_C"]])`), and the LIONESS and first-order metrics were declared equivalent.
 For next-visit SLEDAI, every feature set reached the concordance of the current SLEDAI alone (`r pa(app_p$next_visit[["c_R0"]])`).
-On the authors' test children, the concordance was `r pa(app_p$split[["A"]])` for the LIONESS metrics, `r pa(app_p$split[["C"]])` for the first-order metrics, and `r pa(app_p$split[["B"]])` for the pathway scores.
+On the authors' test children, the concordance was `r pa(app_p$split[["A"]])` for the LIONESS metrics, `r pa(app_p$split[["C"]])` for the first-order metrics, and `r pa(app_p$split[["B"]])` for the pathway scores. @tbl-app-pred collects these results.
 
 ```{r}
 #| label: fig-app-net-v1
@@ -596,6 +596,24 @@ PlotPathwayNetwork(app_e$metrics[app_rows(2), app_w], app_e$metrics[app_rows(2),
 
 gap_register("fig-app-modules", what = "module stabilities", cells = NA, n_rep = NA, run = "production", production = "the application")
 PlotModuleStability(app_m$icc_score2, app_m$icc_conn, highlight = app_ifn_mod, xlab = "Stability of the squared module score", ylab = "Stability of LIONESS connectivity")
+```
+
+```{r}
+#| label: tbl-app-pred
+#| tbl-cap: "Identity and prediction in GSE65391 by feature set: the LIONESS metrics, the four pathway scores and their squares, the first-order metrics, and the current SLEDAI alone. Identity is the share of children whose second-visit features correlate most with their own first-visit features. SLEDAI is predicted by elastic net with all visits of a child in one cross-validation fold (concordance; one half is chance), and on the authors' test children after fitting on their training children. Above one half: the lower bootstrap bound exceeds one half."
+
+yn <- function(v) ifelse(v == 1, "yes", "no")
+sp <- app_p$same
+nv <- app_p$next_visit
+kable_w(data.frame(
+  Quantity = c("Identity (chance in the last row)", "Same-visit SLEDAI, concordance", "Same-visit SLEDAI, above one half",
+               "Next-visit SLEDAI, concordance", "Next-visit SLEDAI, above one half", "Authors' test children, same-visit concordance",
+               "Chance level of identity"),
+  `LIONESS metrics` = c(pa(app_p$finger[["A"]]), pa(sp[["c_A"]]), yn(sp[["sup_A"]]), pa(nv[["c_A"]]), yn(nv[["sup_A"]]), pa(app_p$split[["A"]]), ""),
+  `Pathway scores` = c(pa(app_p$finger[["B"]]), pa(sp[["c_B"]]), yn(sp[["sup_B"]]), pa(nv[["c_B"]]), yn(nv[["sup_B"]]), pa(app_p$split[["B"]]), ""),
+  `First-order metrics` = c(pa(app_p$finger[["C"]]), pa(sp[["c_C"]]), yn(sp[["sup_C"]]), pa(nv[["c_C"]]), yn(nv[["sup_C"]]), pa(app_p$split[["C"]]), ""),
+  `Current SLEDAI alone` = c("", "", "", pa(nv[["c_R0"]]), yn(nv[["sup_R0"]]), "", pa(app_p$chance)),
+  check.names = FALSE), widths = c(34, 17, 16, 17, 16))
 ```
 
 ```{r}

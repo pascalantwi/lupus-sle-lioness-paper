@@ -1,7 +1,7 @@
 # LIONESS edges are quadratic functions of expression: closed forms, an interferon artifact, and equivalence with first-order features
 <span class="tc">TO CONFIRM: first author</span>, <span class="tc">TO
 CONFIRM: second author, the supervisor</span>
-2026-11-17
+2026-11-19
 
 <div class="apparatus">
 
@@ -658,7 +658,7 @@ closed form implies. Over children, interferon connectivity had a
 stability of 0.304, against 0.349 for the squared interferon score; the
 number of edges had 0.278, the number of nodes 0.236, transitivity
 0.184, the interferon genes’ degree 0.260, and their betweenness 0.203
-(<a href="#tbl-app" class="quarto-xref">Table 4</a>). For every metric,
+(<a href="#tbl-app" class="quarto-xref">Table 5</a>). For every metric,
 the stability on the LIONESS networks differed from the stability on the
 first-order networks by at most 0.0058. Across modules, the stability of
 connectivity followed that of the squared module score (correlation
@@ -683,6 +683,8 @@ next-visit SLEDAI, every feature set reached the concordance of the
 current SLEDAI alone (0.760). On the authors’ test children, the
 concordance was 0.551 for the LIONESS metrics, 0.557 for the first-order
 metrics, and 0.622 for the pathway scores.
+<a href="#tbl-app-pred" class="quarto-xref">Table 4</a> collects these
+results.
 
 <div id="fig-app-net-v1">
 
@@ -735,9 +737,36 @@ identity line.
 
 </div>
 
+<div id="tbl-app-pred">
+
+Table 4: Identity and prediction in GSE65391 by feature set: the LIONESS
+metrics, the four pathway scores and their squares, the first-order
+metrics, and the current SLEDAI alone. Identity is the share of children
+whose second-visit features correlate most with their own first-visit
+features. SLEDAI is predicted by elastic net with all visits of a child
+in one cross-validation fold (concordance; one half is chance), and on
+the authors’ test children after fitting on their training children.
+Above one half: the lower bootstrap bound exceeds one half.
+
+<div class="cell-output-display">
+
+| Quantity | LIONESS metrics | Pathway scores | First-order metrics | Current SLEDAI alone |
+|----|----|----|----|----|
+| Identity (chance in the last row) | 0.122 | 0.069 | 0.122 |  |
+| Same-visit SLEDAI, concordance | 0.523 | 0.628 | 0.524 |  |
+| Same-visit SLEDAI, above one half | no | yes | no |  |
+| Next-visit SLEDAI, concordance | 0.760 | 0.759 | 0.760 | 0.760 |
+| Next-visit SLEDAI, above one half | yes | yes | yes | yes |
+| Authors’ test children, same-visit concordance | 0.551 | 0.622 | 0.557 |  |
+| Chance level of identity |  |  |  | 0.008 |
+
+</div>
+
+</div>
+
 <div id="tbl-app">
 
-Table 4: LIONESS metrics of the four-pathway network in GSE65391:
+Table 5: LIONESS metrics of the four-pathway network in GSE65391:
 stability over visits on the LIONESS networks and on their first-order
 versions.
 
@@ -786,12 +815,12 @@ be compared with the expression terms of its closed form before it is
 read as co-expression. LIONESS metrics also lost the sign of expression:
 activity driven by a factor’s level was predicted by pathway scores,
 while the metrics, which carry squared scores, did not predict it.
-<a href="#tbl-novelty" class="quarto-xref">Table 5</a> sets these
+<a href="#tbl-novelty" class="quarto-xref">Table 6</a> sets these
 results beside earlier work.
 
 <div id="tbl-novelty">
 
-Table 5: What was known and what this paper adds.
+Table 6: What was known and what this paper adds.
 
 <div class="cell-output-display">
 

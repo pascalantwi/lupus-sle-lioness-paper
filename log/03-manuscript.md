@@ -140,3 +140,10 @@ Pre-registered application claims (`protocol.md`, section 7): claim 5 failed nar
 Check after the run (not pre-registered), behind one sentence of the Application: in the example child, the gene touched by most of the 150 strongest edges (146 at visit 2, 35 at visit 1) was in both visits the gene with the largest absolute standardized expression (TIPIN at 10.8 at visit 2; CHEK1 at 5.6 at visit 1), as the closed form's product term implies.
 
 Figure functions: `PlotSampleNetwork()` and `PlotPathwayNetwork()` take pathway labels and leave room for side labels; `PlotModuleStability()` added. Checker: 0 errors; the uncited-bib warning kept as before.
+
+## Revision 2 (2026-11-19)
+
+| Comment | Change | Where |
+|---|---|---|
+| "Where is the prediction results ... to show to Tyler" | The application's identity and SLEDAI prediction results were in the text only, against the rule that every finding has a table or figure; added a table of identity, same-visit and next-visit concordance, the superiority test, and the authors' split, by feature set | `manuscript/manuscript.qmd`, `tbl-app-pred` |
+| Model ladder of the first method (R0, R1, E1, N1, F1) | Not done; proposed to the user as a design change (needs a dated protocol entry before any run); waiting for the answer | this log |
