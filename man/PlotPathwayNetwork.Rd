@@ -11,7 +11,7 @@ PlotPathwayNetwork(
   scale_cross = NULL,
   main = "",
   labels = PathwayLabels(),
-  legend = TRUE
+  legend = FALSE
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ widest line; default to the largest absolute values given.}
 \item{labels}{Pathway labels, named by pathway.}
 
 \item{legend}{Draw the legend of circle size and fill and line colour
-and width.}
+and width (off by default: the caption describes them).}
 }
 \value{
 \code{NULL}, invisibly.

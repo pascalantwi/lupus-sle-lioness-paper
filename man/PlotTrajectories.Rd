@@ -11,7 +11,10 @@ PlotTrajectories(
   ids = unique(person),
   col = "#2a78d6",
   ylab = "",
-  main = ""
+  main = "",
+  flat = TRUE,
+  flat_col = "#eb6834",
+  legend = FALSE
 )
 }
 \arguments{
@@ -24,6 +27,15 @@ PlotTrajectories(
 \item{col}{Line color.}
 
 \item{ylab, main}{Labels.}
+
+\item{flat}{Draw the no-change line: a horizontal dashed line at the mean
+of the drawn values, the path a metric that did not change between
+visits would follow.}
+
+\item{flat_col}{Colour of the no-change line.}
+
+\item{legend}{Draw a legend (off by default: the caption describes the
+lines).}
 }
 \value{
 \code{NULL}, invisibly.

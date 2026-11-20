@@ -143,16 +143,19 @@ eq_ac_txt <- if (eq_ac == 1) "in every replicate" else paste("in at least", prov
 cap_design <- paste("Factors of the simulation design. Study S1 varied one factor at a time around the base setting (marked with an asterisk); study S2 used the base setting with the listed activity effects.",
   "$\\kappa_1$: within-person intraclass correlation of the interferon factor; $\\lambda_1$: its loading; $m_1$: the interferon pathway's size; $\\tau$: spread of person-specific co-expression; $\\beta$: activity effect.")
 cap_stability <- sprintf("Stability over visits of each LIONESS metric in the base setting, measured by the intraclass correlation (@eq-icc): on the LIONESS network (filled red points, with bars of two Monte Carlo standard errors) and on the first-order network (open circles). Top %s%% marks metrics computed on the graph of the strongest %s%% of edges.", lvl(100 * st$prop), lvl(100 * st$prop))
-cap_net1 <- sprintf("LIONESS gene network of one simulated child at visit 1, base setting. Dots are genes, grouped on six circles by pathway; lines are the %s strongest edges of the child's network, red for positive and blue for negative edges, with width proportional to the absolute edge on a scale shared with the child's network at visit 2.", lvl(120))
-cap_net2 <- "LIONESS gene network of the same simulated child at visit 2, drawn as at visit 1 and on the same scale."
-cap_path1 <- "Pathway network of the same simulated child at visit 1: its LIONESS network read through the six pathways. Circle area is a pathway's connectivity (the mean edge among its genes, hollow when negative); each line is the crosstalk between two pathways (the mean edge between their genes), red when positive and blue when negative, thicker when stronger. Scales are shared with the child's pathway network at visit 2."
-cap_path2 <- "Pathway network of the same simulated child at visit 2, drawn as at visit 1 and on the same scales."
-cap_traj_conn <- "Interferon connectivity of the LIONESS networks of twelve simulated children over their six visits, base setting. Each line joins one child's values in visit order."
-cap_traj_degree <- sprintf("Mean degree of the interferon genes over the six visits of the same twelve simulated children, in the LIONESS networks thresholded at an absolute edge of %s. Each line joins one child's values in visit order.", lvl(st$threshold))
+cap_net1 <- sprintf("LIONESS gene network of one simulated child at visit 1, base setting. Each dot is a gene; the genes sit on six circles, one per pathway, and are coloured by pathway (interferon blue, neutrophil-like orange, lymphocyte-like green, plasmablast-like yellow, personal pink, null dark green), with each circle labelled by its pathway. Each line is one of the %s strongest edges of the child's network: red for a positive edge and blue for a negative one, thin for a weak edge and thick for a strong one, with width proportional to the absolute edge on a scale shared with the child's network at visit 2.", lvl(120))
+cap_net2 <- "LIONESS gene network of the same simulated child at visit 2, drawn as at visit 1 (same colours, same scale)."
+cap_path1 <- "Pathway network of the same simulated child at visit 1: its LIONESS network read through the six pathways. Each circle is a pathway, coloured as in the gene network and labelled by name; its area is the pathway's connectivity (the mean edge among its genes), and it is filled when the connectivity is positive and hollow when negative. Each line joins two pathways and shows their crosstalk (the mean edge between their genes): red when positive and blue when negative, thicker when stronger. Scales are shared with the child's pathway network at visit 2."
+cap_path2 <- "Pathway network of the same simulated child at visit 2, drawn as at visit 1 (same colours, same scales)."
+cap_traj_conn <- "Interferon connectivity of the LIONESS networks of twelve simulated children over their six visits, base setting. Each blue line is one child, its points the child's values at each visit, joined in visit order. The orange dashed line is the no-change line, drawn at the mean of all values: the flat line that a child whose connectivity did not change between visits follows."
+cap_traj_degree <- sprintf("Mean degree of the interferon genes over the six visits of the same twelve simulated children, in the LIONESS networks thresholded at an absolute edge of %s. Each blue line is one child, joined in visit order; the orange dashed line is the no-change line, drawn at the mean of all values, the flat line that a child whose degree did not change between visits follows.", lvl(st$threshold))
 cap_conn_score <- "Interferon connectivity against the squared interferon score, one simulated cohort in the base setting. Each point is one sample (one child at one visit); the line is the least-squares fit."
 cap_gradient <- "Stability over visits along the stability of the interferon factor (its within-person intraclass correlation): interferon connectivity, the squared interferon score, and the residual of connectivity after the first-order and after the fourth-order expression terms, with bars of two Monte Carlo standard errors. The dashed line is the stability of a squared normal factor, the square of the factor's own stability."
 cap_power <- "Type I error and power of the test that a model predicts same-visit activity better than chance (@eq-tests), by activity effect: the share of replicates in which the test was positive for the LIONESS metrics (A), the pathway scores (B), and the first-order metrics (C), with bars of two Monte Carlo standard errors. At no effect, the share is the type I error."
-cap_app_net1 <- sprintf("LIONESS gene network of the GSE65391 child with the highest mean interferon score, at visit 1. Dots are genes, grouped on four circles by pathway; lines are the %s strongest edges, red for positive and blue for negative edges, with width proportional to the absolute edge on a scale shared with the child's network at visit 2.", lvl(150))
+cap_app_path1 <- "Pathway network of the same GSE65391 child at visit 1. Each circle is a pathway, coloured as in the gene network and labelled by name; its area is the pathway's connectivity, filled when positive and hollow when negative. Each line shows the crosstalk between two pathways: red when positive and blue when negative, thicker when stronger. Scales are shared with the child's pathway network at visit 2."
+cap_app_net2 <- "LIONESS gene network of the same GSE65391 child at visit 2, drawn as at visit 1 (same colours, same scale)."
+cap_app_path2 <- "Pathway network of the same GSE65391 child at visit 2, drawn as at visit 1 (same colours, same scales)."
+cap_app_net1 <- sprintf("LIONESS gene network of the GSE65391 child with the highest mean interferon score, at visit 1. Each dot is a gene; the genes sit on four circles, one per pathway, coloured by pathway (interferon blue, neutrophil orange, lymphocyte green, plasma cell yellow) and labelled by name. Each line is one of the %s strongest edges: red for a positive edge and blue for a negative one, thin for a weak edge and thick for a strong one, with width on a scale shared with the child's network at visit 2.", lvl(150))
 ```
 
 ```{r}
@@ -589,7 +592,7 @@ Fingerprinting accuracy was `r prov(G(base, "finger_A"), 3)` for the LIONESS met
 #| label: fig-net-v1
 #| fig-cap: !expr cap_net1
 #| fig-width: 7
-#| fig-height: 5.5
+#| fig-height: 5
 
 gap_register("fig-net-v1", what = "one child's LIONESS network, visit 1", cells = 1, n_rep = 1, production = "the same cohort")
 PlotSampleNetwork(ex$edges[ex_rows(1), ], ex$sets, scale_max = sc_e)
@@ -599,7 +602,7 @@ PlotSampleNetwork(ex$edges[ex_rows(1), ], ex$sets, scale_max = sc_e)
 #| label: fig-net-v2
 #| fig-cap: !expr cap_net2
 #| fig-width: 7
-#| fig-height: 5.5
+#| fig-height: 5
 
 gap_register("fig-net-v2", what = "one child's LIONESS network, visit 2", cells = 1, n_rep = 1, production = "the same cohort")
 PlotSampleNetwork(ex$edges[ex_rows(2), ], ex$sets, scale_max = sc_e)
@@ -609,7 +612,7 @@ PlotSampleNetwork(ex$edges[ex_rows(2), ], ex$sets, scale_max = sc_e)
 #| label: fig-path-v1
 #| fig-cap: !expr cap_path1
 #| fig-width: 7
-#| fig-height: 5.9
+#| fig-height: 5
 
 gap_register("fig-path-v1", what = "one child's pathway network, visit 1", cells = 1, n_rep = 1, production = "the same cohort")
 PlotPathwayNetwork(ex$lioness_metrics[ex_i(1), w_cols], ex$lioness_metrics[ex_i(1), c_cols], scale_conn = sc_conn, scale_cross = sc_cross)
@@ -619,7 +622,7 @@ PlotPathwayNetwork(ex$lioness_metrics[ex_i(1), w_cols], ex$lioness_metrics[ex_i(
 #| label: fig-path-v2
 #| fig-cap: !expr cap_path2
 #| fig-width: 7
-#| fig-height: 5.9
+#| fig-height: 5
 
 gap_register("fig-path-v2", what = "one child's pathway network, visit 2", cells = 1, n_rep = 1, production = "the same cohort")
 PlotPathwayNetwork(ex$lioness_metrics[ex_i(2), w_cols], ex$lioness_metrics[ex_i(2), c_cols], scale_conn = sc_conn, scale_cross = sc_cross)
@@ -782,7 +785,7 @@ The genes identified `r pa(app_p$finger[["G"]])` of the children.
 #| label: fig-app-net-v1
 #| fig-cap: !expr cap_app_net1
 #| fig-width: 7
-#| fig-height: 5.5
+#| fig-height: 5
 
 gap_register("fig-app-net-v1", what = "a child's LIONESS network, visit 1", cells = NA, n_rep = NA, run = "production", production = "the application")
 PlotSampleNetwork(app_e$edges[app_rows(1), ], app_e$sets, top = 150, scale_max = app_sc_e, node_cex = 0.5, labels = app_lab)
@@ -790,9 +793,9 @@ PlotSampleNetwork(app_e$edges[app_rows(1), ], app_e$sets, top = 150, scale_max =
 
 ```{r}
 #| label: fig-app-net-v2
-#| fig-cap: "The same child's LIONESS network at the second visit, drawn as in the previous figure."
+#| fig-cap: !expr cap_app_net2
 #| fig-width: 7
-#| fig-height: 5.5
+#| fig-height: 5
 
 gap_register("fig-app-net-v2", what = "a child's LIONESS network, visit 2", cells = NA, n_rep = NA, run = "production", production = "the application")
 PlotSampleNetwork(app_e$edges[app_rows(2), ], app_e$sets, top = 150, scale_max = app_sc_e, node_cex = 0.5, labels = app_lab)
@@ -800,9 +803,9 @@ PlotSampleNetwork(app_e$edges[app_rows(2), ], app_e$sets, top = 150, scale_max =
 
 ```{r}
 #| label: fig-app-path-v1
-#| fig-cap: "The same child's LIONESS network at the first visit, summarized by pathway: node area is the pathway's connectivity (hollow when negative) and line width the crosstalk, on scales shared with the next figure."
+#| fig-cap: !expr cap_app_path1
 #| fig-width: 7
-#| fig-height: 5.9
+#| fig-height: 5
 
 gap_register("fig-app-path-v1", what = "a child's pathway network, visit 1", cells = NA, n_rep = NA, run = "production", production = "the application")
 PlotPathwayNetwork(app_e$metrics[app_rows(1), app_w], app_e$metrics[app_rows(1), app_c], scale_conn = app_sc_conn, scale_cross = app_sc_cross, labels = app_lab)
@@ -810,9 +813,9 @@ PlotPathwayNetwork(app_e$metrics[app_rows(1), app_w], app_e$metrics[app_rows(1),
 
 ```{r}
 #| label: fig-app-path-v2
-#| fig-cap: "The same child's pathway network at the second visit, drawn as in the previous figure."
+#| fig-cap: !expr cap_app_path2
 #| fig-width: 7
-#| fig-height: 5.9
+#| fig-height: 5
 
 gap_register("fig-app-path-v2", what = "a child's pathway network, visit 2", cells = NA, n_rep = NA, run = "production", production = "the application")
 PlotPathwayNetwork(app_e$metrics[app_rows(2), app_w], app_e$metrics[app_rows(2), app_c], scale_conn = app_sc_conn, scale_cross = app_sc_cross, labels = app_lab)

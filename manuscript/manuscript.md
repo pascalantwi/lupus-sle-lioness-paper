@@ -797,9 +797,13 @@ pathway scores, against 0.01 by chance.
 ![](manuscript_files/figure-commonmark/fig-net-v1-1.png)
 
 Figure 1: LIONESS gene network of one simulated child at visit 1, base
-setting. Dots are genes, grouped on six circles by pathway; lines are
-the 120 strongest edges of the child’s network, red for positive and
-blue for negative edges, with width proportional to the absolute edge on
+setting. Each dot is a gene; the genes sit on six circles, one per
+pathway, and are coloured by pathway (interferon blue, neutrophil-like
+orange, lymphocyte-like green, plasmablast-like yellow, personal pink,
+null dark green), with each circle labelled by its pathway. Each line is
+one of the 120 strongest edges of the child’s network: red for a
+positive edge and blue for a negative one, thin for a weak edge and
+thick for a strong one, with width proportional to the absolute edge on
 a scale shared with the child’s network at visit 2.
 
 </div>
@@ -809,7 +813,7 @@ a scale shared with the child’s network at visit 2.
 ![](manuscript_files/figure-commonmark/fig-net-v2-1.png)
 
 Figure 2: LIONESS gene network of the same simulated child at visit 2,
-drawn as at visit 1 and on the same scale.
+drawn as at visit 1 (same colours, same scale).
 
 </div>
 
@@ -818,12 +822,13 @@ drawn as at visit 1 and on the same scale.
 ![](manuscript_files/figure-commonmark/fig-path-v1-1.png)
 
 Figure 3: Pathway network of the same simulated child at visit 1: its
-LIONESS network read through the six pathways. Circle area is a
-pathway’s connectivity (the mean edge among its genes, hollow when
-negative); each line is the crosstalk between two pathways (the mean
-edge between their genes), red when positive and blue when negative,
-thicker when stronger. Scales are shared with the child’s pathway
-network at visit 2.
+LIONESS network read through the six pathways. Each circle is a pathway,
+coloured as in the gene network and labelled by name; its area is the
+pathway’s connectivity (the mean edge among its genes), and it is filled
+when the connectivity is positive and hollow when negative. Each line
+joins two pathways and shows their crosstalk (the mean edge between
+their genes): red when positive and blue when negative, thicker when
+stronger. Scales are shared with the child’s pathway network at visit 2.
 
 </div>
 
@@ -832,7 +837,7 @@ network at visit 2.
 ![](manuscript_files/figure-commonmark/fig-path-v2-1.png)
 
 Figure 4: Pathway network of the same simulated child at visit 2, drawn
-as at visit 1 and on the same scales.
+as at visit 1 (same colours, same scales).
 
 </div>
 
@@ -841,8 +846,11 @@ as at visit 1 and on the same scales.
 ![](manuscript_files/figure-commonmark/fig-traj-conn-1.png)
 
 Figure 5: Interferon connectivity of the LIONESS networks of twelve
-simulated children over their six visits, base setting. Each line joins
-one child’s values in visit order.
+simulated children over their six visits, base setting. Each blue line
+is one child, its points the child’s values at each visit, joined in
+visit order. The orange dashed line is the no-change line, drawn at the
+mean of all values: the flat line that a child whose connectivity did
+not change between visits follows.
 
 </div>
 
@@ -852,8 +860,10 @@ one child’s values in visit order.
 
 Figure 6: Mean degree of the interferon genes over the six visits of the
 same twelve simulated children, in the LIONESS networks thresholded at
-an absolute edge of 1. Each line joins one child’s values in visit
-order.
+an absolute edge of 1. Each blue line is one child, joined in visit
+order; the orange dashed line is the no-change line, drawn at the mean
+of all values, the flat line that a child whose degree did not change
+between visits follows.
 
 </div>
 
@@ -1115,10 +1125,13 @@ identified 0.221 of the children.
 ![](manuscript_files/figure-commonmark/fig-app-net-v1-1.png)
 
 Figure 11: LIONESS gene network of the GSE65391 child with the highest
-mean interferon score, at visit 1. Dots are genes, grouped on four
-circles by pathway; lines are the 150 strongest edges, red for positive
-and blue for negative edges, with width proportional to the absolute
-edge on a scale shared with the child’s network at visit 2.
+mean interferon score, at visit 1. Each dot is a gene; the genes sit on
+four circles, one per pathway, coloured by pathway (interferon blue,
+neutrophil orange, lymphocyte green, plasma cell yellow) and labelled by
+name. Each line is one of the 150 strongest edges: red for a positive
+edge and blue for a negative one, thin for a weak edge and thick for a
+strong one, with width on a scale shared with the child’s network at
+visit 2.
 
 </div>
 
@@ -1126,8 +1139,8 @@ edge on a scale shared with the child’s network at visit 2.
 
 ![](manuscript_files/figure-commonmark/fig-app-net-v2-1.png)
 
-Figure 12: The same child’s LIONESS network at the second visit, drawn
-as in the previous figure.
+Figure 12: LIONESS gene network of the same GSE65391 child at visit 2,
+drawn as at visit 1 (same colours, same scale).
 
 </div>
 
@@ -1135,10 +1148,12 @@ as in the previous figure.
 
 ![](manuscript_files/figure-commonmark/fig-app-path-v1-1.png)
 
-Figure 13: The same child’s LIONESS network at the first visit,
-summarized by pathway: node area is the pathway’s connectivity (hollow
-when negative) and line width the crosstalk, on scales shared with the
-next figure.
+Figure 13: Pathway network of the same GSE65391 child at visit 1. Each
+circle is a pathway, coloured as in the gene network and labelled by
+name; its area is the pathway’s connectivity, filled when positive and
+hollow when negative. Each line shows the crosstalk between two
+pathways: red when positive and blue when negative, thicker when
+stronger. Scales are shared with the child’s pathway network at visit 2.
 
 </div>
 
@@ -1146,8 +1161,8 @@ next figure.
 
 ![](manuscript_files/figure-commonmark/fig-app-path-v2-1.png)
 
-Figure 14: The same child’s pathway network at the second visit, drawn
-as in the previous figure.
+Figure 14: Pathway network of the same GSE65391 child at visit 2, drawn
+as at visit 1 (same colours, same scales).
 
 </div>
 

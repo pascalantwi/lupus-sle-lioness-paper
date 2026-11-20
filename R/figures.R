@@ -104,12 +104,13 @@ EdgeColors <- function(e, alpha = 0.55) {
 #' @param main Plot title.
 #' @param node_cex Size of the gene points.
 #' @param labels Pathway labels, named as `sets`.
-#' @param legend Draw the legend of edge sign and width.
+#' @param legend Draw the legend of edge sign and width (off by default:
+#'   the caption describes the colours).
 #' @return The drawn edges' indices, invisibly.
 #' @export
 PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
                               main = "", node_cex = 1.3,
-                              labels = PathwayLabels(), legend = TRUE) {
+                              labels = PathwayLabels(), legend = FALSE) {
   p <- max(unlist(sets))
   pr <- PairIndex(p)
   keep <- order(-abs(e))[seq_len(min(top, length(e)))]
@@ -119,7 +120,8 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
   memb <- rep(NA_character_, p)
   for (k in names(sets)) memb[sets[[k]]] <- k
   graphics::par(mar = c(0, 0, if (nzchar(main)) 2 else 0, 0))
-  graphics::plot(NA, xlim = c(-2.35, 2.35), ylim = c(-2.1, 1.6), asp = 1,
+  graphics::plot(NA, xlim = c(-2.35, 2.35),
+                 ylim = c(if (legend) -2.1 else -1.6, 1.6), asp = 1,
                  xaxs = "i", yaxs = "i",
                  axes = FALSE, xlab = "", ylab = "", main = main)
   w <- pmin(abs(e[keep]) / scale_max, 1)
@@ -160,12 +162,12 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
 #' @param main Plot title.
 #' @param labels Pathway labels, named by pathway.
 #' @param legend Draw the legend of circle size and fill and line colour
-#'   and width.
+#'   and width (off by default: the caption describes them).
 #' @return `NULL`, invisibly.
 #' @export
 PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
                                scale_cross = NULL, main = "",
-                               labels = PathwayLabels(), legend = TRUE) {
+                               labels = PathwayLabels(), legend = FALSE) {
   nm <- sub("^(within|conn)_", "", names(conn))
   k <- length(nm)
   ang <- pi / 2 - 2 * pi * (seq_len(k) - 1) / k
@@ -174,7 +176,8 @@ PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
   if (is.null(scale_conn)) scale_conn <- max(abs(conn))
   if (is.null(scale_cross)) scale_cross <- max(abs(cross))
   graphics::par(mar = c(0, 0, if (nzchar(main)) 2 else 0, 0))
-  graphics::plot(NA, xlim = c(-2.3, 2.3), ylim = c(-2.3, 1.62), asp = 1,
+  graphics::plot(NA, xlim = c(-2.3, 2.3),
+                 ylim = c(if (legend) -2.3 else -1.62, 1.62), asp = 1,
                  xaxs = "i", yaxs = "i",
                  axes = FALSE, xlab = "", ylab = "", main = main)
   pairs <- strsplit(sub("^cross_", "", names(cross)), "_")
@@ -241,16 +244,24 @@ PlotConnectivityScore <- function(conn, score2, col = "#2a78d6",
 #' @param ids People drawn; defaults to all.
 #' @param col Line color.
 #' @param ylab,main Labels.
+#' @param flat Draw the no-change line: a horizontal dashed line at the mean
+#'   of the drawn values, the path a metric that did not change between
+#'   visits would follow.
+#' @param flat_col Colour of the no-change line.
+#' @param legend Draw a legend (off by default: the caption describes the
+#'   lines).
 #' @return `NULL`, invisibly.
 #' @export
 PlotTrajectories <- function(value, person, visit, ids = unique(person),
-                             col = "#2a78d6", ylab = "", main = "") {
+                             col = "#2a78d6", ylab = "", main = "",
+                             flat = TRUE, flat_col = "#eb6834",
+                             legend = FALSE) {
   use <- person %in% ids
   graphics::par(mar = c(4.2, 4.4, if (nzchar(main)) 2.5 else 1, 1))
   yr <- range(value[use])
-  # headroom above the data for the legend
+  # headroom above the data when a legend is drawn
   graphics::plot(NA, xlim = range(visit[use]),
-                 ylim = c(yr[1], yr[2] + 0.22 * diff(yr)),
+                 ylim = c(yr[1], yr[2] + if (legend) 0.22 * diff(yr) else 0),
                  xlab = "Visit", ylab = ylab, main = main, las = 1, bty = "l",
                  xaxt = "n")
   graphics::axis(1, at = sort(unique(visit[use])))
@@ -261,11 +272,16 @@ PlotTrajectories <- function(value, person, visit, ids = unique(person),
                     lwd = 1.5)
     graphics::points(visit[w], value[w], pch = 19, cex = 0.6, col = col)
   }
-  graphics::legend("topright", c("One child: the value at each visit",
-                                 "joined in visit order"),
-                   pch = c(19, NA), lwd = c(NA, 1.5),
-                   col = c(col, grDevices::adjustcolor(col, 0.6)),
-                   cex = 0.75, bg = "white", box.col = "grey80")
+  if (flat) {
+    graphics::abline(h = mean(value[use]), col = flat_col, lty = 2, lwd = 2.5)
+  }
+  if (legend) {
+    graphics::legend("topright", c("One child, in visit order",
+                                   "No change between visits"),
+                     pch = c(19, NA), lwd = c(1.5, 2.5), lty = c(1, 2),
+                     col = c(col, flat_col), cex = 0.75, bg = "white",
+                     box.col = "grey80")
+  }
   invisible(NULL)
 }
 

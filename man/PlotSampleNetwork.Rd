@@ -12,7 +12,7 @@ PlotSampleNetwork(
   main = "",
   node_cex = 1.3,
   labels = PathwayLabels(),
-  legend = TRUE
+  legend = FALSE
 )
 }
 \arguments{
@@ -31,7 +31,8 @@ largest drawn edge.}
 
 \item{labels}{Pathway labels, named as \code{sets}.}
 
-\item{legend}{Draw the legend of edge sign and width.}
+\item{legend}{Draw the legend of edge sign and width (off by default:
+the caption describes the colours).}
 }
 \value{
 The drawn edges' indices, invisibly.
