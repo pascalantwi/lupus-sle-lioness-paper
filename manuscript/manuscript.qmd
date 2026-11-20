@@ -200,7 +200,7 @@ Blood gene expression is partly specific to the individual [@whitney2003individu
 A Pearson LIONESS edge between genes $i$ and $j$ in sample $q$ is, to first order in $1/N$ for a cohort of $N$ samples, a function of that sample's own standardized expression $z_{qi}$ and $z_{qj}$ and of the cohort correlation $r_{ij}$:
 $$
 e_{qij} \approx r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right).
-$$
+$$ {#eq-edge-approx}
 The product term is the single-sample correlation of earlier work [@yu2017iena].
 Averaged over the pairs of a pathway, the product term becomes the square of the pathway's summed expression, so a sample's connectivity follows its pathway score.
 In a network built from all samples, module networks are approximately factorizable, and a gene's connectivity has a counterpart computed from the module eigengene [@horvath2008geometric].
@@ -218,151 +218,172 @@ Finally, we follow children with lupus over repeated visits and apply the same a
 
 # Methods
 
-We first define LIONESS networks and the metrics read from them through pathways, then derive what the edges and the metrics measure, and give a diagnostic that follows from that result.
-We then define how we measured the stability of a metric over a person's visits, whether it identifies the person, and how well it predicts disease activity, and close with the data and the software.
+We first define LIONESS networks and the metrics read from them through pathways (@sec-lioness, @sec-metrics), then derive what the edges and the metrics measure (@sec-closed), and give a diagnostic that follows from that result (@sec-diagnostic).
+We then define how we measured the stability of a metric over a person's visits (@sec-stability), whether it identifies the person (@sec-identification), and how well it predicts disease activity (@sec-prediction), and close with the data and the software.
 
-## LIONESS single-sample networks
+## LIONESS single-sample networks {#sec-lioness}
 
 A user who builds a LIONESS network for a blood sample reads it as the co-expression specific to that sample, and reads a network metric of it, such as the connectivity of the interferon genes, as how tightly that pathway's genes move together in that person at that visit.
 Over repeated visits, the stability of the metric is then read as the stability of the person's network.
 The procedure is the following.
-For a cohort of $N$ samples, let $r_{ij}$ be the Pearson correlation of genes $i$ and $j$ over all samples and $r^{(-q)}_{ij}$ the correlation without sample $q$.
-The LIONESS edge of sample $q$ is
+Consider a cohort of $N$ samples, indexed by $q$, measured on $p$ genes, indexed by $i$ and $j$.
+Let $r_{ij}$ be the Pearson correlation of genes $i$ and $j$ over all $N$ samples, and $r^{(-q)}_{ij}$ their correlation over the $N - 1$ samples left when sample $q$ is removed.
+The LIONESS edge between genes $i$ and $j$ in sample $q$ is [@kuijjer2019lioness]
 $$
-e_{qij} = N r_{ij} - (N - 1)\, r^{(-q)}_{ij}
-$$
-[@kuijjer2019lioness].
+e_{qij} = N r_{ij} - (N - 1)\, r^{(-q)}_{ij}.
+$$ {#eq-lioness}
 The edge is large and positive when leaving sample $q$ out lowers the correlation of the two genes, and large and negative when leaving it out raises it; the factor $N - 1$ scales one sample's influence up to the size of a correlation.
-Every metric in this paper is built from these edges, so what an edge measures decides what every metric measures.
+Every metric in this paper is built from the edges of @eq-lioness, so what an edge measures decides what every metric measures.
 For that reason the rest of this section starts from the edge.
 
-## Network metrics read through pathways
+## Network metrics read through pathways {#sec-metrics}
 
-For a pathway $A$ of $m_A$ genes and a second pathway $B$ of $m_B$ genes, disjoint from $A$, the connectivity $W_{qA}$, the crosstalk $X_{qAB}$, the total edge weight $T_q$ over all $p$ genes of the network, and the strength $s_{qi}$ of gene $i$ in sample $q$ are
+A pathway is a set of genes; let $A$ be a pathway of $m_A$ genes and $B$ a second pathway of $m_B$ genes, with no gene in common with $A$.
+For sample $q$, the connectivity $W_{qA}$ of pathway $A$ is the mean edge among its genes,
 $$
-\begin{aligned}
-W_{qA} &= \binom{m_A}{2}^{-1} \sum_{i < j \in A} e_{qij}, \\
-X_{qAB} &= \frac{1}{m_A m_B} \sum_{i \in A} \sum_{j \in B} e_{qij}, \\
-T_q &= \sum_{i < j} e_{qij}, \\
-s_{qi} &= \sum_{j \ne i} e_{qij}.
-\end{aligned}
+W_{qA} = \binom{m_A}{2}^{-1} \sum_{i < j \in A} e_{qij},
+$$ {#eq-conn}
+where $\binom{m_A}{2} = m_A (m_A - 1)/2$ is the number of pairs of genes in $A$ and the sum runs over those pairs.
+The crosstalk $X_{qAB}$ between pathways $A$ and $B$ is the mean edge between their genes,
 $$
-where $\binom{m_A}{2}$ is the number of pairs of genes in $A$, the first sum runs over those pairs, the second over every gene $i$ of $A$ with every gene $j$ of $B$, and the last over the $p - 1$ other genes.
+X_{qAB} = \frac{1}{m_A m_B} \sum_{i \in A} \sum_{j \in B} e_{qij},
+$$ {#eq-cross}
+where the sums pair every gene $i$ of $A$ with every gene $j$ of $B$.
+The total edge weight $T_q$ is the sum of all edges of the network, and the strength $s_{qi}$ of gene $i$ the sum of its edges,
+$$
+T_q = \sum_{i < j} e_{qij}, \qquad s_{qi} = \sum_{j \ne i} e_{qij},
+$$ {#eq-total}
+where the first sum runs over all pairs of the $p$ genes and the second over the $p - 1$ genes other than $i$.
 For the graph metrics, we kept in a graph $G_q$ the pairs with $\lvert e_{qij}\rvert$ above a threshold, either fixed or chosen so that a fixed share of pairs is kept, and computed the number of edges and of nodes (genes with at least one edge) of $G_q$, its transitivity (the share of connected triples that close into triangles), and each gene's degree and betweenness, the latter with distance $1/\lvert e_{qij}\rvert$.
 We averaged the gene-level metrics over the genes of each pathway.
 Reading the network through pathways turns many thousands of edges per sample into a few numbers with a biological label.
-The metrics fall into two groups: sums of edges (connectivity, crosstalk, total edge weight, and strength) and functions of the edges above a threshold (degree, betweenness, transitivity, and the numbers of edges and nodes).
+The metrics fall into two groups: sums of edges (@eq-conn, @eq-cross, and @eq-total) and functions of the edges above a threshold (degree, betweenness, transitivity, and the numbers of edges and nodes).
 A closed form for the edge therefore carries over exactly to the first group and constrains the second.
 
-## What LIONESS edges and metrics measure
+## What LIONESS edges and metrics measure {#sec-closed}
 
 We show that every LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression.
-With $z_{qi}$ the expression of gene $i$ in sample $q$ standardized over all $N$ samples (divisor $N$) and $\varepsilon = 1/(N - 1)$, removing sample $q$ gives (supplement, S1.1)
+Let $x_{qi}$ be the expression of gene $i$ in sample $q$, and let
 $$
-\begin{aligned}
-r^{(-q)}_{ij} &= \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}}, \\
-e_{qij} &= N r_{ij} - (N - 1)\, r^{(-q)}_{ij}.
-\end{aligned}
+z_{qi} = \frac{x_{qi} - \bar x_i}{\sigma_i}, \qquad \varepsilon = \frac{1}{N - 1},
+$$ {#eq-z}
+where $\bar x_i$ is the mean of gene $i$ over all $N$ samples, $\sigma_i$ its standard deviation with divisor $N$, so that $z_{qi}$ is the number of standard deviations by which sample $q$ lies above the cohort mean of gene $i$, and $\varepsilon$ is a small number that shrinks as the cohort grows.
+Removing sample $q$ changes the correlation to (supplement, S1.1)
 $$
-Here $r^{(-q)}_{ij}$ is the correlation of the two genes without sample $q$, $r_{ij}$ their correlation over all samples, and $z_{qi} z_{qj}$ the product of the sample's two standardized values.
+r^{(-q)}_{ij} = \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}},
+$$ {#eq-loo}
+so that, by @eq-lioness, the edge is
+$$
+e_{qij} = N r_{ij} - (N - 1)\, \frac{r_{ij} - \varepsilon z_{qi} z_{qj}}{\sqrt{(1 - \varepsilon z_{qi}^2)(1 - \varepsilon z_{qj}^2)}}.
+$$ {#eq-exact}
+In @eq-exact, $r_{ij}$ is the cohort correlation of the two genes and $z_{qi}$ and $z_{qj}$ are the sample's two standardized values; nothing else enters.
 This is the central result of the paper.
-For a given cohort, the edge of sample $q$ is fixed once the sample's two standardized values are known: the rest of the cohort enters only through the correlation $r_{ij}$ and the standardization.
+For a given cohort, the edge of sample $q$ is fixed once the sample's two standardized values are known: the rest of the cohort enters only through the correlation $r_{ij}$ and the standardization of @eq-z.
 Two samples with the same $z_{qi}$ and $z_{qj}$ therefore receive the same edge, whatever the rest of their expression, and an edge carries no information about the sample beyond these two numbers.
-Expanding in $\varepsilon$ gives the first-order form and a remainder of order $\varepsilon$ that is a polynomial of degree four in $z_{qi}$ and $z_{qj}$ (S1.2):
+Expanding @eq-exact in powers of $\varepsilon$ gives the first-order form and a remainder (S1.2):
 $$
-e_{qij} = r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right) + O(\varepsilon).
-$$
-where $O(\varepsilon)$ stands for a term no larger than a constant times $\varepsilon$, so that it vanishes as the cohort grows.
-Each of the three terms has a plain reading.
+e_{qij} = r_{ij} + z_{qi} z_{qj} - \tfrac{r_{ij}}{2}\left(z_{qi}^2 + z_{qj}^2\right) + O(\varepsilon),
+$$ {#eq-first-order}
+where $O(\varepsilon)$ stands for a term no larger than a constant times $\varepsilon$, which vanishes as the cohort grows and is a polynomial of degree four in $z_{qi}$ and $z_{qj}$.
+This is the form given in @eq-edge-approx of the Introduction.
+Each of its three terms has a plain reading.
 The first, $r_{ij}$, is the same for every sample.
 The second, $z_{qi} z_{qj}$, is positive when the sample lies on the same side of the cohort mean for both genes and negative when it lies on opposite sides, and it grows with how far the sample lies from the mean.
 The third pulls the edge back toward the cohort correlation when either value is large.
 A sample far from the mean on both genes therefore receives a strong edge between them, whether or not the two genes are co-regulated in that person.
-Summing the first-order form over the pairs of a pathway gives the connectivity and crosstalk as linear functions of three expression terms each (S1.3).
-Let $S_A = \sum_{i \in A} z_{qi}$ be the sum of the sample's standardized values over the genes of $A$, $Q_A = \sum_{i \in A} z_{qi}^2$ the sum of their squares, $R^B_i = \sum_{j \in B, j \ne i} r_{ij}$ the summed cohort correlation of gene $i$ with the genes of $B$, and $C_A = m_A (m_A - 1)/2$ the number of pairs in $A$. Then
+
+Summing @eq-first-order over the pairs of a pathway gives the connectivity and crosstalk as linear functions of three expression terms each (S1.3).
+For pathway $A$ and sample $q$, let
 $$
-\begin{aligned}
-W_{qA} &\approx \bar r_A + \frac{S_A^2 - Q_A}{2 C_A} - \frac{1}{2 C_A} \sum_{i \in A} R^A_i z_{qi}^2, \\
-X_{qAB} &\approx \bar r_{AB} + \frac{S_A S_B}{m_A m_B} - \frac{1}{2 m_A m_B} \Big( \sum_{i \in A} R^B_i z_{qi}^2 + \sum_{j \in B} R^A_j z_{qj}^2 \Big),
-\end{aligned}
+S_A = \sum_{i \in A} z_{qi}, \qquad Q_A = \sum_{i \in A} z_{qi}^2, \qquad R^B_i = \sum_{j \in B,\, j \ne i} r_{ij},
+$$ {#eq-terms}
+where $S_A$ is the sum of the sample's standardized values over the genes of $A$, $Q_A$ the sum of their squares, and $R^B_i$ the summed cohort correlation of gene $i$ with the genes of $B$ ($R^A_i$ is the same with the other genes of $A$).
+With $C_A = \binom{m_A}{2}$ the number of pairs in $A$, $\bar r_A$ the mean cohort correlation among the genes of $A$, and $\bar r_{AB}$ the mean cohort correlation between the genes of $A$ and of $B$, the connectivity of @eq-conn and the crosstalk of @eq-cross are, to first order,
 $$
-where $\bar r_A$ and $\bar r_{AB}$ are the mean cohort correlations within $A$ and between $A$ and $B$.
-The connectivity is, up to small terms, the squared pathway score $(S_A/m_A)^2$, and the crosstalk the product of two pathway scores.
+W_{qA} \approx \bar r_A + \frac{S_A^2 - Q_A}{2 C_A} - \frac{1}{2 C_A} \sum_{i \in A} R^A_i z_{qi}^2,
+$$ {#eq-conn-cf}
+$$
+X_{qAB} \approx \bar r_{AB} + \frac{S_A S_B}{m_A m_B} - \frac{1}{2 m_A m_B} \Big( \sum_{i \in A} R^B_i z_{qi}^2 + \sum_{j \in B} R^A_j z_{qj}^2 \Big).
+$$ {#eq-cross-cf}
+The pathway score of $A$ in sample $q$ is the mean standardized expression of its genes, $S_A/m_A$.
+By @eq-conn-cf, the connectivity is, up to small terms, the squared pathway score $(S_A/m_A)^2$; by @eq-cross-cf, the crosstalk is, up to small terms, the product of two pathway scores.
 Two consequences follow.
 First, a pathway's connectivity is high when its genes lie, on average, far from the cohort mean in either direction: it records how unusual the pathway's level is in that sample, not its direction, so a sample with the pathway strongly up and one with it strongly down both receive a high connectivity.
 Second, to first order, connectivity and crosstalk hold no information beyond the standardized expression of the pathways' own genes and the cohort correlations.
-The total edge weight is the same sum over all genes, and the strength of gene $i$ is $R_i + z_{qi}(S - z_{qi}) - \tfrac{1}{2} R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2$, where $S = \sum_{j} z_{qj}$ is the sum of the sample's standardized values over all genes and $R_i = \sum_{j \ne i} r_{ij}$ the summed cohort correlation of gene $i$ with all other genes (S1.4).
-The graph metrics have no closed form, but they are functions of the edges, and so of the same standardized expression.
-A metric is therefore stable over a person's visits to the extent that the person's expression terms are: the squared score of a pathway driven by a factor with within-person intraclass correlation $\kappa$ has intraclass correlation $\kappa^2$ when the factor is normal (S1.5).
+The total edge weight of @eq-total is the same sum over all genes, and the strength of gene $i$ is, to first order (S1.4),
+$$
+s_{qi} \approx R_i + z_{qi}(S - z_{qi}) - \tfrac{1}{2} R_i z_{qi}^2 - \tfrac12 \sum_{j \ne i} r_{ij} z_{qj}^2,
+$$ {#eq-strength-cf}
+where $S = \sum_{j} z_{qj}$ is the sum of the sample's standardized values over all $p$ genes and $R_i = \sum_{j \ne i} r_{ij}$ the summed cohort correlation of gene $i$ with all other genes.
+The graph metrics have no closed form, but they are functions of the edges of @eq-exact, and so of the same standardized expression.
+A metric is therefore stable over a person's visits to the extent that the person's expression terms are: the squared score of a pathway driven by a factor whose within-person intraclass correlation (@eq-icc) is $\kappa$ has intraclass correlation $\kappa^2$ when the factor is normal (S1.5).
 This makes the stability of a metric predictable: a metric that squares an expression term is as stable as that square, and less stable than the term itself, since $\kappa^2 < \kappa$ whenever $0 < \kappa < 1$.
 
-## A diagnostic: comparing a metric with its expression terms
+## A diagnostic: comparing a metric with its expression terms {#sec-diagnostic}
 
 We propose two checks that tell a user whether a LIONESS metric carries anything beyond the sample's expression.
-In the first, we recompute the metric on the first-order form of the edges, the network the closed form predicts from expression alone, and compare the two metrics' stability over visits and their predictions.
-In the second, we regress connectivity and crosstalk over samples on their three first-order expression terms, then with the fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the corresponding products for crosstalk), and report the $R^2$ and the stability of the residual.
+In the first, we recompute the metric on the first-order form of the edges (@eq-first-order without the remainder), the network that the closed form predicts from expression alone, and compare the two metrics' stability over visits and their predictions.
+In the second, we regress connectivity and crosstalk over samples on their three first-order expression terms of @eq-conn-cf and @eq-cross-cf, then with the fourth-order terms of the remainder added ($S_A^4$, $S_A^2 Q_A$, $Q_A^2$, and $\sum_{i \in A} z_{qi}^4$ for connectivity; the corresponding products for crosstalk), and report the $R^2$ and the stability of the residual.
 A metric that matches its first-order version, and whose residual is not stable, measures expression.
 The two checks answer different questions.
 The first applies to every metric, including the graph metrics that have no closed form, and asks whether the LIONESS network gives a metric anything that the expression-only network does not.
 The second applies to connectivity and crosstalk, whose closed forms name the terms, and asks how much of the metric those terms explain and whether what remains is stable over visits.
 A metric that fails either check carries something beyond expression; for a metric that passes both, its expression terms serve in its place without loss.
 
-## Stability over visits
+## Stability over visits {#sec-stability}
 
 For each feature set, a vector of numbers for person $p$ at visit $v$ (the LIONESS metrics, the first-order metrics, the pathway scores, or the genes), we measured how stable it is over a person's visits, whether it identifies the person, and how well it predicts disease activity at the same visit and at the next one.
-For one feature, let $x_{pv}$ be its value for person $p$ at visit $v$, $k_p$ the number of visits of person $p$, $P$ the number of people, and $n = \sum_p k_p$ the number of samples.
+For one feature, let $u_{pv}$ be its value for person $p$ at visit $v$, $n_p$ the number of visits of person $p$, $P$ the number of people, and $n = \sum_p n_p$ the number of samples; let $\bar u_{p\cdot}$ be the mean of person $p$'s visits and $\bar u_{\cdot\cdot}$ the mean of all samples.
 We used the one-way intraclass correlation
 $$
 \begin{aligned}
-\mathrm{MSB} &= \frac{1}{P - 1} \sum_{p} k_p \left(\bar x_{p\cdot} - \bar x_{\cdot\cdot}\right)^2, \\
-\mathrm{MSW} &= \frac{1}{n - P} \sum_{p} \sum_{v} \left(x_{pv} - \bar x_{p\cdot}\right)^2, \\
-n_0 &= \frac{1}{P - 1}\Big(n - \frac{1}{n}\sum_p k_p^2\Big), \\
+\mathrm{MSB} &= \frac{1}{P - 1} \sum_{p} n_p \left(\bar u_{p\cdot} - \bar u_{\cdot\cdot}\right)^2, \\
+\mathrm{MSW} &= \frac{1}{n - P} \sum_{p} \sum_{v} \left(u_{pv} - \bar u_{p\cdot}\right)^2, \\
+n_0 &= \frac{1}{P - 1}\Big(n - \frac{1}{n}\sum_p n_p^2\Big), \\
 I &= \frac{\mathrm{MSB} - \mathrm{MSW}}{\mathrm{MSB} + (n_0 - 1)\,\mathrm{MSW}},
 \end{aligned}
-$$
-where $\bar x_{p\cdot}$ is the mean of person $p$'s visits, $\bar x_{\cdot\cdot}$ the mean of all samples, MSB and MSW the mean squares between and within people, and $n_0$ the average number of visits per person corrected for unequal numbers.
+$$ {#eq-icc}
+where MSB is the mean square between people (how far the people's means lie from the overall mean), MSW the mean square within people (how far a person's visits lie from that person's mean), and $n_0$ the average number of visits per person, corrected for unequal numbers.
 $I$ is the share of the feature's variance that belongs to the person rather than to the visit: it is zero when a person's visits differ as much as different people do, and one when every visit of a person gives the same value.
-We chose this measure because the question a user asks of a personal network is whether it stays with the person, and the intraclass correlation answers it directly: it weighs the differences within a person over time against the differences between people.
+We chose this measure because the question a user asks of a personal network is whether it stays with the person, and the intraclass correlation of @eq-icc answers it directly: it weighs the differences within a person over time against the differences between people.
 It also allows people to have different numbers of visits, as in the application.
 And because a metric that squares an expression term has the square of that term's stability (S1.5), the intraclass correlation also tests the closed forms against data.
 
-## Identification of a person
+## Identification of a person {#sec-identification}
 
 For each person, let $\mathbf{f}_{p1}$ and $\mathbf{f}_{p2}$ be the feature vectors of the first two visits, each feature standardized over all samples.
 The person predicted for the second visit of person $p$ is the person whose first visit is most correlated with it, and the fingerprinting accuracy is the share of people predicted correctly [@finn2015fingerprinting]:
 $$
-\begin{aligned}
-\hat p &= \arg\max_{p'} \operatorname{cor}\left(\mathbf{f}_{p2}, \mathbf{f}_{p'1}\right), \\
-\mathrm{Acc} &= \frac{1}{P} \sum_{p} \mathbb{1}\left(\hat p = p\right),
-\end{aligned}
-$$
-where $\operatorname{cor}$ is the Pearson correlation over the features and $\mathbb{1}(\cdot)$ is one when its condition holds and zero otherwise; guessing gives $1/P$.
+\hat p = \arg\max_{p'} \operatorname{cor}\left(\mathbf{f}_{p2}, \mathbf{f}_{p'1}\right), \qquad \mathrm{Acc} = \frac{1}{P} \sum_{p} \mathbb{1}\left(\hat p = p\right),
+$$ {#eq-finger}
+where $p'$ runs over all $P$ people, $\operatorname{cor}$ is the Pearson correlation over the features, $\hat p$ is the person whose first visit correlates most with the second visit of person $p$, and $\mathbb{1}(\cdot)$ is one when its condition holds and zero otherwise; guessing gives $\mathrm{Acc} = 1/P$.
 Identification is a stronger test of a personal network than stability: a network specific to a person should single that person out among all others from one visit to the next.
-Comparing the accuracy of the LIONESS metrics with that of the first-order metrics and of the genes asks whether any identifying information lies in the network rather than in the expression it is built from.
+Comparing the accuracy of @eq-finger for the LIONESS metrics with that for the first-order metrics and for the genes asks whether any identifying information lies in the network rather than in the expression it is built from.
 
-## Prediction of disease activity
+## Prediction of disease activity {#sec-prediction}
 
-Throughout, $\mathbf{s}_{pv}$ is the vector of pathway scores of person $p$ at visit $v$ (the mean standardized expression of each pathway's genes), $\mathbf{s}^{2}_{pv}$ its elementwise square, $\mathbf{g}_{pv}$ the standardized expression of all genes of the network, $\mathbf{m}_{pv}$ the LIONESS metrics, $\mathbf{m}^{(1)}_{pv}$ the same metrics computed on the first-order network, and $y_{pv}$ the disease activity (SLEDAI in the application).
+Throughout, $\mathbf{s}_{pv}$ is the vector of pathway scores of person $p$ at visit $v$ (the mean standardized expression of each pathway's genes), $\mathbf{s}^{2}_{pv}$ its elementwise square, $\mathbf{g}_{pv}$ the standardized expression of all genes of the network, $\mathbf{m}_{pv}$ the LIONESS metrics of @sec-metrics, $\mathbf{m}^{(1)}_{pv}$ the same metrics computed on the first-order network, and $y_{pv}$ the disease activity (SLEDAI in the application).
+The models named A, B, and C below are not the pathways $A$ and $B$ of @sec-metrics.
 
 ### The common form of the models
 
 Every model predicts activity at the same visit as
 $$
-y_{pv} = \alpha + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{pv},
-$$
+y_{pv} = \alpha + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{w}_{pv} + \xi_{pv},
+$$ {#eq-same}
 and at the next visit as
 $$
-y_{p,v+1} = \alpha + \delta\, y_{pv} + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{p,v+1},
+y_{p,v+1} = \alpha + \delta\, y_{pv} + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{w}_{pv} + \xi_{p,v+1},
+$$ {#eq-next}
+where $\alpha$ is an intercept, $\mathbf{b}_{pv}$ the model's base terms with coefficients $\boldsymbol{\gamma}$, $\mathbf{w}_{pv}$ its features under test with coefficients $\boldsymbol{\theta}$, $\delta$ the coefficient of the current activity, and $\xi$ an error with mean zero.
+The base terms and the current activity are not penalized; the features under test are, by the elastic net [@friedman2010glmnet], which over the $n_{\mathrm{tr}}$ training samples minimizes
 $$
-where $\alpha$ is an intercept, $\mathbf{b}_{pv}$ the model's base terms with coefficients $\boldsymbol{\gamma}$, $\mathbf{x}_{pv}$ its features under test with coefficients $\boldsymbol{\theta}$, $\delta$ the coefficient of the current activity, and $\epsilon$ an error with mean zero.
-The base terms and the current activity are not penalized; the features under test are, by the elastic net [@friedman2010glmnet], which over the $n$ training samples minimizes
-$$
-\frac{1}{2n} \sum_{k = 1}^{n} \left(y_k - \alpha - \delta y^{\mathrm{cur}}_k - \boldsymbol{\gamma}^\top \mathbf{b}_k - \boldsymbol{\theta}^\top \mathbf{x}_k\right)^2 + \lambda \left[\frac{1 - a}{2} \lVert \boldsymbol{\theta} \rVert_2^2 + a \lVert \boldsymbol{\theta} \rVert_1\right],
-$$
-where $k$ indexes the training samples, $y^{\mathrm{cur}}_k$ is the current activity (absent, $\delta = 0$, for same-visit prediction), $\lVert \boldsymbol{\theta} \rVert_2^2$ is the sum of the squared coefficients and $\lVert \boldsymbol{\theta} \rVert_1$ the sum of their absolute values, the mixing $a$ was `r lvl(st$alpha)`, and the penalty $\lambda$ was chosen by `r lvl(st$folds)`-fold cross-validation inside the training samples, with all visits of a person in one fold, at the value with the smallest mean squared error.
-A model with no features under test was fitted by least squares.
+\frac{1}{2n_{\mathrm{tr}}} \sum_{t = 1}^{n_{\mathrm{tr}}} \left(y_t - \alpha - \delta y^{\mathrm{cur}}_t - \boldsymbol{\gamma}^\top \mathbf{b}_t - \boldsymbol{\theta}^\top \mathbf{w}_t\right)^2 + \lambda \left[\frac{1 - a}{2} \lVert \boldsymbol{\theta} \rVert_2^2 + a \lVert \boldsymbol{\theta} \rVert_1\right],
+$$ {#eq-enet}
+where $t$ indexes the training samples, $y_t$ is the activity to be predicted, $y^{\mathrm{cur}}_t$ the current activity (absent, $\delta = 0$, for same-visit prediction), $\lVert \boldsymbol{\theta} \rVert_2^2$ the sum of the squared coefficients and $\lVert \boldsymbol{\theta} \rVert_1$ the sum of their absolute values, $a$ the mixing between the two penalties, set to `r lvl(st$alpha)`, and $\lambda$ the strength of the penalty, chosen by `r lvl(st$folds)`-fold cross-validation inside the training samples, with all visits of a person in one fold, at the value with the smallest mean squared error.
+A model with no features under test was fitted by least squares, that is, @eq-enet with $\lambda = 0$.
 Every prediction was made out of fold: the people were split into `r lvl(st$folds)` folds, and each person's predictions came from a model fitted on the other folds.
-The models below differ only in $\mathbf{b}_{pv}$ and $\mathbf{x}_{pv}$; moving up the ladder from R0 to N1 adds one source of information at a time.
+The models below differ only in $\mathbf{b}_{pv}$ and $\mathbf{w}_{pv}$; moving up the ladder from R0 to N1 adds one source of information at a time.
 Two choices keep the comparison fair.
 The base terms are left unpenalized, so that each model starts from the same information and the penalty acts only on what the model adds.
 And the folds keep all visits of a person together, because a person's visits resemble one another, and a model trained on one of them predicts the others too well.
@@ -371,88 +392,99 @@ And the folds keep all visits of a person together, because a person's visits re
 
 R0 predicts the next visit from today's activity only, and is the floor any expression model must beat for the next visit:
 $$
-y_{p,v+1} = \alpha + \delta\, y_{pv} + \epsilon_{p,v+1},
-$$
-fitted by least squares. It has no same-visit version, since it has no predictor at the same visit.
-Activity is partly stable within a person, so R0 is the bar every other model must clear for the next visit: a model whose next-visit concordance does not exceed that of R0 has learned nothing from expression.
+y_{p,v+1} = \alpha + \delta\, y_{pv} + \xi_{p,v+1},
+$$ {#eq-r0}
+fitted by least squares. It is @eq-next with no base terms and no features under test, and has no same-visit version, since it has no predictor at the same visit.
+Activity is partly stable within a person, so R0 is the bar every other model must clear for the next visit: a model whose next-visit concordance (@eq-concordance) does not exceed that of R0 has learned nothing from expression.
 
 ### Model R1: the pathway scores
 
-R1 uses the pathway scores and their squares, the expression terms that the closed forms say the LIONESS metrics are made of:
+R1 uses the pathway scores and their squares, the expression terms that the closed forms (@eq-conn-cf, @eq-cross-cf) say the LIONESS metrics are made of:
 $$
-y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \epsilon_{pv},
-$$
-with $\boldsymbol{\gamma}_1$ and $\boldsymbol{\gamma}_2$ unpenalized and the model fitted by least squares; for the next visit, $\delta\, y_{pv}$ is added.
+y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \xi_{pv},
+$$ {#eq-r1}
+where $\boldsymbol{\gamma}_1$ and $\boldsymbol{\gamma}_2$ hold one unpenalized coefficient per pathway for the score and its square; the model is fitted by least squares, and for the next visit $\delta\, y_{pv}$ is added.
 R1 is the simplest model that holds what the closed forms say the LIONESS metrics contain; if the metrics carry nothing more, the models built on them do no better than R1.
 
 ### Model E1: the genes
 
 E1 adds every gene of the network, penalized, to the terms of R1:
 $$
-y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \epsilon_{pv},
-$$
-where $\boldsymbol{\theta}_g$ holds one coefficient per gene; for the next visit, $\delta\, y_{pv}$ is added. E1 is the expression baseline: everything the network is built from.
+y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \xi_{pv},
+$$ {#eq-e1}
+where $\boldsymbol{\theta}_g$ holds one penalized coefficient per gene; for the next visit, $\delta\, y_{pv}$ is added. E1 is the expression baseline: everything the network is built from.
 Comparing E1 with R1 shows how much the individual genes add to their pathway averages.
 
 ### Model N1: the genes and the LIONESS metrics
 
 N1 adds the LIONESS metrics, penalized, to E1:
 $$
-y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \boldsymbol{\theta}_m^\top \mathbf{m}_{pv} + \epsilon_{pv},
-$$
-where $\boldsymbol{\theta}_m$ holds one coefficient per metric; for the next visit, $\delta\, y_{pv}$ is added. The contrast $\Delta_1 = C(\mathrm{N1}) - C(\mathrm{E1})$ is what the LIONESS network adds to the genes.
+y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \boldsymbol{\theta}_m^\top \mathbf{m}_{pv} + \xi_{pv},
+$$ {#eq-n1}
+where $\boldsymbol{\theta}_m$ holds one penalized coefficient per metric; for the next visit, $\delta\, y_{pv}$ is added.
+The contrast $\Delta_1 = C(\mathrm{N1}) - C(\mathrm{E1})$, with $C$ the concordance of @eq-concordance, is what the LIONESS network adds to the genes.
 If the LIONESS network carries co-expression that the genes do not, N1 exceeds E1.
-The closed forms imply that it does not, since every metric is a function of the genes' standardized values and the cohort correlations; $\Delta_1$ tests that implication.
+The closed forms imply that it does not, since by @eq-exact every metric is a function of the genes' standardized values and the cohort correlations; $\Delta_1$ tests that implication.
 
 ### Model F1: the genes and the first-order metrics
 
 F1 is N1 with the LIONESS metrics replaced by the same metrics computed on the first-order network:
 $$
-y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \boldsymbol{\theta}_f^\top \mathbf{m}^{(1)}_{pv} + \epsilon_{pv},
-$$
-with $\delta\, y_{pv}$ added for the next visit. The contrast $\Delta_2 = C(\mathrm{N1}) - C(\mathrm{F1})$ is what the LIONESS network adds to its own first-order form.
+y_{pv} = \alpha + \boldsymbol{\gamma}_1^\top \mathbf{s}_{pv} + \boldsymbol{\gamma}_2^\top \mathbf{s}^{2}_{pv} + \boldsymbol{\theta}_g^\top \mathbf{g}_{pv} + \boldsymbol{\theta}_f^\top \mathbf{m}^{(1)}_{pv} + \xi_{pv},
+$$ {#eq-f1}
+where $\boldsymbol{\theta}_f$ holds one penalized coefficient per first-order metric; for the next visit, $\delta\, y_{pv}$ is added.
+The contrast $\Delta_2 = C(\mathrm{N1}) - C(\mathrm{F1})$ is what the LIONESS network adds to its own first-order form.
 Equivalence of N1 and F1 means that whatever the LIONESS metrics contribute to prediction is already in their first-order form, which is a function of expression alone.
 
 ### Model A: the LIONESS metrics alone
 
 A uses only the LIONESS metrics, penalized, with no base terms:
 $$
-y_{pv} = \alpha + \boldsymbol{\theta}_m^\top \mathbf{m}_{pv} + \epsilon_{pv}.
-$$
+y_{pv} = \alpha + \boldsymbol{\theta}_m^\top \mathbf{m}_{pv} + \xi_{pv}.
+$$ {#eq-a}
 A is the prediction available to a user who reads only the network.
 
 ### Model B: the pathway scores, penalized
 
-B uses the pathway scores and their squares like R1, but penalized, so that it is fitted the same way as A and C:
+B uses the pathway scores and their squares like R1 (@eq-r1), but penalized, so that it is fitted the same way as A and C:
 $$
-y_{pv} = \alpha + \boldsymbol{\theta}_1^\top \mathbf{s}_{pv} + \boldsymbol{\theta}_2^\top \mathbf{s}^{2}_{pv} + \epsilon_{pv}.
-$$
-B keeps the sign of each pathway score, which the metrics lose when they square it; comparing A with B shows what that loss costs.
+y_{pv} = \alpha + \boldsymbol{\theta}_1^\top \mathbf{s}_{pv} + \boldsymbol{\theta}_2^\top \mathbf{s}^{2}_{pv} + \xi_{pv},
+$$ {#eq-b}
+where $\boldsymbol{\theta}_1$ and $\boldsymbol{\theta}_2$ are the penalized counterparts of $\boldsymbol{\gamma}_1$ and $\boldsymbol{\gamma}_2$.
+B keeps the sign of each pathway score, which the metrics lose when they square it (@eq-conn-cf); comparing A with B shows what that loss costs.
 
 ### Model C: the first-order metrics alone
 
-C is A with the first-order metrics in place of the LIONESS metrics:
+C is A (@eq-a) with the first-order metrics in place of the LIONESS metrics:
 $$
-y_{pv} = \alpha + \boldsymbol{\theta}_f^\top \mathbf{m}^{(1)}_{pv} + \epsilon_{pv}.
-$$
+y_{pv} = \alpha + \boldsymbol{\theta}_f^\top \mathbf{m}^{(1)}_{pv} + \xi_{pv}.
+$$ {#eq-c}
 For the next visit, A, B, and C each add $\delta\, y_{pv}$ unpenalized.
 Comparing A with C repeats the contrast of N1 with F1 without the genes.
 
 ### Scoring and tests
 
-Predictions $\hat y$ were scored by the concordance
+Predictions were scored by the concordance
 $$
 C = \frac{\sum_{(k, l):\, y_k > y_l} \left[\mathbb{1}(\hat y_k > \hat y_l) + \tfrac12\, \mathbb{1}(\hat y_k = \hat y_l)\right]}{\#\{(k, l): y_k > y_l\}},
+$$ {#eq-concordance}
+where $k$ and $l$ index samples, $y_k$ is the observed activity of sample $k$, $\hat y_k$ its out-of-fold prediction, the sums run over the pairs of samples whose activity differs, and $\#\{\cdot\}$ counts those pairs.
+$C$ is the share of such pairs that the predictions put in the right order, ties counting one half; $C = 1/2$ is chance and $C = 1$ a perfect ordering (S1.6).
+To test, we drew $B^{*} = `r lvl(st$n_boot)`$ bootstrap samples of people, with replacement and with all of a person's visits, and recomputed @eq-concordance as $C^{*}_b$ for each bootstrap sample $b = 1, \dots, B^{*}$ without refitting.
+With $Q_{\pi}(\cdot)$ the $\pi$ quantile over the bootstrap samples, the decisions were
 $$
-the share of pairs of samples with different activity that the predictions put in the right order, ties counting one half; $C = 1/2$ is chance and $C = 1$ a perfect ordering (S1.6).
-To test, we drew `r lvl(st$n_boot)` bootstrap samples of people, with replacement and with all of a person's visits, and recomputed $C^{*}_b$ for each sample $b$ without refitting.
-A model was declared better than chance when $Q_{0.05}(C^{*}) > 1/2$, where $Q_{0.05}$ is the lower `r lvl(5)` percent quantile over the bootstrap samples.
-For two models $M_1$ and $M_2$ with difference $\Delta = C(M_1) - C(M_2)$, $M_1$ was declared better when $Q_{0.05}(\Delta^{*}) > 0$, and the two were declared equivalent when $\left[Q_{0.05}(\Delta^{*}), Q_{0.95}(\Delta^{*})\right] \subset (-\eta, \eta)$ with margin $\eta = `r lvl(st$margin)`$.
+\begin{aligned}
+\text{better than chance:}\quad & Q_{0.05}(C^{*}) > \tfrac12, \\
+M_1 \text{ better than } M_2:\quad & Q_{0.05}(\Delta^{*}) > 0, \\
+M_1 \text{ equivalent to } M_2:\quad & \left[Q_{0.05}(\Delta^{*}),\, Q_{0.95}(\Delta^{*})\right] \subset (-\eta, \eta),
+\end{aligned}
+$$ {#eq-tests}
+where $\Delta^{*}$ is the bootstrap difference $C^{*}(M_1) - C^{*}(M_2)$ between two models $M_1$ and $M_2$ and $\eta = `r lvl(st$margin)`$ is the equivalence margin.
 We scored by concordance because it depends only on the order of the predictions, so that models fitted on different terms are compared on the same scale.
 We resampled people rather than visits because the visits of one person are not independent.
 And we tested equivalence as well as superiority because failing to show that one model is better is not evidence that two models are the same; the equivalence test makes that claim directly, within a stated margin.
 
-## Data
+## Data {#sec-data}
 
 For the application, we used the longitudinal study of children with systemic lupus erythematosus of @banchereau2016personalized, Gene Expression Omnibus series GSE65391, whole-blood expression on the Illumina HumanHT-12 array with disease activity (SLEDAI) recorded at every visit.
 We kept the `r lvl(app_s$n_children)` children with two or more visits, `r lvl(app_s$n_visits)` visits in all, ordered by time within child, and the authors' split into training and test children.
@@ -719,7 +751,7 @@ Across the `r lvl(app_s$n_modules)` modules, the stability of the module score h
 
 A user reading the LIONESS networks of these children sees networks that change from visit to visit and metrics that follow the children's expression.
 The LIONESS network of the child with the highest mean interferon score differed between the first two visits (@fig-app-net-v1, @fig-app-net-v2), as did its pathway summary (@fig-app-path-v1, @fig-app-path-v2).
-At the second visit, `r lvl(app_hub[2])` of the `r lvl(150)` strongest edges touched one plasma cell gene, against `r lvl(app_hub[1])` at the first: the network was organized around the gene whose expression lay farthest from its mean, as the product term of the closed form implies.
+At the second visit, `r lvl(app_hub[2])` of the `r lvl(150)` strongest edges touched one plasma cell gene, against `r lvl(app_hub[1])` at the first: the network was organized around the gene whose expression lay farthest from its mean, as the product term of the closed form implies (@eq-first-order).
 Over children, interferon connectivity had a stability of `r pa(ai("conn_ifn"))`, against `r pa(app_i$icc_score2[["ifn"]])` for the squared interferon score; the number of edges had `r pa(ai("n_edges"))`, the number of nodes `r pa(ai("n_nodes"))`, transitivity `r pa(ai("transitivity"))`, the interferon genes' degree `r pa(ai("degree_ifn"))`, and their betweenness `r pa(ai("betweenness_ifn"))` (@tbl-app).
 For every metric, the stability on the LIONESS networks differed from the stability on the first-order networks by at most `r pa(app_d_max, 4)`.
 Across modules, the stability of connectivity followed that of the squared module score (correlation `r pa(stats::cor(app_m$icc_conn, app_m$icc_score2), 2)`, @fig-app-modules).
@@ -840,7 +872,7 @@ kable_w(data.frame(Metric = lab_app, LIONESS = vapply(shown_app, function(m) pa(
 critique table's rows that did not become design factors; future work from the spec's out-of-scope
 list, item by item. No new results. -->
 
-A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression, and its first-order form keeps nearly all of it.
+A Pearson LIONESS edge is an exact function of the cohort correlation and the sample's own standardized expression (@eq-exact), and its first-order form (@eq-first-order) keeps nearly all of it.
 Every network metric built on the edges, read whole or by pathway, inherited that: in simulated children followed over visits, each metric was exactly as stable as the same metric on the first-order network, connectivity and crosstalk were their expression terms, and the stable part that remained beyond first order was the next-order expression term.
 Pathway connectivity was more stable than single edges because it averaged the edges into a squared pathway score.
 The children of GSE65391 behaved in the same way: their LIONESS metrics were as stable as the first-order metrics, identified children no better, and predicted disease activity no better than the module scores.
