@@ -11,7 +11,8 @@ PlotSampleNetwork(
   scale_max = NULL,
   main = "",
   node_cex = 1.3,
-  labels = PathwayLabels()
+  labels = PathwayLabels(),
+  legend = TRUE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ largest drawn edge.}
 \item{node_cex}{Size of the gene points.}
 
 \item{labels}{Pathway labels, named as \code{sets}.}
+
+\item{legend}{Draw the legend of edge sign and width.}
 }
 \value{
 The drawn edges' indices, invisibly.

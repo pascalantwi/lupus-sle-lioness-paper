@@ -630,9 +630,18 @@ graph metrics.
 
 ## Use of AI
 
-{{< include parts/ai-use-statement.md >}} <span class="tc">TO CONFIRM:
-whether the journal wants the figure legends to name the AI-assisted
-code</span>
+We used an AI assistant (Claude, Anthropic) to draft the analysis code,
+to propose the structure of the simulation study, to summarize the
+literature, and to produce a first draft of the text; we directed and
+reviewed the work throughout. We reviewed, corrected, and take
+responsibility for every part of the manuscript and the code. We checked
+every derivation numerically, and we verify every citation against the
+cited paper before submission. The figures are drawn from simulated data
+and computed results by code in the accompanying repository. No AI tool
+is an author.
+
+<span class="tc">TO CONFIRM: whether the journal wants the figure
+legends to name the AI-assisted code</span>
 
 # Simulation study
 
@@ -787,10 +796,11 @@ pathway scores, against 0.01 by chance.
 
 ![](manuscript_files/figure-commonmark/fig-net-v1-1.png)
 
-Figure 1: The LIONESS network of one simulated child at the first visit,
-base setting. Genes sit on six circles, one per pathway; the strongest
-edges are drawn, red positive and blue negative, with width proportional
-to the absolute edge on a scale shared with the next figure.
+Figure 1: LIONESS gene network of one simulated child at visit 1, base
+setting. Dots are genes, grouped on six circles by pathway; lines are
+the 120 strongest edges of the child’s network, red for positive and
+blue for negative edges, with width proportional to the absolute edge on
+a scale shared with the child’s network at visit 2.
 
 </div>
 
@@ -798,8 +808,8 @@ to the absolute edge on a scale shared with the next figure.
 
 ![](manuscript_files/figure-commonmark/fig-net-v2-1.png)
 
-Figure 2: The LIONESS network of the same child at the second visit,
-drawn as in the previous figure.
+Figure 2: LIONESS gene network of the same simulated child at visit 2,
+drawn as at visit 1 and on the same scale.
 
 </div>
 
@@ -807,10 +817,13 @@ drawn as in the previous figure.
 
 ![](manuscript_files/figure-commonmark/fig-path-v1-1.png)
 
-Figure 3: The same child’s LIONESS network at the first visit,
-summarized by pathway: node area is the pathway’s connectivity (hollow
-when negative) and line width the crosstalk between two pathways, on
-scales shared with the next figure.
+Figure 3: Pathway network of the same simulated child at visit 1: its
+LIONESS network read through the six pathways. Circle area is a
+pathway’s connectivity (the mean edge among its genes, hollow when
+negative); each line is the crosstalk between two pathways (the mean
+edge between their genes), red when positive and blue when negative,
+thicker when stronger. Scales are shared with the child’s pathway
+network at visit 2.
 
 </div>
 
@@ -818,8 +831,8 @@ scales shared with the next figure.
 
 ![](manuscript_files/figure-commonmark/fig-path-v2-1.png)
 
-Figure 4: The same child’s pathway network at the second visit, drawn as
-in the previous figure.
+Figure 4: Pathway network of the same simulated child at visit 2, drawn
+as at visit 1 and on the same scales.
 
 </div>
 
@@ -828,7 +841,8 @@ in the previous figure.
 ![](manuscript_files/figure-commonmark/fig-traj-conn-1.png)
 
 Figure 5: Interferon connectivity of the LIONESS networks of twelve
-simulated children over their visits, base setting; one line per child.
+simulated children over their six visits, base setting. Each line joins
+one child’s values in visit order.
 
 </div>
 
@@ -836,8 +850,10 @@ simulated children over their visits, base setting; one line per child.
 
 ![](manuscript_files/figure-commonmark/fig-traj-degree-1.png)
 
-Figure 6: Mean degree of the interferon genes in the thresholded LIONESS
-networks of the same twelve children over their visits.
+Figure 6: Mean degree of the interferon genes over the six visits of the
+same twelve simulated children, in the LIONESS networks thresholded at
+an absolute edge of 1. Each line joins one child’s values in visit
+order.
 
 </div>
 
@@ -845,10 +861,12 @@ networks of the same twelve children over their visits.
 
 ![](manuscript_files/figure-commonmark/fig-stability-1.png)
 
-Figure 7: Stability over visits (intraclass correlation) of LIONESS
-metrics in the base setting: filled points on the LIONESS network with
-bars of two Monte Carlo standard errors, open points on the first-order
-network. Top 5% marks the proportional threshold.
+Figure 7: Stability over visits of each LIONESS metric in the base
+setting, measured by the intraclass correlation
+(<a href="#eq-icc" class="quarto-xref">Equation 14</a>): on the LIONESS
+network (filled red points, with bars of two Monte Carlo standard
+errors) and on the first-order network (open circles). Top 5% marks
+metrics computed on the graph of the strongest 5% of edges.
 
 </div>
 
@@ -915,9 +933,9 @@ settings, by type of metric. Top share marks the proportional threshold.
 
 ![](manuscript_files/figure-commonmark/fig-conn-score-1.png)
 
-Figure 8: Interferon connectivity of every sample’s LIONESS network
-against the sample’s squared interferon score, one simulated cohort in
-the base setting, with the least-squares line.
+Figure 8: Interferon connectivity against the squared interferon score,
+one simulated cohort in the base setting. Each point is one sample (one
+child at one visit); the line is the least-squares fit.
 
 </div>
 
@@ -925,12 +943,13 @@ the base setting, with the least-squares line.
 
 ![](manuscript_files/figure-commonmark/fig-gradient-1.png)
 
-Figure 9: Stability over visits along the interferon factor’s
-within-person intraclass correlation: interferon connectivity, the
-squared interferon score, and the residual of connectivity after the
-first-order and after the fourth-order expression terms, with bars of
-two Monte Carlo standard errors. The dashed line is the stability of a
-squared normal factor.
+Figure 9: Stability over visits along the stability of the interferon
+factor (its within-person intraclass correlation): interferon
+connectivity, the squared interferon score, and the residual of
+connectivity after the first-order and after the fourth-order expression
+terms, with bars of two Monte Carlo standard errors. The dashed line is
+the stability of a squared normal factor, the square of the factor’s own
+stability.
 
 </div>
 
@@ -958,11 +977,13 @@ activity alone (<span class="prov-quick">0.618</span> to
 
 ![](manuscript_files/figure-commonmark/fig-power-1.png)
 
-Figure 10: Share of replicates in which the superiority test declared
-the concordance of same-visit predictions above one half, by activity
-effect, for the LIONESS metrics (A), the pathway scores (B), and the
-first-order metrics (C), with bars of two Monte Carlo standard errors.
-At no effect, the share is the type I error.
+Figure 10: Type I error and power of the test that a model predicts
+same-visit activity better than chance
+(<a href="#eq-tests" class="quarto-xref">Equation 28</a>), by activity
+effect: the share of replicates in which the test was positive for the
+LIONESS metrics (A), the pathway scores (B), and the first-order metrics
+(C), with bars of two Monte Carlo standard errors. At no effect, the
+share is the type I error.
 
 </div>
 
@@ -1093,10 +1114,11 @@ identified 0.221 of the children.
 
 ![](manuscript_files/figure-commonmark/fig-app-net-v1-1.png)
 
-Figure 11: The LIONESS network of the GSE65391 child with the highest
-mean interferon score at the first visit. Genes of the four pathways sit
-on four circles; the strongest edges are drawn, red positive and blue
-negative, with width on a scale shared with the next figure.
+Figure 11: LIONESS gene network of the GSE65391 child with the highest
+mean interferon score, at visit 1. Dots are genes, grouped on four
+circles by pathway; lines are the 150 strongest edges, red for positive
+and blue for negative edges, with width proportional to the absolute
+edge on a scale shared with the child’s network at visit 2.
 
 </div>
 

@@ -104,11 +104,12 @@ EdgeColors <- function(e, alpha = 0.55) {
 #' @param main Plot title.
 #' @param node_cex Size of the gene points.
 #' @param labels Pathway labels, named as `sets`.
+#' @param legend Draw the legend of edge sign and width.
 #' @return The drawn edges' indices, invisibly.
 #' @export
 PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
                               main = "", node_cex = 1.3,
-                              labels = PathwayLabels()) {
+                              labels = PathwayLabels(), legend = TRUE) {
   p <- max(unlist(sets))
   pr <- PairIndex(p)
   keep <- order(-abs(e))[seq_len(min(top, length(e)))]
@@ -117,8 +118,9 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
   xy <- PathwayLayout(sets)
   memb <- rep(NA_character_, p)
   for (k in names(sets)) memb[sets[[k]]] <- k
-  graphics::par(mar = c(2, 0.5, if (nzchar(main)) 2.5 else 0.5, 0.5))
-  graphics::plot(NA, xlim = c(-2.4, 2.4), ylim = c(-1.65, 1.65), asp = 1,
+  graphics::par(mar = c(0, 0, if (nzchar(main)) 2 else 0, 0))
+  graphics::plot(NA, xlim = c(-2.35, 2.35), ylim = c(-2.1, 1.6), asp = 1,
+                 xaxs = "i", yaxs = "i",
                  axes = FALSE, xlab = "", ylab = "", main = main)
   w <- pmin(abs(e[keep]) / scale_max, 1)
   graphics::segments(xy[pr[keep, 1], 1], xy[pr[keep, 1], 2],
@@ -133,10 +135,13 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
   lab <- labels[names(sets)]
   lab[is.na(lab)] <- names(sets)[is.na(lab)]
   LabelOutside(cen, lab, gap = 0.4)
-  graphics::mtext(sprintf(paste("The %d strongest edges; red positive, blue",
-                                "negative; width shows the absolute edge"),
-                          length(keep)), side = 1, line = 0.5, cex = 0.7,
-                  col = "grey30")
+  if (legend) {
+    graphics::legend("bottom", inset = 0.01, ncol = 2, cex = 0.75,
+                     legend = c("Positive edge", "Negative edge",
+                                "Weak edge (thin)", "Strong edge (thick)"),
+                     col = c("#e34948", "#1c5cab", "grey45", "grey45"),
+                     lwd = c(2.5, 2.5, 0.6, 3.5), bty = "n")
+  }
   invisible(keep)
 }
 
@@ -154,11 +159,13 @@ PlotSampleNetwork <- function(e, sets, top = 120L, scale_max = NULL,
 #'   widest line; default to the largest absolute values given.
 #' @param main Plot title.
 #' @param labels Pathway labels, named by pathway.
+#' @param legend Draw the legend of circle size and fill and line colour
+#'   and width.
 #' @return `NULL`, invisibly.
 #' @export
 PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
                                scale_cross = NULL, main = "",
-                               labels = PathwayLabels()) {
+                               labels = PathwayLabels(), legend = TRUE) {
   nm <- sub("^(within|conn)_", "", names(conn))
   k <- length(nm)
   ang <- pi / 2 - 2 * pi * (seq_len(k) - 1) / k
@@ -166,8 +173,9 @@ PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
   rownames(xy) <- nm
   if (is.null(scale_conn)) scale_conn <- max(abs(conn))
   if (is.null(scale_cross)) scale_cross <- max(abs(cross))
-  graphics::par(mar = c(2, 0.5, if (nzchar(main)) 2.5 else 0.5, 0.5))
-  graphics::plot(NA, xlim = c(-2.3, 2.3), ylim = c(-1.6, 1.6), asp = 1,
+  graphics::par(mar = c(0, 0, if (nzchar(main)) 2 else 0, 0))
+  graphics::plot(NA, xlim = c(-2.3, 2.3), ylim = c(-2.3, 1.62), asp = 1,
+                 xaxs = "i", yaxs = "i",
                  axes = FALSE, xlab = "", ylab = "", main = main)
   pairs <- strsplit(sub("^cross_", "", names(cross)), "_")
   for (i in seq_along(cross)) {
@@ -183,10 +191,21 @@ PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
                    bg = ifelse(conn >= 0, cols, "white"), col = cols, lwd = 2)
   lab <- labels[nm]
   lab[is.na(lab)] <- nm[is.na(lab)]
-  LabelOutside(xy, lab, gap = 0.34)
-  graphics::mtext(paste("Node area: connectivity (hollow if negative);",
-                        "line width: crosstalk; red positive, blue negative"),
-                  side = 1, line = 0.5, cex = 0.7, col = "grey30")
+  LabelOutside(xy, lab, gap = 0.42)
+  if (legend) {
+    graphics::legend("bottom", inset = 0.01, ncol = 2, cex = 0.75, bty = "n",
+                     legend = c("High connectivity (large circle)",
+                                "Low connectivity (small circle)",
+                                "Negative connectivity (hollow)",
+                                "Positive crosstalk", "Negative crosstalk",
+                                "Thicker line: stronger crosstalk"),
+                     pch = c(21, 21, 21, NA, NA, NA),
+                     pt.cex = c(2.6, 1.2, 1.8, NA, NA, NA),
+                     pt.bg = c("grey45", "grey45", "white", NA, NA, NA),
+                     col = c("grey45", "grey45", "grey45", "#e34948",
+                             "#1c5cab", "grey45"),
+                     lwd = c(NA, NA, NA, 3, 3, 6))
+  }
   invisible(NULL)
 }
 
@@ -207,6 +226,11 @@ PlotConnectivityScore <- function(conn, score2, col = "#2a78d6",
                  ylab = ylab, main = main, las = 1, bty = "l")
   fit <- stats::lm(conn ~ score2)
   graphics::abline(fit, col = "grey30", lwd = 1.5)
+  graphics::legend("topleft", c("One sample (one child at one visit)",
+                                "Least-squares line"),
+                   pch = c(19, NA), lwd = c(NA, 1.5),
+                   col = c(grDevices::adjustcolor(col, 0.7), "grey30"),
+                   cex = 0.75, bg = "white", box.col = "grey80")
   invisible(stats::cor(conn, score2))
 }
 
@@ -223,7 +247,10 @@ PlotTrajectories <- function(value, person, visit, ids = unique(person),
                              col = "#2a78d6", ylab = "", main = "") {
   use <- person %in% ids
   graphics::par(mar = c(4.2, 4.4, if (nzchar(main)) 2.5 else 1, 1))
-  graphics::plot(NA, xlim = range(visit[use]), ylim = range(value[use]),
+  yr <- range(value[use])
+  # headroom above the data for the legend
+  graphics::plot(NA, xlim = range(visit[use]),
+                 ylim = c(yr[1], yr[2] + 0.22 * diff(yr)),
                  xlab = "Visit", ylab = ylab, main = main, las = 1, bty = "l",
                  xaxt = "n")
   graphics::axis(1, at = sort(unique(visit[use])))
@@ -234,6 +261,11 @@ PlotTrajectories <- function(value, person, visit, ids = unique(person),
                     lwd = 1.5)
     graphics::points(visit[w], value[w], pch = 19, cex = 0.6, col = col)
   }
+  graphics::legend("topright", c("One child: the value at each visit",
+                                 "joined in visit order"),
+                   pch = c(19, NA), lwd = c(NA, 1.5),
+                   col = c(col, grDevices::adjustcolor(col, 0.6)),
+                   cex = 0.75, bg = "white", box.col = "grey80")
   invisible(NULL)
 }
 
@@ -351,8 +383,10 @@ PlotMetricStability <- function(summaries, cell, metrics, main = "") {
   graphics::segments(raw - 2 * se, yy, raw + 2 * se, yy, col = "#e34948")
   graphics::points(raw, yy, pch = 19, col = "#e34948", cex = 0.9)
   graphics::points(fo, yy, pch = 1, col = "grey20", cex = 1.3, lwd = 1.2)
-  graphics::legend("bottomright", c("LIONESS network", "First-order network"),
-                   pch = c(19, 1), col = c("#e34948", "grey20"), cex = 0.7,
+  graphics::legend("bottomright", c("LIONESS network", "First-order network",
+                                    "Two Monte Carlo standard errors"),
+                   pch = c(19, 1, NA), lwd = c(NA, NA, 1.5),
+                   col = c("#e34948", "grey20", "#e34948"), cex = 0.7,
                    bg = "white", box.col = "grey80")
   invisible(cbind(raw = raw, fo = fo))
 }
@@ -369,10 +403,12 @@ PlotMetricStability <- function(summaries, cell, metrics, main = "") {
 #'   legend labels.
 #' @param xlab,ylab,main Labels.
 #' @param ref Optional reference line `y = f(x)`, a function.
+#' @param ref_label Legend label of the reference line.
 #' @return The plotted means, invisibly.
 #' @export
 PlotGradient <- function(summaries, design, factor, cells, quantities,
-                         xlab = factor, ylab = "", main = "", ref = NULL) {
+                         xlab = factor, ylab = "", main = "", ref = NULL,
+                         ref_label = "Reference line") {
   x <- design[[factor]][match(cells, design$cell)]
   o <- order(x)
   x <- x[o]
@@ -392,7 +428,13 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
   pch <- c(19, 17, 15, 18, 1, 2)[seq_along(quantities)]
   graphics::par(mar = c(4.2, 4.6, if (nzchar(main)) 2.5 else 1, 1))
   yl <- range(c(m - 2 * se, m + 2 * se, 0), na.rm = TRUE)
-  graphics::plot(NA, xlim = range(x), ylim = yl, xlab = xlab, ylab = ylab,
+  # headroom above the data for the legend
+  yl[2] <- yl[2] + 0.3 * diff(yl)
+  # series that coincide are drawn side by side, so that none is hidden
+  dodge <- (seq_along(quantities) - (length(quantities) + 1) / 2) *
+    0.012 * diff(range(x))
+  graphics::plot(NA, xlim = range(x) + c(-1, 1) * 2 * max(abs(dodge)),
+                 ylim = yl, xlab = xlab, ylab = ylab,
                  main = main, bty = "l", las = 1, xaxt = "n")
   graphics::axis(1, at = x)
   if (!is.null(ref)) {
@@ -401,13 +443,27 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
   }
   graphics::abline(h = 0, col = "grey85")
   for (k in seq_along(quantities)) {
-    graphics::lines(x, m[, k], col = cols[k], lwd = 2)
-    graphics::segments(x, m[, k] - 2 * se[, k], x, m[, k] + 2 * se[, k],
+    xk <- x + dodge[k]
+    graphics::lines(xk, m[, k], col = cols[k], lwd = 2)
+    graphics::segments(xk, m[, k] - 2 * se[, k], xk, m[, k] + 2 * se[, k],
                        col = cols[k])
-    graphics::points(x, m[, k], pch = pch[k], col = cols[k])
+    graphics::points(xk, m[, k], pch = pch[k], col = cols[k])
   }
-  graphics::legend("topleft", unname(quantities), col = cols, pch = pch,
-                   lwd = 2, cex = 0.7, bg = "white", box.col = "grey80")
+  leg <- c(unname(quantities), "Bars: two Monte Carlo standard errors")
+  leg_col <- c(cols, "grey40")
+  leg_pch <- c(pch, NA)
+  leg_lty <- c(rep(1, length(quantities)), 1)
+  leg_lwd <- c(rep(2, length(quantities)), 1)
+  if (!is.null(ref)) {
+    leg <- c(leg, ref_label)
+    leg_col <- c(leg_col, "grey60")
+    leg_pch <- c(leg_pch, NA)
+    leg_lty <- c(leg_lty, 2)
+    leg_lwd <- c(leg_lwd, 1)
+  }
+  graphics::legend("topleft", leg, col = leg_col, pch = leg_pch,
+                   lty = leg_lty, lwd = leg_lwd, cex = 0.7, bg = "white",
+                   box.col = "grey80")
   invisible(m)
 }
 

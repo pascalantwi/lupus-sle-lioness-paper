@@ -13,7 +13,8 @@ PlotGradient(
   xlab = factor,
   ylab = "",
   main = "",
-  ref = NULL
+  ref = NULL,
+  ref_label = "Reference line"
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ legend labels.}
 \item{xlab, ylab, main}{Labels.}
 
 \item{ref}{Optional reference line \code{y = f(x)}, a function.}
+
+\item{ref_label}{Legend label of the reference line.}
 }
 \value{
 The plotted means, invisibly.
