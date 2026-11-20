@@ -838,6 +838,11 @@ when the connectivity is positive and hollow when negative. Each line
 joins two pathways and shows their crosstalk (the mean edge between
 their genes): red when positive and blue when negative, thicker when
 stronger. Scales are shared with the child’s pathway network at visit 2.
+A bigger circle means that the pathway’s genes lay, together, farther
+from their cohort means at that visit, whether above or below them,
+since connectivity is close to the squared pathway score
+(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
+circle means the pathway was near its usual level.
 
 </div>
 
@@ -855,7 +860,12 @@ it is filled when the connectivity is positive and hollow when negative.
 Each line joins two pathways and shows their crosstalk (the mean edge
 between their genes): red when positive and blue when negative, thicker
 when stronger. Circle areas and line widths are on the same scales as at
-visit 1, so that they compare directly between the two visits.
+visit 1, so that they compare directly between the two visits. A bigger
+circle means that the pathway’s genes lay, together, farther from their
+cohort means at that visit, whether above or below them, since
+connectivity is close to the squared pathway score
+(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
+circle means the pathway was near its usual level.
 
 </div>
 
@@ -1180,6 +1190,11 @@ name; its area is the pathway’s connectivity, filled when positive and
 hollow when negative. Each line shows the crosstalk between two
 pathways: red when positive and blue when negative, thicker when
 stronger. Scales are shared with the child’s pathway network at visit 2.
+A bigger circle means that the pathway’s genes lay, together, farther
+from their cohort means at that visit, whether above or below them,
+since connectivity is close to the squared pathway score
+(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
+circle means the pathway was near its usual level.
 
 </div>
 
@@ -1195,7 +1210,11 @@ name; its area is the pathway’s connectivity, filled when positive and
 hollow when negative. Each line shows the crosstalk between two
 pathways: red when positive and blue when negative, thicker when
 stronger. Circle areas and line widths are on the same scales as at
-visit 1.
+visit 1. A bigger circle means that the pathway’s genes lay, together,
+farther from their cohort means at that visit, whether above or below
+them, since connectivity is close to the squared pathway score
+(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
+circle means the pathway was near its usual level.
 
 </div>
 
