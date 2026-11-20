@@ -839,9 +839,8 @@ their genes): red when positive and blue when negative, thicker when
 stronger. Scales are shared with the child’s pathway network at visit 2.
 A bigger circle means that the pathway’s genes lay, together, farther
 from their cohort means at that visit, whether above or below them,
-since connectivity is close to the squared pathway score
-(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
-circle means the pathway was near its usual level.
+since connectivity is close to the squared pathway score; a small circle
+means the pathway was near its usual level.
 
 </div>
 
@@ -861,9 +860,8 @@ areas and line widths are on the same scales as at visit 1, so that they
 compare directly between the two visits. A bigger circle means that the
 pathway’s genes lay, together, farther from their cohort means at that
 visit, whether above or below them, since connectivity is close to the
-squared pathway score
-(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
-circle means the pathway was near its usual level.
+squared pathway score; a small circle means the pathway was near its
+usual level.
 
 </div>
 
@@ -899,11 +897,10 @@ follows.
 ![](manuscript_files/figure-commonmark/fig-stability-1.png)
 
 Figure 7: Stability over visits of each LIONESS metric in the base
-setting, measured by the intraclass correlation
-(<a href="#eq-icc" class="quarto-xref">Equation 14</a>): on the LIONESS
-network (filled red points, with bars of two Monte Carlo standard
-errors) and on the first-order network (open circles). Top 5% marks
-metrics computed on the graph of the strongest 5% of edges.
+setting, measured by the intraclass correlation: on the LIONESS network
+(filled red points, with bars of two Monte Carlo standard errors) and on
+the first-order network (open circles). Top 5% marks metrics computed on
+the graph of the strongest 5% of edges.
 
 </div>
 
@@ -1015,12 +1012,11 @@ activity alone (<span class="prov-quick">0.618</span> to
 ![](manuscript_files/figure-commonmark/fig-power-1.png)
 
 Figure 10: Type I error and power of the test that a model predicts
-same-visit activity better than chance
-(<a href="#eq-tests" class="quarto-xref">Equation 28</a>), by activity
-effect: the share of replicates in which the test was positive for the
-LIONESS metrics (A), the pathway scores (B), and the first-order metrics
-(C), with bars of two Monte Carlo standard errors. At no effect, the
-share is the type I error.
+same-visit activity better than chance, by activity effect: the share of
+replicates in which the test was positive for the LIONESS metrics (A),
+the pathway scores (B), and the first-order metrics (C), with bars of
+two Monte Carlo standard errors. At no effect, the share is the type I
+error.
 
 </div>
 
@@ -1188,9 +1184,8 @@ pathways: red when positive and blue when negative, thicker when
 stronger. Scales are shared with the child’s pathway network at visit 2.
 A bigger circle means that the pathway’s genes lay, together, farther
 from their cohort means at that visit, whether above or below them,
-since connectivity is close to the squared pathway score
-(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
-circle means the pathway was near its usual level.
+since connectivity is close to the squared pathway score; a small circle
+means the pathway was near its usual level.
 
 </div>
 
@@ -1207,9 +1202,8 @@ when negative, thicker when stronger. Circle areas and line widths are
 on the same scales as at visit 1. A bigger circle means that the
 pathway’s genes lay, together, farther from their cohort means at that
 visit, whether above or below them, since connectivity is close to the
-squared pathway score
-(<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
-circle means the pathway was near its usual level.
+squared pathway score; a small circle means the pathway was near its
+usual level.
 
 </div>
 
