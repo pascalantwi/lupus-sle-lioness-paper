@@ -14,7 +14,9 @@ PlotGradient(
   ylab = "",
   main = "",
   ref = NULL,
-  ref_label = "Reference line"
+  ref_label = "Reference line",
+  legend = TRUE,
+  limits = NULL
 )
 }
 \arguments{
@@ -34,6 +36,12 @@ legend labels.}
 \item{ref}{Optional reference line \code{y = f(x)}, a function.}
 
 \item{ref_label}{Legend label of the reference line.}
+
+\item{legend}{Draw the legend; when \code{FALSE} the caption describes the
+series and no room is left for a legend.}
+
+\item{limits}{Optional range the quantities can take (for example
+\code{c(0, 1)} for a share); bars and the axis are kept within it.}
 }
 \value{
 The plotted means, invisibly.

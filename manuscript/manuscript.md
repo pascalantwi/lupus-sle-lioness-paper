@@ -967,9 +967,14 @@ settings, by type of metric. Top share marks the proportional threshold.
 
 ![](manuscript_files/figure-commonmark/fig-conn-score-1.png)
 
-Figure 8: Interferon connectivity against the squared interferon score,
-one simulated cohort in the base setting. Each point is one sample (one
-child at one visit); the line is the least-squares fit.
+Figure 8: Interferon connectivity against the squared interferon score
+in one simulated cohort, base setting. Each blue point is one sample,
+that is, one child at one visit; its horizontal position is the sample’s
+squared interferon score (the square of the mean standardized expression
+of the interferon genes) and its vertical position the interferon
+connectivity of its LIONESS network (the mean edge among the interferon
+genes). The grey line is the least-squares fit of connectivity on the
+squared score.
 
 </div>
 
@@ -977,12 +982,17 @@ child at one visit); the line is the least-squares fit.
 
 ![](manuscript_files/figure-commonmark/fig-gradient-1.png)
 
-Figure 9: Stability over visits along the stability of the interferon
-factor (its within-person intraclass correlation): interferon
-connectivity, the squared interferon score, and the residual of
-connectivity after the first-order and after the fourth-order expression
-terms, with bars of two Monte Carlo standard errors. The dashed line is
-the stability of a squared normal factor, the square of the factor’s own
+Figure 9: Stability over visits (within-person intraclass correlation)
+of four quantities, at each level of the stability of the interferon
+factor, which runs from no stable factor to a strongly stable one along
+the horizontal axis. Blue circles: interferon connectivity. Orange
+triangles: the squared interferon score. Green squares: the residual of
+connectivity after its first-order expression terms. Purple diamonds:
+the residual after the fourth-order terms are added. Each point is the
+mean over replicates, the vertical bar through it spans two Monte Carlo
+standard errors on each side, and points of the same level are drawn
+slightly apart so that none is hidden. The grey dashed line is the
+stability of a squared normal factor, the square of the factor’s own
 stability.
 
 </div>
@@ -1012,11 +1022,17 @@ activity alone (<span class="prov-quick">0.618</span> to
 ![](manuscript_files/figure-commonmark/fig-power-1.png)
 
 Figure 10: Type I error and power of the test that a model predicts
-same-visit activity better than chance, by activity effect: the share of
-replicates in which the test was positive for the LIONESS metrics (A),
-the pathway scores (B), and the first-order metrics (C), with bars of
-two Monte Carlo standard errors. At no effect, the share is the type I
-error.
+same-visit activity better than chance, at each activity effect, from no
+effect to the largest effect studied along the horizontal axis. The
+vertical axis is the share of replicates in which the test was positive.
+Blue circles: the LIONESS metrics (model A). Orange triangles: the
+pathway scores (model B). Green squares: the first-order metrics (model
+C). Each point is the share over replicates, the vertical bar through it
+spans two Monte Carlo standard errors on each side (kept within zero and
+one), and points of the same effect are drawn slightly apart so that
+none is hidden; the blue and green points coincide at zero at every
+effect. At no effect, the share is the type I error; at the other
+effects, it is the power.
 
 </div>
 

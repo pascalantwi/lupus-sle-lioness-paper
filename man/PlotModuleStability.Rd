@@ -19,6 +19,9 @@ PlotModuleStability(
 \item{highlight}{Logical, modules drawn in the accent color.}
 
 \item{xlab, ylab, main}{Labels.}
+
+\item{legend}{Draw a legend (off by default: the caption describes the
+points and the line).}
 }
 \value{
 The correlation, invisibly.

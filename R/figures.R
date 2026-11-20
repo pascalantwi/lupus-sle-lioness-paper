@@ -218,18 +218,21 @@ PlotPathwayNetwork <- function(conn, cross, scale_conn = NULL,
 #' @param score2 Squared pathway score, one value per sample.
 #' @param col Point color.
 #' @param xlab,ylab,main Labels.
+#' @param legend Draw a legend (off by default: the caption describes the
+#'   points and the line).
 #' @return The correlation, invisibly.
 #' @export
 PlotConnectivityScore <- function(conn, score2, col = "#2a78d6",
                                   xlab = "Squared pathway score",
-                                  ylab = "Pathway connectivity", main = "") {
+                                  ylab = "Pathway connectivity", main = "",
+                                  legend = FALSE) {
   graphics::par(mar = c(4.2, 4.4, if (nzchar(main)) 2.5 else 1, 1))
   graphics::plot(score2, conn, pch = 19, cex = 0.55,
                  col = grDevices::adjustcolor(col, 0.5), xlab = xlab,
                  ylab = ylab, main = main, las = 1, bty = "l")
   fit <- stats::lm(conn ~ score2)
   graphics::abline(fit, col = "grey30", lwd = 1.5)
-  graphics::legend("topleft", c("One sample (one child at one visit)",
+  if (legend) graphics::legend("topleft", c("One sample (one child at one visit)",
                                 "Least-squares line"),
                    pch = c(19, NA), lwd = c(NA, 1.5),
                    col = c(grDevices::adjustcolor(col, 0.7), "grey30"),
@@ -420,11 +423,16 @@ PlotMetricStability <- function(summaries, cell, metrics, main = "") {
 #' @param xlab,ylab,main Labels.
 #' @param ref Optional reference line `y = f(x)`, a function.
 #' @param ref_label Legend label of the reference line.
+#' @param legend Draw the legend; when `FALSE` the caption describes the
+#'   series and no room is left for a legend.
+#' @param limits Optional range the quantities can take (for example
+#'   `c(0, 1)` for a share); bars and the axis are kept within it.
 #' @return The plotted means, invisibly.
 #' @export
 PlotGradient <- function(summaries, design, factor, cells, quantities,
                          xlab = factor, ylab = "", main = "", ref = NULL,
-                         ref_label = "Reference line") {
+                         ref_label = "Reference line", legend = TRUE,
+                         limits = NULL) {
   x <- design[[factor]][match(cells, design$cell)]
   o <- order(x)
   x <- x[o]
@@ -443,9 +451,15 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
             "grey35")[seq_along(quantities)]
   pch <- c(19, 17, 15, 18, 1, 2)[seq_along(quantities)]
   graphics::par(mar = c(4.2, 4.6, if (nzchar(main)) 2.5 else 1, 1))
-  yl <- range(c(m - 2 * se, m + 2 * se, 0), na.rm = TRUE)
-  # headroom above the data for the legend
-  yl[2] <- yl[2] + 0.3 * diff(yl)
+  lo <- m - 2 * se
+  hi <- m + 2 * se
+  if (!is.null(limits)) {
+    lo <- pmax(lo, limits[1])
+    hi <- pmin(hi, limits[2])
+  }
+  yl <- range(c(lo, hi, 0), na.rm = TRUE)
+  # headroom above the data for the legend, when one is drawn
+  if (legend) yl[2] <- yl[2] + 0.3 * diff(yl)
   # series that coincide are drawn side by side, so that none is hidden
   dodge <- (seq_along(quantities) - (length(quantities) + 1) / 2) *
     0.012 * diff(range(x))
@@ -461,8 +475,7 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
   for (k in seq_along(quantities)) {
     xk <- x + dodge[k]
     graphics::lines(xk, m[, k], col = cols[k], lwd = 2)
-    graphics::segments(xk, m[, k] - 2 * se[, k], xk, m[, k] + 2 * se[, k],
-                       col = cols[k])
+    graphics::segments(xk, lo[, k], xk, hi[, k], col = cols[k])
     graphics::points(xk, m[, k], pch = pch[k], col = cols[k])
   }
   leg <- c(unname(quantities), "Bars: two Monte Carlo standard errors")
@@ -477,9 +490,11 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
     leg_lty <- c(leg_lty, 2)
     leg_lwd <- c(leg_lwd, 1)
   }
-  graphics::legend("topleft", leg, col = leg_col, pch = leg_pch,
-                   lty = leg_lty, lwd = leg_lwd, cex = 0.7, bg = "white",
-                   box.col = "grey80")
+  if (legend) {
+    graphics::legend("topleft", leg, col = leg_col, pch = leg_pch,
+                     lty = leg_lty, lwd = leg_lwd, cex = 0.7, bg = "white",
+                     box.col = "grey80")
+  }
   invisible(m)
 }
 
@@ -488,6 +503,8 @@ PlotGradient <- function(summaries, design, factor, cells, quantities,
 #' @param x,y Stabilities, one per module.
 #' @param highlight Logical, modules drawn in the accent color.
 #' @param xlab,ylab,main Labels.
+#' @param legend Draw a legend (off by default: the caption describes the
+#'   points and the line).
 #' @return The correlation, invisibly.
 #' @export
 PlotModuleStability <- function(x, y, highlight = rep(FALSE, length(x)),

@@ -10,7 +10,8 @@ PlotConnectivityScore(
   col = "#2a78d6",
   xlab = "Squared pathway score",
   ylab = "Pathway connectivity",
-  main = ""
+  main = "",
+  legend = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,9 @@ PlotConnectivityScore(
 \item{col}{Point color.}
 
 \item{xlab, ylab, main}{Labels.}
+
+\item{legend}{Draw a legend (off by default: the caption describes the
+points and the line).}
 }
 \value{
 The correlation, invisibly.
