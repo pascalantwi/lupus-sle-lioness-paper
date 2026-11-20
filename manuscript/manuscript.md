@@ -813,8 +813,7 @@ a scale shared with the child’s network at visit 2.
 ![](manuscript_files/figure-commonmark/fig-net-v2-1.png)
 
 Figure 2: LIONESS gene network of the same simulated child at visit 2,
-base setting, for comparison with the network at visit 1
-(<a href="#fig-net-v1" class="quarto-xref">Figure 1</a>). Each dot is a
+base setting, for comparison with the network at visit 1. Each dot is a
 gene; the genes sit on six circles, one per pathway, and are coloured by
 pathway (interferon blue, neutrophil-like orange, lymphocyte-like green,
 plasmablast-like yellow, personal pink, null dark green), with each
@@ -852,18 +851,17 @@ circle means the pathway was near its usual level.
 
 Figure 4: Pathway network of the same simulated child at visit 2: its
 LIONESS network at this visit read through the six pathways, for
-comparison with visit 1
-(<a href="#fig-path-v1" class="quarto-xref">Figure 3</a>). Each circle
-is a pathway, coloured as in the gene network and labelled by name; its
-area is the pathway’s connectivity (the mean edge among its genes), and
-it is filled when the connectivity is positive and hollow when negative.
-Each line joins two pathways and shows their crosstalk (the mean edge
-between their genes): red when positive and blue when negative, thicker
-when stronger. Circle areas and line widths are on the same scales as at
-visit 1, so that they compare directly between the two visits. A bigger
-circle means that the pathway’s genes lay, together, farther from their
-cohort means at that visit, whether above or below them, since
-connectivity is close to the squared pathway score
+comparison with visit 1. Each circle is a pathway, coloured as in the
+gene network and labelled by name; its area is the pathway’s
+connectivity (the mean edge among its genes), and it is filled when the
+connectivity is positive and hollow when negative. Each line joins two
+pathways and shows their crosstalk (the mean edge between their genes):
+red when positive and blue when negative, thicker when stronger. Circle
+areas and line widths are on the same scales as at visit 1, so that they
+compare directly between the two visits. A bigger circle means that the
+pathway’s genes lay, together, farther from their cohort means at that
+visit, whether above or below them, since connectivity is close to the
+squared pathway score
 (<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
 circle means the pathway was near its usual level.
 
@@ -1169,14 +1167,12 @@ visit 2.
 ![](manuscript_files/figure-commonmark/fig-app-net-v2-1.png)
 
 Figure 12: LIONESS gene network of the same GSE65391 child at visit 2,
-for comparison with visit 1
-(<a href="#fig-app-net-v1" class="quarto-xref">Figure 11</a>). Each dot
-is a gene; the genes sit on four circles, one per pathway, coloured by
-pathway (interferon blue, neutrophil orange, lymphocyte green, plasma
-cell yellow) and labelled by name. Each line is one of the 150 strongest
-edges at this visit: red for a positive edge and blue for a negative
-one, thin for a weak edge and thick for a strong one, with width on the
-same scale as at visit 1.
+for comparison with visit 1. Each dot is a gene; the genes sit on four
+circles, one per pathway, coloured by pathway (interferon blue,
+neutrophil orange, lymphocyte green, plasma cell yellow) and labelled by
+name. Each line is one of the 150 strongest edges at this visit: red for
+a positive edge and blue for a negative one, thin for a weak edge and
+thick for a strong one, with width on the same scale as at visit 1.
 
 </div>
 
@@ -1203,16 +1199,15 @@ circle means the pathway was near its usual level.
 ![](manuscript_files/figure-commonmark/fig-app-path-v2-1.png)
 
 Figure 14: Pathway network of the same GSE65391 child at visit 2, for
-comparison with visit 1
-(<a href="#fig-app-path-v1" class="quarto-xref">Figure 13</a>). Each
-circle is a pathway, coloured as in the gene network and labelled by
-name; its area is the pathway’s connectivity, filled when positive and
-hollow when negative. Each line shows the crosstalk between two
-pathways: red when positive and blue when negative, thicker when
-stronger. Circle areas and line widths are on the same scales as at
-visit 1. A bigger circle means that the pathway’s genes lay, together,
-farther from their cohort means at that visit, whether above or below
-them, since connectivity is close to the squared pathway score
+comparison with visit 1. Each circle is a pathway, coloured as in the
+gene network and labelled by name; its area is the pathway’s
+connectivity, filled when positive and hollow when negative. Each line
+shows the crosstalk between two pathways: red when positive and blue
+when negative, thicker when stronger. Circle areas and line widths are
+on the same scales as at visit 1. A bigger circle means that the
+pathway’s genes lay, together, farther from their cohort means at that
+visit, whether above or below them, since connectivity is close to the
+squared pathway score
 (<a href="#eq-conn-cf" class="quarto-xref">Equation 11</a>); a small
 circle means the pathway was near its usual level.
 
