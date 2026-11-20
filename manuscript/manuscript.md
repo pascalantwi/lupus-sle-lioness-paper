@@ -144,13 +144,14 @@ visits and apply the same analyses to their blood.
 
 # Methods
 
-## The estimand and the procedure
+We first define LIONESS networks and the metrics read from them through
+pathways, then derive what the edges and the metrics measure, and give a
+diagnostic that follows from that result. We then define how we measured
+the stability of a metric over a person’s visits, whether it identifies
+the person, and how well it predicts disease activity, and close with
+the data and the software.
 
-<!-- The estimand as a feature of a population, in plain words first, then as a functional of the
-relevant distribution. Then each procedure as a recipe applied to data: the equations with one clause per
-line, each symbol defined in the sentence that introduces it or in the equation's label; no table of
-notation. Carried from the report's
-"In symbols" section; the mathematics is the mathematics, the sentences are new. -->
+## LIONESS single-sample networks
 
 A user who builds a LIONESS network for a blood sample reads it as the
 co-expression specific to that sample, and reads a network metric of it,
@@ -162,11 +163,14 @@ cohort of $N$ samples, let $r_{ij}$ be the Pearson correlation of genes
 $i$ and $j$ over all samples and $r^{(-q)}_{ij}$ the correlation without
 sample $q$. The LIONESS edge of sample $q$ is $$
 e_{qij} = N r_{ij} - (N - 1)\, r^{(-q)}_{ij}
-$$ \[[2](#ref-kuijjer2019lioness)\]. For a pathway $A$ of $m_A$ genes
-and a second pathway $B$ of $m_B$ genes, disjoint from $A$, the
-connectivity $W_{qA}$, the crosstalk $X_{qAB}$, the total edge weight
-$T_q$ over all $p$ genes of the network, and the strength $s_{qi}$ of
-gene $i$ in sample $q$ are $$
+$$ \[[2](#ref-kuijjer2019lioness)\].
+
+## Network metrics read through pathways
+
+For a pathway $A$ of $m_A$ genes and a second pathway $B$ of $m_B$
+genes, disjoint from $A$, the connectivity $W_{qA}$, the crosstalk
+$X_{qAB}$, the total edge weight $T_q$ over all $p$ genes of the
+network, and the strength $s_{qi}$ of gene $i$ in sample $q$ are $$
 \begin{aligned}
 W_{qA} &= \binom{m_A}{2}^{-1} \sum_{i < j \in A} e_{qij}, \\
 X_{qAB} &= \frac{1}{m_A m_B} \sum_{i \in A} \sum_{j \in B} e_{qij}, \\
@@ -185,11 +189,7 @@ degree and betweenness, the latter with distance
 $1/\lvert e_{qij}\rvert$. We averaged the gene-level metrics over the
 genes of each pathway.
 
-## What the procedure estimates
-
-<!-- The target under the realistic condition and the bias as a formula: when it is zero, what makes it
-large. Where no formula exists for a method or setting, say so plainly. Proofs go to
-_supplement.qmd; state the results here and point at the supplement. -->
+## What LIONESS edges and metrics measure
 
 We show that every LIONESS edge is an exact function of the cohort
 correlation and the sample’s own standardized expression. With $z_{qi}$
@@ -237,9 +237,7 @@ the squared score of a pathway driven by a factor with within-person
 intraclass correlation $\kappa$ has intraclass correlation $\kappa^2$
 when the factor is normal (S1.5).
 
-## The fix or the diagnostic
-
-<!-- What to change so the gap vanishes, or what to check so a user knows whether it matters. -->
+## A diagnostic: comparing a metric with its expression terms
 
 We propose two checks that tell a user whether a LIONESS metric carries
 anything beyond the sample’s expression. In the first, we recompute the
@@ -254,27 +252,16 @@ $R^2$ and the stability of the residual. A metric that matches its
 first-order version, and whose residual is not stable, measures
 expression.
 
-## Stability, identification, and prediction of disease activity
+## Stability over visits
 
-We measured four things for each feature set: how stable it is over a
-person’s visits, whether it identifies the person, and how well it
-predicts disease activity at the same visit and at the next one. A
-feature set is a vector of numbers for person $p$ at visit $v$: the
-LIONESS metrics, the first-order metrics, the pathway scores, or the
-genes. Throughout, $\mathbf{s}_{pv}$ is the vector of pathway scores of
-person $p$ at visit $v$ (the mean standardized expression of each
-pathway’s genes), $\mathbf{s}^{2}_{pv}$ its elementwise square,
-$\mathbf{g}_{pv}$ the standardized expression of all genes of the
-network, $\mathbf{m}_{pv}$ the LIONESS metrics, $\mathbf{m}^{(1)}_{pv}$
-the same metrics computed on the first-order network, and $y_{pv}$ the
-disease activity (SLEDAI in the application).
-
-### Stability over visits
-
-For one feature, let $x_{pv}$ be its value for person $p$ at visit $v$,
-$k_p$ the number of visits of person $p$, $P$ the number of people, and
-$n = \sum_p k_p$ the number of samples. We used the one-way intraclass
-correlation $$
+For each feature set, a vector of numbers for person $p$ at visit $v$
+(the LIONESS metrics, the first-order metrics, the pathway scores, or
+the genes), we measured how stable it is over a person’s visits, whether
+it identifies the person, and how well it predicts disease activity at
+the same visit and at the next one. For one feature, let $x_{pv}$ be its
+value for person $p$ at visit $v$, $k_p$ the number of visits of person
+$p$, $P$ the number of people, and $n = \sum_p k_p$ the number of
+samples. We used the one-way intraclass correlation $$
 \begin{aligned}
 \mathrm{MSB} &= \frac{1}{P - 1} \sum_{p} k_p \left(\bar x_{p\cdot} - \bar x_{\cdot\cdot}\right)^2, \\
 \mathrm{MSW} &= \frac{1}{n - P} \sum_{p} \sum_{v} \left(x_{pv} - \bar x_{p\cdot}\right)^2, \\
@@ -289,7 +276,7 @@ feature’s variance that belongs to the person rather than to the visit:
 it is zero when a person’s visits differ as much as different people do,
 and one when every visit of a person gives the same value.
 
-### Identification of a person
+## Identification of a person
 
 For each person, let $\mathbf{f}_{p1}$ and $\mathbf{f}_{p2}$ be the
 feature vectors of the first two visits, each feature standardized over
@@ -305,7 +292,17 @@ $$ where $\operatorname{cor}$ is the Pearson correlation over the
 features and $\mathbb{1}(\cdot)$ is one when its condition holds and
 zero otherwise; guessing gives $1/P$.
 
-### Prediction of disease activity: the common form
+## Prediction of disease activity
+
+Throughout, $\mathbf{s}_{pv}$ is the vector of pathway scores of person
+$p$ at visit $v$ (the mean standardized expression of each pathway’s
+genes), $\mathbf{s}^{2}_{pv}$ its elementwise square, $\mathbf{g}_{pv}$
+the standardized expression of all genes of the network,
+$\mathbf{m}_{pv}$ the LIONESS metrics, $\mathbf{m}^{(1)}_{pv}$ the same
+metrics computed on the first-order network, and $y_{pv}$ the disease
+activity (SLEDAI in the application).
+
+### The common form of the models
 
 Every model predicts activity at the same visit as $$
 y_{pv} = \alpha + \boldsymbol{\gamma}^\top \mathbf{b}_{pv} + \boldsymbol{\theta}^\top \mathbf{x}_{pv} + \epsilon_{pv},
@@ -416,9 +413,6 @@ with margin $\eta = 0.05$.
 
 ## Data
 
-<!-- The cohort or dataset: source paper and accession, who was sampled, sizes, the measurement scale,
-the processing applied. Carried from the report's "The study" subsection. -->
-
 For the application, we used the longitudinal study of children with
 systemic lupus erythematosus of
 \[[1](#ref-banchereau2016personalized)\], Gene Expression Omnibus series
@@ -458,6 +452,8 @@ software and package versions with the results.
 We used R version 4.6.2 (2026-10-29), with glmnet
 \[[12](#ref-friedman2010glmnet)\] for the elastic net and igraph for the
 graph metrics.
+
+## Use of AI
 
 {{< include parts/ai-use-statement.md >}} <span class="tc">TO CONFIRM:
 whether the journal wants the figure legends to name the AI-assisted
@@ -1411,7 +1407,7 @@ source, with its section.
 | TO CONFIRM | affiliation | (front matter) |
 | TO CONFIRM | second author, the supervisor | (front matter) |
 | TO CONFIRM | affiliation | (front matter) |
-| TO CONFIRM | whether the journal wants the figure legends to name the AI-assisted code | Software and reproducibility |
+| TO CONFIRM | whether the journal wants the figure legends to name the AI-assisted code | Use of AI |
 | TO CONFIRM | the pre-registered limit of one in ten replicates for N1 declared better than E1 was exceeded at the largest activity effect for next-visit activity in the quick run; the production run decides | LIONESS metrics did not predict beyond expression |
 | TO CONFIRM | the pre-registered claim that every module has R squared of at least 0.99 on the first-order terms failed for two modules; and the small stable residual in real data, unlike the simulation, is either higher-order expression or person-specific co-expression | A child’s LIONESS network over visits is the child’s expression |
 | TO CONFIRM | the supervisor’s confirmation of the re-scope and of the paper’s message | Discussion |
