@@ -813,7 +813,16 @@ a scale shared with the child’s network at visit 2.
 ![](manuscript_files/figure-commonmark/fig-net-v2-1.png)
 
 Figure 2: LIONESS gene network of the same simulated child at visit 2,
-drawn as at visit 1 (same colours, same scale).
+base setting, for comparison with the network at visit 1
+(<a href="#fig-net-v1" class="quarto-xref">Figure 1</a>). Each dot is a
+gene; the genes sit on six circles, one per pathway, and are coloured by
+pathway (interferon blue, neutrophil-like orange, lymphocyte-like green,
+plasmablast-like yellow, personal pink, null dark green), with each
+circle labelled by its pathway. Each line is one of the 120 strongest
+edges of the child’s network at this visit: red for a positive edge and
+blue for a negative one, thin for a weak edge and thick for a strong
+one, with width proportional to the absolute edge on the same scale as
+at visit 1, so that line widths compare directly between the two visits.
 
 </div>
 
@@ -836,8 +845,17 @@ stronger. Scales are shared with the child’s pathway network at visit 2.
 
 ![](manuscript_files/figure-commonmark/fig-path-v2-1.png)
 
-Figure 4: Pathway network of the same simulated child at visit 2, drawn
-as at visit 1 (same colours, same scales).
+Figure 4: Pathway network of the same simulated child at visit 2: its
+LIONESS network at this visit read through the six pathways, for
+comparison with visit 1
+(<a href="#fig-path-v1" class="quarto-xref">Figure 3</a>). Each circle
+is a pathway, coloured as in the gene network and labelled by name; its
+area is the pathway’s connectivity (the mean edge among its genes), and
+it is filled when the connectivity is positive and hollow when negative.
+Each line joins two pathways and shows their crosstalk (the mean edge
+between their genes): red when positive and blue when negative, thicker
+when stronger. Circle areas and line widths are on the same scales as at
+visit 1, so that they compare directly between the two visits.
 
 </div>
 
@@ -860,10 +878,11 @@ not change between visits follows.
 
 Figure 6: Mean degree of the interferon genes over the six visits of the
 same twelve simulated children, in the LIONESS networks thresholded at
-an absolute edge of 1. Each blue line is one child, joined in visit
-order; the orange dashed line is the no-change line, drawn at the mean
-of all values, the flat line that a child whose degree did not change
-between visits follows.
+an absolute edge of 1. Each orange line is one child, its points the
+child’s values at each visit, joined in visit order; the dark blue
+dashed line is the no-change line, drawn at the mean of all values, the
+flat line that a child whose degree did not change between visits
+follows.
 
 </div>
 
@@ -1140,7 +1159,14 @@ visit 2.
 ![](manuscript_files/figure-commonmark/fig-app-net-v2-1.png)
 
 Figure 12: LIONESS gene network of the same GSE65391 child at visit 2,
-drawn as at visit 1 (same colours, same scale).
+for comparison with visit 1
+(<a href="#fig-app-net-v1" class="quarto-xref">Figure 11</a>). Each dot
+is a gene; the genes sit on four circles, one per pathway, coloured by
+pathway (interferon blue, neutrophil orange, lymphocyte green, plasma
+cell yellow) and labelled by name. Each line is one of the 150 strongest
+edges at this visit: red for a positive edge and blue for a negative
+one, thin for a weak edge and thick for a strong one, with width on the
+same scale as at visit 1.
 
 </div>
 
@@ -1161,8 +1187,15 @@ stronger. Scales are shared with the child’s pathway network at visit 2.
 
 ![](manuscript_files/figure-commonmark/fig-app-path-v2-1.png)
 
-Figure 14: Pathway network of the same GSE65391 child at visit 2, drawn
-as at visit 1 (same colours, same scales).
+Figure 14: Pathway network of the same GSE65391 child at visit 2, for
+comparison with visit 1
+(<a href="#fig-app-path-v1" class="quarto-xref">Figure 13</a>). Each
+circle is a pathway, coloured as in the gene network and labelled by
+name; its area is the pathway’s connectivity, filled when positive and
+hollow when negative. Each line shows the crosstalk between two
+pathways: red when positive and blue when negative, thicker when
+stronger. Circle areas and line widths are on the same scales as at
+visit 1.
 
 </div>
 
