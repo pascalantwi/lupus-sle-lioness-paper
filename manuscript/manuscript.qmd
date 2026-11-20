@@ -343,20 +343,7 @@ $$
 where $k$ indexes the training samples, $y^{\mathrm{cur}}_k$ is the current activity (absent, $\delta = 0$, for same-visit prediction), $\lVert \boldsymbol{\theta} \rVert_2^2$ is the sum of the squared coefficients and $\lVert \boldsymbol{\theta} \rVert_1$ the sum of their absolute values, the mixing $a$ was `r lvl(st$alpha)`, and the penalty $\lambda$ was chosen by `r lvl(st$folds)`-fold cross-validation inside the training samples, with all visits of a person in one fold, at the value with the smallest mean squared error.
 A model with no features under test was fitted by least squares.
 Every prediction was made out of fold: the people were split into `r lvl(st$folds)` folds, and each person's predictions came from a model fitted on the other folds.
-The models below differ only in $\mathbf{b}_{pv}$ and $\mathbf{x}_{pv}$ (@tbl-ladder-def); moving up the ladder from R0 to N1 adds one source of information at a time.
-
-```{r}
-#| label: tbl-ladder-def
-#| tbl-cap: "The models compared. Base terms enter unpenalized; features under test enter penalized. The pathway scores are the means of each pathway's standardized expression; for the next visit, every model also has the current activity unpenalized."
-
-kable_w(data.frame(
-  Model = c("A", "B", "C", "R0", "R1", "E1", "N1", "F1"),
-  `Base terms (unpenalized)` = c("none", "none", "none", "today's activity (next-visit prediction only)", "pathway scores and their squares",
-                                 "pathway scores and their squares", "pathway scores and their squares", "pathway scores and their squares"),
-  `Features under test (penalized)` = c("LIONESS metrics", "pathway scores and their squares", "first-order metrics", "none", "none",
-                                        "all genes of the network", "all genes and the LIONESS metrics", "all genes and the first-order metrics"),
-  check.names = FALSE), widths = c(10, 40, 50))
-```
+The models below differ only in $\mathbf{b}_{pv}$ and $\mathbf{x}_{pv}$; moving up the ladder from R0 to N1 adds one source of information at a time.
 
 ### Model R0: the current activity alone
 
