@@ -84,3 +84,25 @@ test_that("LionessMetricsBySample gives the same answer on a cluster", {
   expect_equal(LionessMetricsBySample(x, sets, cl = cl),
                LionessMetricsBySample(x, sets))
 })
+
+test_that("PathwayDiagnostics reads the right metrics and terms", {
+  set.seed(106)
+  person <- rep(1:30, each = 4)
+  f <- rnorm(30)[person] + rnorm(120)
+  x <- cbind(0.8 * f + matrix(rnorm(120 * 5), 120),
+             matrix(rnorm(120 * 4), 120))
+  sets <- list(a = 1:5, b = 6:9)
+  m <- LionessMetrics(LionessEdges(x), sets)
+  d <- PathwayDiagnostics(m, x, sets, person)
+  expect_equal(d$block, c("within_a", "within_b", "cross_a_b"))
+  expect_true(all(d$r2_1 > 0.99))
+  expect_true(all(d$r2_4 >= d$r2_1 - 1e-12))
+  # single-edge stability from the pathway's genes alone equals the
+  # stability of the same edges in the whole network
+  pr <- PairIndex(9)
+  inside <- pr[, 1] %in% 1:5 & pr[, 2] %in% 1:5
+  expect_equal(d$icc_edges[1],
+               mean(EdgeICC(LionessEdges(x)[, inside], person)),
+               tolerance = 1e-10)
+  expect_true(is.na(d$icc_edges[3]))
+})

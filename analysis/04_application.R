@@ -129,6 +129,10 @@ examples <- list(kids = kids, person = person[ex_rows], visit = visit[ex_rows],
                  all_metrics = m_raw, all_person = person, all_visit = visit,
                  score2 = score^2)
 
+# ---- additions mirroring the simulation (protocol.md, section 8, entry of
+# 2026-11-20): deterministic, after every random step above ----------------
+pathway_diag <- PathwayDiagnostics(m_raw, x_net, sets, person)
+
 elapsed <- as.numeric(difftime(Sys.time(), start, units = "secs"))
 saveRDS(list(n_children = length(unique(person)), n_visits = nrow(q),
              n_genes_matched = ncol(x_all), n_modules = nrow(modules),
@@ -144,6 +148,7 @@ saveRDS(list(finger = finger, same = t_same, next_visit = t_next,
              ladder_same = l_same, ladder_next = l_next),
         file.path(out_dir, "application_prediction.rds"))
 saveRDS(examples, file.path(out_dir, "application_examples.rds"))
+saveRDS(pathway_diag, file.path(out_dir, "application_pathways.rds"))
 saveRDS(list(run = "production", n_rep = NA_integer_, n_cells = NA_integer_,
              date = Sys.time(), elapsed_seconds = elapsed,
              note = "GSE65391 application, protocol.md section 8",

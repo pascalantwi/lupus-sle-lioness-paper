@@ -209,3 +209,52 @@ SplitConcordance <- function(feats, y, person, train) {
     ConcordanceFast(pred, y[!train])
   }, numeric(1))
 }
+
+#' Diagnostics of every connectivity and crosstalk of a pathway network
+#'
+#' For each pathway and each pair of pathways: the $R^2$ of the LIONESS
+#' connectivity or crosstalk on its first-order terms and with the
+#' fourth-order terms ([PathwayTerms4()]), and the stability over visits of
+#' the metric and of each residual; for each pathway, also the stability of
+#' its squared score and the mean stability of its single edges.
+#'
+#' @param metrics LIONESS metrics, samples by metrics, with columns
+#'   `conn_<set>` and `cross_<A>_<B>` ([LionessMetrics()] or
+#'   [LionessMetricsBySample()]).
+#' @param x Expression of the network's genes, samples by genes.
+#' @param sets A named list of gene index sets (columns of `x`).
+#' @param person Person of each sample.
+#' @return A data frame, one row per block: `block`, `kind` (`within` or
+#'   `cross`), `r2_1`, `r2_4`, `icc_metric`, `icc_res1`, `icc_res4`, and,
+#'   for pathways, `icc_score2` and `icc_edges` (`NA` for pairs).
+#' @export
+PathwayDiagnostics <- function(metrics, x, sets, person) {
+  t4 <- PathwayTerms4(x, sets)
+  z <- StandardizeN(x)$z
+  rows <- lapply(names(t4), function(b) {
+    within <- startsWith(b, "within_")
+    col <- if (within) sub("^within_", "conn_", b) else b
+    y <- metrics[, col]
+    f1 <- R2OnTerms(y, t4[[b]][, 1:3])
+    f4 <- R2OnTerms(y, t4[[b]])
+    out <- data.frame(block = b, kind = if (within) "within" else "cross",
+                      r2_1 = f1$r2, r2_4 = f4$r2,
+                      icc_metric = EdgeICC(y, person),
+                      icc_res1 = EdgeICC(f1$resid, person),
+                      icc_res4 = EdgeICC(f4$resid, person),
+                      icc_score2 = NA_real_, icc_edges = NA_real_,
+                      stringsAsFactors = FALSE)
+    if (within) {
+      k <- sub("^within_", "", b)
+      g <- sets[[k]]
+      out$icc_score2 <- EdgeICC(rowMeans(z[, g, drop = FALSE])^2, person)
+      # a pathway's own edges depend only on its genes (S1.1), so they are
+      # computed from those genes alone
+      out$icc_edges <- mean(EdgeICC(LionessEdgesClosedForm(x[, g,
+                                                             drop = FALSE]),
+                                    person))
+    }
+    out
+  })
+  do.call(rbind, rows)
+}
